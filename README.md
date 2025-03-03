@@ -1,3 +1,3 @@
 RUN THE PROJECT
- > npm i
+ > npm i <br>
  > npm run dev
