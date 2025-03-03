@@ -1,39 +1,46 @@
 import * as THREE from 'three';
+import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
 
-const t = 3;
-const h = 6;
-const squareShape = new THREE.Shape();
-squareShape.moveTo( 0, 0 );    // Start at (0, 0)
-squareShape.lineTo( 0, h * .98);   // Line to (10, 0)
-squareShape.lineTo( t * .8, h);  // Line to (10, 10)
-squareShape.lineTo( t * .8, h *.9);   // Line to (0, 10)
-squareShape.lineTo( t * .7 , h * .85);  // Close the square by returning to (0, 0)
-squareShape.lineTo( t * .75, h * .65);
-squareShape.lineTo( t, h * .6);
-squareShape.lineTo(t , h * .5);
-squareShape.lineTo(t * .88, h * .5);
-squareShape.lineTo(t * .88, 0);
+const arcadeMachine = new THREE.Group();
 
-const extrudeSettings = {
-  depth: t,          // Depth of the cube (how tall it will be)
-  bevelEnabled: false ,// No bevel for simplicity
-  bevelThickness: 0.5,  // How thick the bevel should be (adds a rounded edge)
-  bevelSize: 1,  // The size of the bevel
-  bevelSegments: 10  // How smooth the bevel is
-};
+function get_shape(total_height, total_width)
+{
+	const h_ratios = [0, 0.5, 0.6, 0.65, 0.85, 0.9, 0.98, 1];
+	const w_ratios = [0, 0.7, 0.75, 0.8, 0.85, 0.88, 1];
+	const h = h_ratios.map(ratio => ratio * total_height);
+	const w = w_ratios.map(ratio => ratio * total_width);
+	const squareShape = new THREE.Shape();
+	squareShape.moveTo(w[0], h[0]);
+	squareShape.lineTo(w[0], h[6]);
+	squareShape.lineTo(w[3], h[7]);
+	squareShape.lineTo(w[3], h[5]);
+	squareShape.lineTo(w[1], h[4]);
+	squareShape.lineTo(w[2], h[3]);
+	squareShape.lineTo(w[5], h[2]);
+	squareShape.lineTo(w[5], h[1]);
+	squareShape.lineTo(w[4], h[1]);
+	squareShape.lineTo(w[4], h[0]);
+	return squareShape;
+}
+const scale = 0.2;
+const height = 6 * scale;
+const width = 3 * scale;
 
+const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const baseShape = get_shape(height, width);
+const baseGeometry = new THREE.ExtrudeGeometry(baseShape, { depth: width, bevelEnabled: false });
+const base = new THREE.Mesh(baseGeometry, material);
+arcadeMachine.add(base);
 
-// const geometry = new THREE.ShapeGeometry( squareShape);
+const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
+const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff, linewidth: 5 });
+const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+arcadeMachine.add(edges);
 
-const arcadegeometry = new THREE.ExtrudeGeometry( squareShape, extrudeSettings);
-const arcadematerial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-const arcadeMachine = new THREE.Mesh(arcadegeometry, arcadematerial);
 arcadeMachine.receiveShadow = true;
 arcadeMachine.castShadow = true;
-let sc = 0.2;
-arcadeMachine.scale.set(sc, sc, sc); // Uniformly scale the cube to 50% of its original size
 arcadeMachine.position.y = -0.5;
 arcadeMachine.position.z = 2;
-arcadeMachine.rotation.y = - Math.PI / 2;
+arcadeMachine.rotation.y = -Math.PI / 2;
 
 export { arcadeMachine }
