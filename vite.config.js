@@ -3,4 +3,7 @@ export default {
     server: {
         open: true,
     },
+	// optimizeDeps: {
+	// 	include: ['three/examples/js/controls/OrbitControls.js'],
+	//   },
 };
