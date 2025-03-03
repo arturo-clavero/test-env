@@ -1,3 +1,3 @@
-run the project
+Run the project:
  > npm i <br>
  > npm run dev
