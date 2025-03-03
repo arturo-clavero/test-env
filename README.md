@@ -1,2 +1,3 @@
-npm i
-npm run dev
+RUN THE PROJECT
+ > npm i
+ > npm run dev
