@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Modern import path for modules
 import { backBox } from './backBox';
 import { arcadeMachine } from './arcadeMachine';
-
+import { Shape } from './CustomShapes'
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -27,8 +27,12 @@ scene.add(directionalLight);
 // scene.add(directionalLightHelper);
 
 scene.add(backBox);
-scene.add(arcadeMachine);
-
+//scene.add(arcadeMachine);
+const check1 = new Shape([[0, 0, 3], [0,1,3],[1,1,3],[1,0,3]]);
+check1.add_material(new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }));
+check1.mesh.position.x = 0;
+console.log(check1.mesh);
+scene.add(check1.mesh);
 camera.position.z = 5;
 
 const controls = new OrbitControls(camera, renderer.domElement);

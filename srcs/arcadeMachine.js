@@ -26,21 +26,93 @@ const scale = 0.2;
 const height = 6 * scale;
 const width = 3 * scale;
 
-const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const materials = [
+	new THREE.MeshStandardMaterial({ color: 0x00ff00 ,}),
+	new THREE.MeshStandardMaterial({ color: 0xff0000 ,}),
+	new THREE.MeshStandardMaterial({ color: 0xff00ff ,}),
+
+];
 const baseShape = get_shape(height, width);
+console.log(baseShape);
 const baseGeometry = new THREE.ExtrudeGeometry(baseShape, { depth: width, bevelEnabled: false });
-const base = new THREE.Mesh(baseGeometry, material);
+baseGeometry.rotateY(-Math.PI / 2);
+
+const base = new THREE.Mesh(baseGeometry, materials);
 arcadeMachine.add(base);
 
 const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
 const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff, linewidth: 5 });
-const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-arcadeMachine.add(edges);
+// const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+// arcadeMachine.add(edges);
+
+
+////
+const edgesPositions = edgesGeometry.attributes.position.array;
+// edgesPositions.rotation.y = -Math.PI / 2;
+const filteredEdges = [];
+let shape = new THREE.Shape();
+let shapeGroup = [];
+for (let i = 0; i < edgesPositions.length; i += 3) {
+    const startVertex = new THREE.Vector3(edgesPositions[i], edgesPositions[i + 1], edgesPositions[i + 2]);
+    const endVertex = new THREE.Vector3(edgesPositions[i + 3], edgesPositions[i + 4], edgesPositions[i + 5]);
+	if (i < 6 * 2)
+		console.log("first is: ", startVertex, endVertex);
+	else if (i < 6 * 5)
+		console.log("second is: ", startVertex, endVertex);
+	if (i == 0)
+		shape.moveTo(startVertex.z, startVertex.y);
+	else if (endVertex.z == 0 && startVertex.z == 0)
+	{
+		console.log("start new shape at i of : ", i / 6);
+		console.log("prev shape: ", shape);
+		shapeGroup.push(shape);
+		shape = new THREE.Shape();
+		shape.moveTo(startVertex.z, startVertex.y);
+	}
+	// else
+	// 	shape.lineTo(startVertex.x, startVertex.y);
+	else if (i + 3  > edgesPositions.length || (edgesPositions[i + 3 + 2] == 0  && edgesPositions[i + 5] == 0));
+		shape.lineTo(endVertex.z, endVertex.y);
+	if (i == 6 * 2 || i == 6 * 5 || i == 6 * 11)
+		console.log("RIGHT COORD: ", startVertex.z, ", ", endVertex.z );
+	if (i == 6 * 10 || i == 6 * 16 || i == 6 * 22)
+		console.log("LEFT COORD: ", startVertex.z, ", ", endVertex.z );
+	if ( i != 6 * 15 && i != 6 * 12 && i % 6 == 0) {
+        filteredEdges.push(startVertex.x, startVertex.y, startVertex.z, endVertex.x, endVertex.y, endVertex.z);
+    }
+}
+console.log("total: ", shapeGroup.length);
+console.log("shape test: ", shapeGroup[0]);
+let materialtest = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const shapetest = new THREE.Mesh(new THREE.ShapeGeometry(shapeGroup[0]), materialtest);
+// arcadeMachine.add(shapetest);
+const filteredEdgesGeometry = new THREE.BufferGeometry();
+filteredEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(filteredEdges, 3));
+const filteredEdgesLine = new THREE.LineSegments(filteredEdgesGeometry, edgesMaterial);
+// arcadeMachine.add(filteredEdgesLine);
+
+
+
+const shape1 = new THREE.Shape();
+
+shape1.moveTo( );
+shape1.lineTo( );
+shape1.lineTo( );
+shape1.lineTo( );
+
+
+const Lgeometry = new THREE.ShapeGeometry( shape1 );
+const Lmaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+const Lmesh = new THREE.Mesh( Lgeometry, Lmaterial ) ;
+arcadeMachine.add( Lmesh );
+
+// arcadeMachine.rotation.y = -Math.PI / 2;
+arcadeMachine.add(filteredEdgesLine);
+
 
 arcadeMachine.receiveShadow = true;
 arcadeMachine.castShadow = true;
-arcadeMachine.position.y = -0.5;
+arcadeMachine.position.y = -0.45;
 arcadeMachine.position.z = 2;
-arcadeMachine.rotation.y = -Math.PI / 2;
 
 export { arcadeMachine }
