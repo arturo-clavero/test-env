@@ -2,77 +2,99 @@ import * as THREE from 'three';
 import { order_path } from './utils';
 
 class Shape {
-	constructor(points, move_back = 0)
+	constructor(points, move_back = 0, geometry)
 	{
-		this.custom_geo(order_path(points));
-		this.material = null;
-		this.mesh = null;
+		// console.log("shape before", points);
 		this.z = move_back;
+		this.geometry = points.length == 0 ? geometry : this.custom_geo(order_path(points));
+		this.material = null;
+		this.self = null;
+		this.normal = 0;
+		console.log("this,z = ", this.z);
+		this.onclick = null;
 		return this;
 	}
 	custom_geo(points){
+		// console.log("shape after", points);
+		let geometry;
 		if (points[0].length == 3)
 		{
-			this.geometry = new THREE.BufferGeometry();
+			// console.log("3d ...");
+			geometry = new THREE.BufferGeometry();
 			const vertices = [];
 			for (let i = 0; i < points.length; i++)
 				vertices.push(points[i][0], points[i][1], points[i][2]);
-			this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+			// console.log("vertices: ", vertices);
+			geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 			const indices = [0, 1, 2, 2, 3, 0];
-			this.geometry.setIndex(indices);
-			this.geometry.computeVertexNormals();
+			geometry.setIndex(indices);
+			geometry.computeVertexNormals();
+			console.log("custom geo this geometry: ", geometry);
 		}
 		else if (points[0].length == 2)
 		{
+			console.log("2d");
 			const shape = new THREE.Shape();
 			shape.moveTo(points[0][0], points[0][1]);
 			for (let i = 1; i < points.length; i++)
 				shape.lineTo(points[i][0], points[i][1]);
 			shape.closePath();
-			this.geometry = new THREE.ShapeGeometry(shape);
+			geometry = new THREE.ShapeGeometry(shape);
 		}
+		return geometry;
 	}
 
 	add_material(material)
 	{
+		console.log("adding material shape ");
+		console.log('Geometry: ', this.geometry);
+		console.log('Material:', material);
+
+		if (!this.geometry || !material) {
+			console.log('Invalid geometry or material');
+		}
 		if (this.material == null)
 		{
+			console.log("new material added to shape");
 			this.material = material;
-			this.mesh = new THREE.Mesh(this.geometry, this.material);
-			this.mesh.position.z -= this.z;
+			this.self = new THREE.Mesh(this.geometry, this.material);
+			this.self.position.z -= this.z;
 		}
 		else
 		{
-			this.mesh.material = material;
-			this.mesh.material.needsUpdate = true;
+			console.log("updating shape material");
+			this.self.material = material;
+			this.self.material.needsUpdate = true;
 		}
+		console.log("shape material done");
 	}
 
 	update_material(attribute, value){
-		if (this.mesh == null)
+		if (this.self == null)
 		{
 			console.log("Error: no mesh!");
 			return;
 		}
 		if (attribute == "color")
-			this.mesh.material.color.set(value);
+			this.self.material.color.set(value);
 		else if (attribute == "roughness")
-			this.mesh.material.roughness = value;
+			this.self.material.roughness = value;
 		else if (attribute == "metalness")
-			this.mesh.material.metalness = value;
+			this.self.material.metalness = value;
 		else
 		{
 			console.log("Error: did not recognise material attribute!");
 			return ;
 		}
-		this.mesh.material.needsUpdate = true;
+		this.self.material.needsUpdate = true;
 	}
 
 	get_mesh(){
-		if (this.mesh)
-			return this.mesh;
+		if (this.self)
+			return this.self;
 		console.log("Error: no mesh!");
 	}
+	add_onclick(ft) { this.onclick = ft};
 }
 
 export { Shape };
