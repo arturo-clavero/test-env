@@ -4,13 +4,8 @@ import { Shape } from "./CustomShapes";
 import { order_path } from './utils';
 
 class Model {
-	//constructor(type, pointsLeftXY, pointsRightXY, materials, object){
 	constructor(object){
-
-		// if (type == "base")
-			this.base = object;
-		// else
-		// 	this.base = Object(type, pointsLeftXY, pointsRightXY, materials);
+		this.base = object;
 		this.objects = [];
 		this.self = new THREE.Group();
 		this.self.add(this.base.self);
@@ -55,26 +50,18 @@ class Component {
 		this.onclick = null;
 	}
 	init_symetrical(points, thickness){
-		// console.log("points before: ",  points);
 		this.width = thickness;
 		points = order_path(points);
-		// console.log("points ordered: ", points);
 		this.baseShape = new Shape(points);
 		this.shapeParts.push(this.baseShape);
-		console.log("geo: ", this.baseShape.geometry);
-		console.log("SECOND!");
 		this.shapeParts.push(new Shape([], thickness, this.baseShape.geometry.clone()));
-		console.log("shapes total: ", this.shapeParts.length);
-		console.log("second shape geo: ", this.shapeParts[1].geometry);
-		console.log("SECOND dne!");
 		for (let i = points.length -1 ; i >= 0; i--){
-			const curr = points[i];
-			const next = i + 1 < points.length ? points[i + 1] : points[0];
+			const curr = points[i].length == 3 ? points[i] : [points[i][0], points[i][1], 0];
+			const next = i + 1 < points.length ? points[i + 1].length == 3 ? points[i + 1] : [points[i + 1][0], points[i + 1][1], 0] : points[0].length == 3 ? points[0] : [points[0][0], points[0][1], 0];
 			const curr_extruded = [curr[0], curr[1], curr[2] - thickness];
 			const next_extruded = [next[0], next[1], next[2] - thickness];
-			// console.log("stats: ", curr, next, next_extruded, curr_extruded);
+			console.log("next: ", next, "curr: ", curr);
 			this.shapeParts.push(new Shape([curr, next, next_extruded, curr_extruded]));
-			console.log("shape ", this.shapeParts.length , ", geo : ", this.shapeParts[this.shapeParts.length - 1].geometry);
 		}
 	}
 	init_asymetical(pLeft, pRight){
@@ -91,17 +78,13 @@ class Component {
 		}
 	}
 	add_material(materials){
-		console.log("adding material component");
 		if (! Array.isArray(materials))
 		{
-			console.log("single...");
 			for (let i = 0; i < this.shapeParts.length; i++)
 				this.shapeParts[i].add_material(materials);
-			console.log("done");
 		}
 		else
 		{
-			console.log("array ...");
 			for (let i = 0; i < this.shapeParts.length; i++)
 			{
 				let j = i < materials.length ? i : materials.length - 1;
@@ -112,7 +95,6 @@ class Component {
 			this.init_group();		
 	}
 	init_group(){
-		console.log("init group....");
 		this.self = new THREE.Group();
 		for (let i = 0; i < this.shapeParts.length; i++)
 			this.self.add(this.shapeParts[i].self);

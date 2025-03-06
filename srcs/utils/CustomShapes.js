@@ -4,36 +4,29 @@ import { order_path } from './utils';
 class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
-		// console.log("shape before", points);
 		this.z = move_back;
 		this.geometry = points.length == 0 ? geometry : this.custom_geo(order_path(points));
 		this.material = null;
 		this.self = null;
 		this.normal = 0;
-		console.log("this,z = ", this.z);
 		this.onclick = null;
 		return this;
 	}
 	custom_geo(points){
-		// console.log("shape after", points);
 		let geometry;
 		if (points[0].length == 3)
 		{
-			// console.log("3d ...");
 			geometry = new THREE.BufferGeometry();
 			const vertices = [];
 			for (let i = 0; i < points.length; i++)
 				vertices.push(points[i][0], points[i][1], points[i][2]);
-			// console.log("vertices: ", vertices);
 			geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 			const indices = [0, 1, 2, 2, 3, 0];
 			geometry.setIndex(indices);
 			geometry.computeVertexNormals();
-			console.log("custom geo this geometry: ", geometry);
 		}
 		else if (points[0].length == 2)
 		{
-			console.log("2d");
 			const shape = new THREE.Shape();
 			shape.moveTo(points[0][0], points[0][1]);
 			for (let i = 1; i < points.length; i++)
@@ -46,27 +39,17 @@ class Shape {
 
 	add_material(material)
 	{
-		console.log("adding material shape ");
-		console.log('Geometry: ', this.geometry);
-		console.log('Material:', material);
-
-		if (!this.geometry || !material) {
-			console.log('Invalid geometry or material');
-		}
 		if (this.material == null)
 		{
-			console.log("new material added to shape");
 			this.material = material;
 			this.self = new THREE.Mesh(this.geometry, this.material);
 			this.self.position.z -= this.z;
 		}
 		else
 		{
-			console.log("updating shape material");
 			this.self.material = material;
 			this.self.material.needsUpdate = true;
 		}
-		console.log("shape material done");
 	}
 
 	update_material(attribute, value){
