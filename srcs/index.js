@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Modern import path for modules
 import { backBox } from './backBox';
-import { arcadeMachine } from './arcadeMachine';
+// import { arcadeMachine } from './arcadeMachine';
 import { Shape } from './utils/CustomShapes';
 import { Model } from './utils/CustomModel';
 
@@ -30,7 +30,7 @@ scene.add(directionalLight);
 
 scene.add(backBox);
 //scene.add(arcadeMachine);
-const check1 = new Model("symmetrical", [[0, 0, 3], [0,1,3],[1,1,3],[1,0,3]], 2);
+const check1 = new Model("symmetrical", [[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], 2);
 const materialsgroup = [
 	new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide, opacity : 0, transparent: true }),
 	new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity : 0, transparent: true  }),

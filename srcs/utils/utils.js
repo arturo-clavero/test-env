@@ -23,7 +23,7 @@ function order_path(points){
 			if (i + 1 == points.length)
 			{
 				max = start_index;
-				i = 0;
+				i = -1;
 			}
 		}
 	}
