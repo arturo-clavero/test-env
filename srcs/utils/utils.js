@@ -5,7 +5,7 @@ function order_path(points){
 	let start_index;
 	for (let i = 0; i < points.length; i++)
 	{
-		if (points[i][1] <= start[1] && points[i][0] > start[0])
+		if (points[i][1] < start[1] || (points[i][1] == start[1] && points[i][0] > start[0]))
 		{
 			start[0] = points[i][0];
 			start[1] = points[i][1];
