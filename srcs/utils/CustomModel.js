@@ -35,14 +35,14 @@ class Model {
 }
 
 class Component {
-	constructor(type, pointsLeftXY, pointsRightXY, materials){
+	constructor(pointsLeftXY, pointsRightXY, materials){
 		this.width = 0;
 		this.shapeParts = [];
 		this.self = null;
-		if (type == "symmetrical")
+		if (! Array.isArray(pointsRightXY))
 			this.init_symetrical(pointsLeftXY, pointsRightXY);
-		else if (type == "asymmetrical" && pointsLeftXY.length == pointsRightXY.length)
-			this.init_asymetical(pointsLeftXY, pointsRightXY);
+		else if (pointsLeftXY.length == pointsRightXY.length)
+			this.init_asymetrical(pointsLeftXY, pointsRightXY);
 		else
 			throw new Error("Incorrect parameters");
 		if (materials)
@@ -60,21 +60,20 @@ class Component {
 			const next = i + 1 < points.length ? points[i + 1].length == 3 ? points[i + 1] : [points[i + 1][0], points[i + 1][1], 0] : points[0].length == 3 ? points[0] : [points[0][0], points[0][1], 0];
 			const curr_extruded = [curr[0], curr[1], curr[2] - thickness];
 			const next_extruded = [next[0], next[1], next[2] - thickness];
-			console.log("next: ", next, "curr: ", curr);
 			this.shapeParts.push(new Shape([curr, next, next_extruded, curr_extruded]));
 		}
 	}
-	init_asymetical(pLeft, pRight){
-		pLeft = order_path(pRight);
-		pRight = order_path(pLeft);
-		this.shapeParts[0] = get_shape(pRight);
-		this.shapeParts[1] = get_shape(pLeft);
+	init_asymetrical(pLeft, pRight){
+		pRight = order_path(pRight);
+		this.shapeParts[0] =  new Shape(pRight);
+		pLeft = order_path(pLeft);
+		this.shapeParts[1] = new Shape(pLeft);
 		for (let i = 0; i < pRight.length; i++){
 			const currRight = pRight[i];
 			const nextRight = i + 1 < pRight.length ? pRight[i + 1] : pRight[0];	
 			const currLeft = pLeft[i];
 			const nextLeft = i + 1 < pLeft.length ? pLeft[i + 1] : pLeft[0];
-			this.shapeParts.push(get_shape([currRight, nextRight, nextLeft, currLeft]));
+			this.shapeParts.push(new Shape([currRight, nextRight, nextLeft, currLeft]));
 		}
 	}
 	add_material(materials){
