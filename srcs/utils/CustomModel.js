@@ -98,16 +98,29 @@ class Component {
 		for (let i = 0; i < this.shapeParts.length; i++)
 			this.self.add(this.shapeParts[i].self);
 	}
-	get_borders(LineBasicMaterial){
-		if (this.width)
-			return null;
-		if (this.edges == null)
+	get_borders(map, lineBasicMaterial){
+		if (map.length != this.shapeParts.length)
 		{
-			const baseGeometry = new THREE.ExtrudeGeometry(this.baseShape, { depth: this.width, bevelEnabled: false });
-			const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
-			this.edges = new THREE.LineSegments(edgesGeometry, LineBasicMaterial);
+			console.log("Error: incorrect mapping for borders");
+			return ;
 		}
-		return this.edges;
+		this.border = new THREE.Group();
+		for (let i = 0; i < map.length; i++)
+		{
+			let material = Array.isArray(lineBasicMaterial) ? lineBasicMaterial[i] : lineBasicMaterial;
+			if (map[i] == 1)
+				this.self.add(this.shapeParts[i].get_borders(material));
+		}
+
+		// if (this.width)
+		// 	return null;
+		// if (this.edges == null)
+		// {
+		// 	const baseGeometry = new THREE.ExtrudeGeometry(this.baseShape, { depth: this.width, bevelEnabled: false });
+		// 	const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
+		// 	this.edges = new THREE.LineSegments(edgesGeometry, LineBasicMaterial);
+		// }
+		// return this.edges;
 	}
 
 	add_object(xPercent, yPercent, index, object){

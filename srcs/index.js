@@ -30,8 +30,8 @@ scene.add(directionalLight);
 
 scene.add(backBox);
 //scene.add(arcadeMachine);
-
-scene.add(test1lay.self);
+console.log(test1lay);
+scene.add(test1lay);
 camera.position.z = 5;
 
 const controls = new OrbitControls(camera, renderer.domElement);

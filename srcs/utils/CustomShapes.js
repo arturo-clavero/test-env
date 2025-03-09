@@ -4,6 +4,7 @@ import { order_path } from './utils';
 class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
+		console.log(points);
 		this.z = move_back;
 		this.geometry = points.length == 0 ? geometry : this.custom_geo(order_path(points));
 		this.material = null;
@@ -14,6 +15,7 @@ class Shape {
 	}
 	custom_geo(points){
 		let geometry;
+		console.log("poin[0", points[0]);
 		if (points[0].length == 3)
 		{
 			geometry = new THREE.BufferGeometry();
@@ -77,6 +79,16 @@ class Shape {
 			return this.self;
 		console.log("Error: no mesh!");
 	}
+
+	get_borders(lineBasicMaterial){
+		// const geometry = new THREE.BufferGeometry().setFromPoints(shape.getPoints());
+
+		// const edgesGeometry = new THREE.EdgesGeometry(this.geometry);
+		// return (new THREE.LineSegments(edgesGeometry, lineBasicMaterial))
+		
+		return (new THREE.LineLoop(this.geometry, lineBasicMaterial));
+	}
+
 	add_onclick(ft) { this.onclick = ft};
 }
 
