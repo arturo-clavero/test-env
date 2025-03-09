@@ -4,7 +4,7 @@ import { backBox } from './backBox';
 // import { arcadeMachine } from './arcadeMachine';
 import { Shape } from './utils/CustomShapes';
 import { Model , Component} from './utils/CustomModel';
-import { test1lay } from './test';
+import { test1lay, test2lay } from './test';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -32,6 +32,7 @@ scene.add(backBox);
 //scene.add(arcadeMachine);
 console.log(test1lay);
 scene.add(test1lay);
+// scene.add(test2lay);
 camera.position.z = 5;
 
 const controls = new OrbitControls(camera, renderer.domElement);

@@ -41,4 +41,37 @@ function order_path(points){
 	return ordered;
 }
 
-export { order_path };
+function update_min_max(points, limits){
+	for (let i = 0; i < points.length; i++)
+	{
+		for (let j = 0; j < 3; j ++)
+		{
+			if (points[i][j] < limits.min[j])
+				limits.min[j] = points[i][j];
+			if (points[i][j] > limits.max[j])
+				limits.max[j] = points[i][j]
+		}
+	}
+}
+
+function centerLimits(limits)
+{
+	let result = {min: [0, 0, 0], max:[0,0,0]};
+	for (let j = 0; j < 3; j ++)
+	{
+		range = limits.max[j] - limits.min[j];
+		
+	}
+}
+
+function mapToCenter(pointsLeft, pointsRight)
+{
+	let old = { min :[100,100, 100], max: [-100, -100, -100]};
+	old = update_min_max(pointsLeft, old);
+	if (Array.isArray(pointsRight))
+		old = update_min_max(pointsRight, old);
+	else
+		old.max.z = old.min.z + pointsRight;
+	let centered = centerLimits(old);
+}
+export { order_path, mapToCenter};

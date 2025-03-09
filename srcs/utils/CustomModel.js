@@ -2,6 +2,8 @@
 import * as THREE from 'three';
 import { Shape } from "./CustomShapes";
 import { order_path } from './utils';
+import { mapToCenter } from './utils';
+
 
 class Model {
 	constructor(object){
@@ -51,6 +53,7 @@ class Component {
 	}
 	init_symetrical(points, thickness){
 		this.width = thickness;
+		points = mapToCenter(points, thickness);
 		points = order_path(points);
 		this.baseShape = new Shape(points);
 		this.shapeParts.push(this.baseShape);
@@ -64,9 +67,10 @@ class Component {
 		}
 	}
 	init_asymetrical(pLeft, pRight){
-		pRight = order_path(pRight);
+		const newPoints = mapToCenter(pRight, pLeft);
+		pRight = order_path(newPoints.right);
 		this.shapeParts[0] =  new Shape(pRight);
-		pLeft = order_path(pLeft);
+		pLeft = order_path(newPoints.left);
 		this.shapeParts[1] = new Shape(pLeft);
 		for (let i = 0; i < pRight.length; i++){
 			const currRight = pRight[i];
@@ -97,6 +101,26 @@ class Component {
 		this.self = new THREE.Group();
 		for (let i = 0; i < this.shapeParts.length; i++)
 			this.self.add(this.shapeParts[i].self);
+		console.log("positon before: ", this.self.position);
+		console.log("child: ", this.self.children[1]);
+		console.log("posioton face before: ", this.shapeParts[2].self.position);
+		this.shapeParts.forEach((child, index) => {
+			const bboxc = new THREE.Box3().setFromObject(child.self);
+			console.log(`Child ${index} local position: MAX`, bboxc.max, "MIN", bboxc.min);
+		});
+		// const bbox = new THREE.Box3().setFromObject(this.self);
+		// const center = bbox.getCenter(new THREE.Vector3());
+		// this.self.position.sub(center);
+		// this.center = this.self.position;
+		// // this.self.position.set(0, 0, 0);
+		// console.log("positon after: ", this.self.position);
+		// this.shapeParts.forEach((child, index) => {
+		// 	const bboxc = new THREE.Box3().setFromObject(child.self);
+		// 	console.log(`Child ${index} local position: MAX`, bboxc.max, "MIN", bboxc.min);
+		// });
+		// let x;
+		// this.shapeParts[2].self.getWorldPosition(x);
+		// console.log("posioton face before: ",x);
 	}
 	get_borders(map, lineBasicMaterial){
 		if (map.length != this.shapeParts.length)
@@ -124,21 +148,25 @@ class Component {
 	}
 
 	add_object(xPercent, yPercent, index, object){
-		const bbox = new THREE.Box3().setFromObject(object);
-		const object_half_len = (bbox.max.y - bbox.min.y) / 2;
-		x = bbox.min.x + (bbox.max.x - bbox.min.x) * xPercent;
-		y = bbox.min.y + (bbox.max.y - bbox.min.y) * yPercent;
+		const surface = this.shapeParts[index].self;
+		const bbox_surface = new THREE.Box3().setFromObject(surface);
+		const bbox_object = new THREE.Box3().setFromObject(object);
+		const object_half_len = (bbox_object.max.y - bbox_object.min.y) / 2;
+		const x = bbox_surface.min.x + (bbox_surface.max.x - bbox_surface.min.x) * xPercent;
+		const y = bbox_surface.min.y + (bbox_surface.max.y - bbox_surface.min.y) * yPercent;
 		const raycaster = new THREE.Raycaster();
-		raycaster.set((x, y, bbox.max.z + 1), (0, 0, -1));
-		intersects = raycaster.intersectObject(this.shapeParts[index].self, true);
+		const orgin = new THREE.Vector3(x, y, bbox.max.z + 1);
+		const dir = new THREE.Vector3(0, 0, -1)
+		raycaster.set(origin, dir);
+		intersects = raycaster.intersectObject(surface, true);
 		if (intersects.length > 0)
 		{
 			const point = intersects[0].point;
-			const normal = intersects[0].face.normal.clone();
-			normal.applyMatrix4(this.self.matrixWorld()).normalize();
-			const up = new THREE.Vector3(0, 1, 0);
-			object.quartenion = new THREE.Quaternion(up, normal);
-			object.position = (
+			// const normal = intersects[0].face.normal.clone();
+			// normal.applyMatrix4(this.self.matrixWorld()).normalize();
+			// const up = new THREE.Vector3(0, 1, 0);
+			// object.quartenion = new THREE.Quaternion(up, normal);
+			object.position.set(
 				point[0] + (normal[0] * object_half_len),
 				point[1] + (normal[1] * object_half_len),
 				point[2] + (normal[2] * object_half_len) 
