@@ -101,13 +101,13 @@ class Component {
 		this.self = new THREE.Group();
 		for (let i = 0; i < this.shapeParts.length; i++)
 			this.self.add(this.shapeParts[i].self);
-		console.log("positon before: ", this.self.position);
-		console.log("child: ", this.self.children[1]);
-		console.log("posioton face before: ", this.shapeParts[2].self.position);
-		this.shapeParts.forEach((child, index) => {
-			const bboxc = new THREE.Box3().setFromObject(child.self);
-			console.log(`Child ${index} local position: MAX`, bboxc.max, "MIN", bboxc.min);
-		});
+		// console.log("positon before: ", this.self.position);
+		// console.log("child: ", this.self.children[1]);
+		// console.log("posioton face before: ", this.shapeParts[2].self.position);
+		// this.shapeParts.forEach((child, index) => {
+		// 	const bboxc = new THREE.Box3().setFromObject(child.self);
+		// 	console.log(`Child ${index} local position: MAX`, bboxc.max, "MIN", bboxc.min);
+		// });
 		// const bbox = new THREE.Box3().setFromObject(this.self);
 		// const center = bbox.getCenter(new THREE.Vector3());
 		// this.self.position.sub(center);
@@ -149,13 +149,9 @@ class Component {
 
 	add_object(xPercent, yPercent, index, object){
 		const surface = this.shapeParts[index].self;
-		const bbox_surface = new THREE.Box3().setFromObject(surface);
-		const bbox_object = new THREE.Box3().setFromObject(object);
-		const object_half_len = (bbox_object.max.y - bbox_object.min.y) / 2;
-		const x = bbox_surface.min.x + (bbox_surface.max.x - bbox_surface.min.x) * xPercent;
-		const y = bbox_surface.min.y + (bbox_surface.max.y - bbox_surface.min.y) * yPercent;
+		const origin = this.surface.get_points(xPercent, yPercent);
 		const raycaster = new THREE.Raycaster();
-		const orgin = new THREE.Vector3(x, y, bbox.max.z + 1);
+		const orgin = new THREE.Vector3(origin[0], origin[y], bbox.max.z + 1);
 		const dir = new THREE.Vector3(0, 0, -1)
 		raycaster.set(origin, dir);
 		intersects = raycaster.intersectObject(surface, true);
