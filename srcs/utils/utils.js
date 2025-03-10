@@ -50,7 +50,7 @@ function update_min_max(points, limits){
 			min.push(100);
 			max.push(-100);
 		}
-		limits = { "min" : min, max: "max"};
+		limits = { "min" : min, "max": max};
 	}
 	for (let i = 0; i < points.length; i++)
 	{
@@ -74,7 +74,7 @@ function centerLimits(limits)
 }
 
 function update_values(points, center){
-	new_values = [];
+	let new_values = [];
 	for (let i = 0; i < points.length; i++)
 	{
 		for (let j = 0; j < 3; j ++)
@@ -86,9 +86,6 @@ function update_values(points, center){
 }
 function mapToCenter(pointsLeft, pointsRight)
 {
-	console.log("points before LEFT: ", pointsLeft);
-	if (Array.isArray(pointsRight))
-		console.log("points before RIGHT: ", pointsRight);
 	let old = { min :[100,100, 100], max: [-100, -100, -100]};
 	old = update_min_max(pointsLeft, old);
 	if (Array.isArray(pointsRight))
@@ -96,13 +93,11 @@ function mapToCenter(pointsLeft, pointsRight)
 	else
 		old.max.z = old.min.z + pointsRight;
 	let centered = centerLimits(old);
-	pointsLeft = update_values(pointsLeft, old, centered);
-	console.log("points after LEFT: ", pointsLeft);
+	pointsLeft = update_values(pointsLeft, centered);
 	if (! Array.isArray(pointsRight))
 		return pointsLeft;
-	pointsRight = update_values(pointsLeft, old, centered);
-	console.log("points after RIGHT: ", pointsRight);
-	return {"pointsLeft" : pointsLeft, "pointsRight": pointsRight};
+	pointsRight = update_values(pointsRight, centered);
+	return {"left" : pointsLeft, "right": pointsRight};
 }
 
 export { order_path, mapToCenter, update_min_max};

@@ -6,21 +6,20 @@ import { mapToCenter } from './utils';
 
 
 class Model {
-	constructor(object){
-		this.base = object;
+	constructor(component){
+		this.base = component;
 		this.objects = [];
 		this.self = new THREE.Group();
 		this.self.add(this.base.self);
-		this.objects.push(this.base.self);
+		this.objects.push(this.base);
 		this.onclick = null;
 		this.self.raycasting = true;
 		this.self.receiveShadow = true;
 		this.self.castShadow = true;
 	}
 	add_component(Xpercent, Ypercent, indexObject, indexFace, object){
-		//const object = Object(type, pointsLeftXY, pointsRightXY, materials);
 		this.objects[indexObject].add_object(Xpercent, Ypercent, indexFace, object)
-		this.self.add(object);
+		this.self.add(object.self);
 		this.objects.push(object);
 	}
 	add_onclick(ft) { this.onclick = ft};
@@ -49,6 +48,8 @@ class Component {
 			throw new Error("Incorrect parameters");
 		if (materials)
 			this.add_material(materials);
+		else
+			console.log("forgot to add materials!");
 		this.onclick = null;
 	}
 	init_symetrical(points, thickness){
@@ -67,10 +68,12 @@ class Component {
 		}
 	}
 	init_asymetrical(pLeft, pRight){
-		const newPoints = mapToCenter(pRight, pLeft);
+		const newPoints = mapToCenter(pLeft, pRight);
 		pRight = order_path(newPoints.right);
+		// pRight = order_path(pRight);
 		this.shapeParts[0] =  new Shape(pRight);
 		pLeft = order_path(newPoints.left);
+		// pLeft = order_path(pLeft);
 		this.shapeParts[1] = new Shape(pLeft);
 		for (let i = 0; i < pRight.length; i++){
 			const currRight = pRight[i];
@@ -101,76 +104,40 @@ class Component {
 		this.self = new THREE.Group();
 		for (let i = 0; i < this.shapeParts.length; i++)
 			this.self.add(this.shapeParts[i].self);
-		// console.log("positon before: ", this.self.position);
-		// console.log("child: ", this.self.children[1]);
-		// console.log("posioton face before: ", this.shapeParts[2].self.position);
-		// this.shapeParts.forEach((child, index) => {
-		// 	const bboxc = new THREE.Box3().setFromObject(child.self);
-		// 	console.log(`Child ${index} local position: MAX`, bboxc.max, "MIN", bboxc.min);
-		// });
-		// const bbox = new THREE.Box3().setFromObject(this.self);
-		// const center = bbox.getCenter(new THREE.Vector3());
-		// this.self.position.sub(center);
-		// this.center = this.self.position;
-		// // this.self.position.set(0, 0, 0);
-		// console.log("positon after: ", this.self.position);
-		// this.shapeParts.forEach((child, index) => {
-		// 	const bboxc = new THREE.Box3().setFromObject(child.self);
-		// 	console.log(`Child ${index} local position: MAX`, bboxc.max, "MIN", bboxc.min);
-		// });
-		// let x;
-		// this.shapeParts[2].self.getWorldPosition(x);
-		// console.log("posioton face before: ",x);
 	}
 	get_borders(map, lineBasicMaterial){
-		if (map.length != this.shapeParts.length)
+		if (map.length == 0)
 		{
-			console.log("Error: incorrect mapping for borders");
-			return ;
+			for (let i = 0; i < this.shapeParts.length; i++)
+				map.push(i);
 		}
 		this.border = new THREE.Group();
 		for (let i = 0; i < map.length; i++)
 		{
 			let material = Array.isArray(lineBasicMaterial) ? lineBasicMaterial[i] : lineBasicMaterial;
-			if (map[i] == 1)
-				this.self.add(this.shapeParts[i].get_borders(material));
+			this.self.add(this.shapeParts[map[i]].get_borders(material));
 		}
-
-		// if (this.width)
-		// 	return null;
-		// if (this.edges == null)
-		// {
-		// 	const baseGeometry = new THREE.ExtrudeGeometry(this.baseShape, { depth: this.width, bevelEnabled: false });
-		// 	const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
-		// 	this.edges = new THREE.LineSegments(edgesGeometry, LineBasicMaterial);
-		// }
-		// return this.edges;
 	}
 
 	add_object(xPercent, yPercent, index, object){
-		const surface = this.shapeParts[index].self;
-		const origin = this.surface.get_points(xPercent, yPercent);
-		const raycaster = new THREE.Raycaster();
-		const orgin = new THREE.Vector3(origin[0], origin[y], bbox.max.z + 1);
-		const dir = new THREE.Vector3(0, 0, -1)
-		raycaster.set(origin, dir);
-		intersects = raycaster.intersectObject(surface, true);
-		if (intersects.length > 0)
-		{
-			const point = intersects[0].point;
-			// const normal = intersects[0].face.normal.clone();
-			// normal.applyMatrix4(this.self.matrixWorld()).normalize();
-			// const up = new THREE.Vector3(0, 1, 0);
-			// object.quartenion = new THREE.Quaternion(up, normal);
-			object.position.set(
-				point[0] + (normal[0] * object_half_len),
-				point[1] + (normal[1] * object_half_len),
-				point[2] + (normal[2] * object_half_len) 
-			);
-		}
-		else
-			console.log("Error could not intersect!");
+		const bbox = new THREE.Box3().setFromObject(object.self);
+		const object_half_len = (bbox.max.y - bbox.min.y) / 2;
+		const surface = this.shapeParts[index];
+		const point = surface.get_points(xPercent, yPercent);
+		const normal = surface.get_normal(point);
+		console.log("normal ", normal);
+		const axis = new THREE.Vector3(0, 1, 0);
+		if (normal.x != axis.x || normal.y != axis.y || normal.z != axis.z)
+		const angle = Math.acos(axis.dot(normal));
+		const rotationAxis = axis.cross(normal).normalize();
+		object.self.rotateOnAxis(rotationAxis, angle);
+		object.self.position.set(
+			point[0] + (normal.x * object_half_len),
+			point[1] + (normal.y * object_half_len),
+			point[2] + (normal.z * object_half_len) 
+		);
 	}
+
 	add_onclick(ft) { this.onclick = ft};
 	handle_click(raycaster){
 		if (this.add_onclick)

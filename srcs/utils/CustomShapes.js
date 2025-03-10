@@ -4,19 +4,17 @@ import { order_path, update_min_max } from './utils';
 class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
-		console.log(points);
 		this.z = move_back;
 		this.vertex = points;
 		this.geometry = points.length == 0 ? geometry : this.custom_geo(order_path(points));
 		this.material = null;
 		this.self = null;
-		this.normal = [0, 0, 0];
+		this.normal = null;
 		this.onclick = null;
 		return this;
 	}
 	custom_geo(points){
 		let geometry;
-		console.log("poin[0", points[0]);
 		if (points[0].length == 3)
 		{
 			geometry = new THREE.BufferGeometry();
@@ -82,16 +80,13 @@ class Shape {
 	}
 
 	get_borders(lineBasicMaterial){
-		// const geometry = new THREE.BufferGeometry().setFromPoints(shape.getPoints());
-
-		// const edgesGeometry = new THREE.EdgesGeometry(this.geometry);
-		// return (new THREE.LineSegments(edgesGeometry, lineBasicMaterial))
-		
 		return (new THREE.LineLoop(this.geometry, lineBasicMaterial));
 	}
 
 	get_points(xPercent, yPercent){
 		let limits = update_min_max(this.vertex);
+		console.log("limits: ", limits);
+
 		let x1 = limits.min[0], x2 = limits.max[0], y1 = limits.min[1], y2 = limits.max[1];
 		let x = x1 + ((x2- x1) * xPercent);
 		let y = y1 + ((y2- y1) * yPercent);
@@ -103,27 +98,28 @@ class Shape {
 		return [x, y, z];
 	}
 	get_normal(point){
-		if (this.normal != [0, 0, 0])
-			return this.normal();
-		this.geometry.computeVertexNormals();
-		this.normal = geometry.attributes.normal.array[0];
-		const offset = 0.001;
-		const origin = new THREE.Vector3(
-			point[0] - (this.normal[0] * offset), 
-			point[1] - (this.normal[1] * offset),
-			point[2] - (this.normal[2] * offset)
-		);
-		const dir = new THREE.Vector3(normal[0], normal[1], normal[2]);
-		const raycaster = new THREE.Raycaster();
-		raycaster.set(origin, dir);
-		const intersection = raycaster.intersectObject(this.self);
-		if (intersection.length == 0 || intersection[0].distance > offset * 2)
+		if (this.normal == null)
 		{
-			this.normal[0] *= -1;
-			this.normal[1] *= -1;
-			this.normal[2] *= -1;
-			console.log("incorrect normal");
+			this.geometry.computeVertexNormals();
+			this.normal = new THREE.Vector3(this.geometry.attributes.normal.array[0], this.geometry.attributes.normal.array[1], this.geometry.attributes.normal.array[2]);
+			const offset = 0.001;
+			const origin = new THREE.Vector3(
+				point[0] - (this.normal.x * offset), 
+				point[1] - (this.normal.y * offset),
+				point[2] - (this.normal.z * offset)
+			);
+			const raycaster = new THREE.Raycaster();
+			raycaster.set(origin, this.normal);
+			const intersection = raycaster.intersectObject(this.self);
+			if (intersection.length == 0 || intersection[0].distance > offset * 2)
+			{
+				this.normal.x *= -1;
+				this.normal.y *= -1;
+				this.normal.z *= -1;
+				console.log("incorrect normal");
+			}
 		}
+		return this.normal;
 	}
 	add_onclick(ft) { this.onclick = ft};
 }

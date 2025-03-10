@@ -1,14 +1,13 @@
 import * as THREE from 'three';
 // import { Shape } from './utils/CustomShapes';
-// import { Model , Component} from './utils/CustomModel';
+import { Model , Component} from './utils/CustomModel';
 
 
 // //test 1 A: symetrical
 // // const comp1 = new Shape([[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]]);
 // //test 1 B: asymetrical
-// const comp1 = new Component([[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], [[1, 0, 2], [1, 1, 2], [2, 1, 2], [2, 0, 2]]);
 
-// const comp2 = new Component([[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], [[1, 0, 2], [1, 1, 2], [0, 1, 2], [0, 0, 2]]);
+// const comp1 = new Component([[1], [1]], 2);
 
 // //test 2 A: group  material
 const materialsgroup = [
@@ -31,10 +30,22 @@ const materialsgroup = [
 	new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide}),
 	new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }),
 ];
+const comp1 = new Component(
+	[[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], 
+	[[1, 0, 2], [1, 1, 2], [2, 1, 2], [2, 0, 2]],
+	materialsgroup
+);
+
+const comp2 = new Component(
+	[[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], 
+	[[0, 0, 2], [0, 1, 2], [1, 1, 2], [1, 0, 2]],
+	materialsgroup[0]
+);
+
 // //test 2 B: single material
 // const singMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide });
 // comp1.add_material(singMaterial);
-// comp2.add_material(materialsgroup[0]);
+// comp1.add_material(materialsgroup[0]);
 // //test 3: borders
 
 // //test 4: onclick 
@@ -46,7 +57,6 @@ const materialsgroup = [
 // // test Model hierarchy
 // // const test1lay = new Model(comp1);
 
-// // const lineBasicMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 });
 // // const test1lay = new THREE.Group();
 // // // test1lay.add(comp1.self);
 // // test1lay.add(comp1.get_borders([1, 1, 1, 1, 1, 1], lineBasicMaterial));
@@ -123,58 +133,23 @@ const materialsgroup = [
 
 // let test2lay = comp1.self;
 
-const shape1 = new THREE.Shape();
-shape1.moveTo(0, 0);
-shape1.lineTo(0, 1);
-shape1.lineTo(1, 1);
-shape1.lineTo(1, 0);
-shape1.closePath();
-
-const shape2 = new THREE.Shape();
-shape2.moveTo(0, 0);
-shape2.lineTo(0, 1);
-shape2.lineTo(1, 1);
-shape2.lineTo(1, 0);
-shape2.closePath();
-
-const geometry1 = new THREE.ShapeGeometry(shape1);
-const geometry2 = new THREE.ShapeGeometry(shape2);
-
-const obj1 = new THREE.Mesh(geometry1, materialsgroup[0]);
-const obj2 = new THREE.Mesh(geometry2, materialsgroup[1]);
-
-const group1 = new THREE.Group();
-obj1.position.set(0, 0, 0);
-obj1.rotation.x = 2 * Math.PI / 3;
-
-group1.add(obj1);
-// obj1.position.x = -1;
-
-const group2 = new THREE.Group();
-group2.add(obj2);
-
-// const test1lay = group1;
-// // group1.add(group2);
 
 
-// group2.position.x = 1;
-// group1.add(group2);
 
-const test1lay = new THREE.Group();
-test1lay.add(group1);
-// group1.position.x = 1;
-// group1.position.y = 1;
-// group1.position.z = -0.5;
 
-group2.position.x -= 1;
-test1lay.add(group2);
+const mod1 = new Model(comp1);
+comp2.self.scale.set(0.5, 0.5, 0.5);
 
-// console.log(group1.children[0].position);
-// console.log(obj1.position);
-// console.log(group1.children[1].position);
-// console.log(obj2.position);
-// const test2lay = group2;
 
+const lineBasicMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 });
+
+let x = 3;
+comp1.get_borders([x], lineBasicMaterial);
+mod1.add_component(0.5, 0.5, 0, x, comp2)
+
+const test1lay = mod1.self;
 
 const test2lay = 2;
+// mod1.self.rotateOnAxis()
+
 export {test1lay, test2lay}

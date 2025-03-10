@@ -30,7 +30,7 @@ scene.add(directionalLight);
 
 scene.add(backBox);
 //scene.add(arcadeMachine);
-console.log(test1lay);
+
 scene.add(test1lay);
 // scene.add(test2lay);
 camera.position.z = 5;
