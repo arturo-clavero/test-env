@@ -11,27 +11,34 @@ class Model {
 		this.objects = [];
 		this.self = new THREE.Group();
 		this.self.add(this.base.self);
-		this.objects.push(this.base);
+		this.self.userData.instance = this;
 		this.onclick = null;
 		this.self.raycasting = true;
 		this.self.receiveShadow = true;
 		this.self.castShadow = true;
 	}
 	add_component(Xpercent, Ypercent, indexObject, indexFace, object){
-		this.objects[indexObject].add_object(Xpercent, Ypercent, indexFace, object)
+		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object)
 		this.self.add(object.self);
-		this.objects.push(object);
 	}
 	add_onclick(ft) { this.onclick = ft};
-	handle_click(raycaster) {
-		const intersects = raycaster.intersectObject(this.self, true);
-		if (intersects.length > 0) {
-			if (this.onclick)
-				this.onclick();
-			intersects.forEach((intersection) => {
-       			intersection.object.handleClick(raycaster);
-    		});
-		}
+	handle_click() {
+		if (this.onclick)
+			this.onclick();
+		// const intersects = raycaster.intersectObject(this.self, true);
+		// if (intersects.length > 0) {
+		// 	if (this.onclick)
+		// 		this.onclick();
+		// 	console.log(intersects);
+		// 	intersects = forEach((intersection) => {
+       	// 		intersection.object.handleClick(raycaster);
+    	// 	});
+		// }
+	}
+	get_bbox(){
+		this.self.updateMatrixWorld();
+		const bbox = new THREE.Box3().setFromObject(this.self);
+		return bbox;
 	}
 }
 
@@ -70,10 +77,8 @@ class Component {
 	init_asymetrical(pLeft, pRight){
 		const newPoints = mapToCenter(pLeft, pRight);
 		pRight = order_path(newPoints.right);
-		// pRight = order_path(pRight);
 		this.shapeParts[0] =  new Shape(pRight);
 		pLeft = order_path(newPoints.left);
-		// pLeft = order_path(pLeft);
 		this.shapeParts[1] = new Shape(pLeft);
 		for (let i = 0; i < pRight.length; i++){
 			const currRight = pRight[i];
@@ -104,6 +109,7 @@ class Component {
 		this.self = new THREE.Group();
 		for (let i = 0; i < this.shapeParts.length; i++)
 			this.self.add(this.shapeParts[i].self);
+		this.self.userData.instance = this;
 	}
 	get_borders(map, lineBasicMaterial){
 		if (map.length == 0)
@@ -111,7 +117,6 @@ class Component {
 			for (let i = 0; i < this.shapeParts.length; i++)
 				map.push(i);
 		}
-		this.border = new THREE.Group();
 		for (let i = 0; i < map.length; i++)
 		{
 			let material = Array.isArray(lineBasicMaterial) ? lineBasicMaterial[i] : lineBasicMaterial;
@@ -124,24 +129,29 @@ class Component {
 		const object_half_len = (bbox.max.y - bbox.min.y) / 2;
 		const surface = this.shapeParts[index];
 		const point = surface.get_points(xPercent, yPercent);
-		const normal = surface.get_normal(point);
-		console.log("normal ", normal);
+		const normal = surface.get_normal(point, this.self);
+		//console.log("normal ", normal);
 		const axis = new THREE.Vector3(0, 1, 0);
 		if (normal.x != axis.x || normal.y != axis.y || normal.z != axis.z)
-		const angle = Math.acos(axis.dot(normal));
-		const rotationAxis = axis.cross(normal).normalize();
-		object.self.rotateOnAxis(rotationAxis, angle);
+		{
+			if (normal.x != Math.abs(axis.x) || normal.y != Math.abs(axis.y) || normal.z != Math.abs(axis.z))
+			{
+				//console.log("rotate");
+				const angle = Math.acos(axis.dot(normal));
+				const rotationAxis = axis.cross(normal).normalize();
+				object.self.rotateOnAxis(rotationAxis, angle);
+			}
+			else
+			{
+				object.self.rotation.set(normal.x *-1, normal.y * -1, normal.z * -1);
+				//console.log("inverse rotate");
+			}
+		}
 		object.self.position.set(
 			point[0] + (normal.x * object_half_len),
 			point[1] + (normal.y * object_half_len),
 			point[2] + (normal.z * object_half_len) 
 		);
-	}
-
-	add_onclick(ft) { this.onclick = ft};
-	handle_click(raycaster){
-		if (this.add_onclick)
-			this.add_onclick();
 	}
 }
 

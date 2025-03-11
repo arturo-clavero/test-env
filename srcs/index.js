@@ -88,3 +88,36 @@ document.addEventListener('keydown', function(event) {
     //     console.log('Enter key was pressed!');
     // }
 });
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener('mousemove', (event) => {
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+  });
+
+  window.addEventListener('click', () => {
+	raycaster.setFromCamera(mouse, camera);
+	const bbox = test1lay.userData.instance.get_bbox();
+	const intersectsModel = raycaster.ray.intersectBox(bbox, new THREE.Vector3());
+	if (intersectsModel)
+	{
+		test1lay.userData.instance.handle_click();
+		const intersectsSurface = raycaster.intersectObject(test1lay, true);
+		const validIntersects = [];
+		for (let i = 0; i < intersectsSurface.length; i++)
+		{
+			if (intersectsSurface[i].object.userData.raycaster == false)
+				continue;
+			validIntersects.push(intersectsSurface[i].object);
+		}
+		if (validIntersects.length > 0) {
+			const obj = validIntersects[0];
+			// console.log(obj.type, " Color: (", obj.material.color.r, obj.material.color.g, obj.material.color.b, ")");
+			// console.log("intersects", validIntersects);
+			obj.userData.instance.handle_click();
+		}
+	}
+	
+  });
