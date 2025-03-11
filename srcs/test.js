@@ -1,9 +1,10 @@
 import * as THREE from 'three';
+import { scene1 } from './scene1'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 // import { Shape } from './utils/CustomShapes';
 import { Model , Component} from './utils/CustomModel';
-import { camera_global } from './utils/camera';
+import { main_camera } from './utils/camera';
 
 
 // //test 1 A: symetrical
@@ -77,35 +78,36 @@ const test2lay = 2;
 comp2.add_borders([0], lineBasicMaterial);
 const mod2 = new Model(comp2);
 
-const loader = new FontLoader();
-let textMesh1, textMesh2;
-loader.load('https://threejs.org/examples/fonts/optimer_regular.typeface.json', (font) => {
-    const textGeometry1 = new TextGeometry('ALIAS:', {
-        font: font,
-        size: 0.06,
-        height: 0.04,
-		depth: 0.01,
-    });
-	const textGeometry2 = new TextGeometry('OPONNENT\'s ALIAS:', {
-        font: font,
-        size: 0.04,
-        height: 0.04,
-		depth: 0.01,
-    });
-	console.log(textGeometry1);
+// const loader = new FontLoader();
+// let textMesh1, textMesh2;
+// loader.load('https://threejs.org/examples/fonts/optimer_regular.typeface.json', (font) => {
+//     const textGeometry1 = new TextGeometry('ALIAS:', {
+//         font: font,
+//         size: 0.06,
+//         height: 0.04,
+// 		depth: 0.01,
+//     });
+// 	const textGeometry2 = new TextGeometry('OPONNENT\'s ALIAS:', {
+//         font: font,
+//         size: 0.04,
+//         height: 0.04,
+// 		depth: 0.01,
+//     });
+// 	console.log(textGeometry1);
 
-	// textGeometry.center();
-	// const textMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff});
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff , wireframe:true});
+// 	// textGeometry.center();
+// 	// const textMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff});
+//     const textMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff , wireframe:true});
 
-    textMesh1 = new THREE.Mesh(textGeometry1, textMaterial);
-	comp2.add_object(0.2, 0.6, 0, textMesh1, [0, 0, 1]);
-	textMesh2 = new THREE.Mesh(textGeometry2, textMaterial);
-	comp2.add_object(0.2, 0.3, 0, textMesh2, [0, 0, 1]);
-});
+//     textMesh1 = new THREE.Mesh(textGeometry1, textMaterial);
+// 	comp2.add_object(0.2, 0.6, 0, textMesh1, [0, 0, 1]);
+// 	textMesh2 = new THREE.Mesh(textGeometry2, textMaterial);
+// 	comp2.add_object(0.2, 0.3, 0, textMesh2, [0, 0, 1]);
+// });
 
 comp2.self.position.z = 0;
 const test1lay = comp2.self;
 console.log(comp2.self.position);
 comp2.self.position.z += 4;
+comp2.shapeParts[0].add_material(scene1.renderMaterial);
 export {test1lay, test2lay}

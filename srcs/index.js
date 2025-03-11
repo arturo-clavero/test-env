@@ -5,14 +5,16 @@ import { backBox } from './backBox';
 import { Shape } from './utils/CustomShapes';
 import { Model , Component} from './utils/CustomModel';
 import { test1lay, test2lay } from './test';
-import {camera_global} from './utils/camera';
+import {main_camera} from './utils/camera';
+import {main_renderer} from './utils/camera';
+import {scene1} from './scene1'
 
 // Scene setup
 const scene = new THREE.Scene(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const camera = camera_global;
+const camera = main_camera;
 
 // Renderer setup
-const renderer = new THREE.WebGLRenderer();
+const renderer = main_renderer;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;  // Enable shadow maps on the renderer
@@ -43,6 +45,7 @@ function animate() {
     requestAnimationFrame(animate);
 	controls.update();
     renderer.render(scene, camera);
+	scene1.animate;
 }
 
 animate();
@@ -52,6 +55,7 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+
 });
 
 function getCameraSettings() {
