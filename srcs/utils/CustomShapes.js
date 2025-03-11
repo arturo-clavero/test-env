@@ -85,6 +85,8 @@ class Shape {
 
 	get_borders(lineBasicMaterial){
 		const border = new THREE.LineLoop(this.geometry, lineBasicMaterial);
+		if (this.z != 0)
+			border.position.z -= this.z;
 		border.userData.instance = this;
 		border.userData.raycaster = false;
 		return (border);
@@ -110,31 +112,43 @@ class Shape {
 		{
 			this.geometry.computeVertexNormals();
 			this.normal = new THREE.Vector3(this.geometry.attributes.normal.array[0], this.geometry.attributes.normal.array[1], this.geometry.attributes.normal.array[2]);
-			//console.log("point: ", point);
+			console.log("point: ", point);
 			const origin = new THREE.Vector3(point[0], point[1],point[2]);
-			//console.log("origin: ", origin);
-			//console.log("direction: ", this.normal);
+			console.log("origin: ", origin);
+			console.log("direction: ", this.normal);
 			const raycaster = new THREE.Raycaster();
 			raycaster.set(origin, this.normal);
 			const intersection = raycaster.intersectObject(parentComponent);
-			const validIntersections = intersection.filter(intersect => intersect.distance > 0);
+			const validIntersections = [];
+			for (let i = 0; i < intersection.length; i++)
+			{
+				if (intersection[i].distance == 0 && ! intersection[i].object.userData.raycaster)
+					validIntersections.push(intersection[i]);
+			}
+			console.log(validIntersections);
 			if (validIntersections.length > 0)
 			{
 				this.normal.x *= -1;
 				this.normal.y *= -1;
 				this.normal.z *= -1;
-				//console.log("INCORRECT normal");
+				console.log("INCORRECT normal");
 			}
 			//console.log("intersection normal", intersection[0].normal);
 			//console.log("inter", intersection);
 		}
 		return this.normal;
 	}
-	add_onclick(ft) { this.onclick = ft};
+	add_onclick(ft) { console.log("adding on click"); this.onclick = ft};
 	handle_click(){
-		if (this.add_onclick)
-			this.add_onclick();
-		console.log("no on click for surface ", this.material.color.r, this.material.color.g, this.material.color.b);
+		console.log("called handle click...");
+		console.log(this);
+		if (this.onclick)
+		{
+			console.log(this);
+			this.onclick();
+		}
+		else
+			console.log("no on click for surface ", this.material.color.r, this.material.color.g, this.material.color.b);
 	}
 }
 

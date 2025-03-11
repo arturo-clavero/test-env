@@ -17,9 +17,10 @@ class Model {
 		this.self.receiveShadow = true;
 		this.self.castShadow = true;
 	}
-	add_component(Xpercent, Ypercent, indexObject, indexFace, object){
-		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object)
-		this.self.add(object.self);
+	add_component(Xpercent, Ypercent, indexObject, indexFace, component, axis = [0, 1, 0]){
+		const object = component instanceof THREE.Object3D ? component : component.self;
+		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, axis)
+		// this.self.add(object)
 	}
 	add_onclick(ft) { this.onclick = ft};
 	handle_click() {
@@ -47,6 +48,7 @@ class Component {
 		this.width = 0;
 		this.shapeParts = [];
 		this.self = null;
+		this.joined_components = [];
 		if (! Array.isArray(pointsRightXY))
 			this.init_symetrical(pointsLeftXY, pointsRightXY);
 		else if (pointsLeftXY.length == pointsRightXY.length)
@@ -111,47 +113,65 @@ class Component {
 			this.self.add(this.shapeParts[i].self);
 		this.self.userData.instance = this;
 	}
-	get_borders(map, lineBasicMaterial){
+	add_borders(map, lineBasicMaterial){
+		if (!lineBasicMaterial)
+		{
+			console.log("ERROR: you forgot to add material to add border!");
+			return;
+		}
+		if (!Array.isArray(map))
+		{
+			console.log("ERROR: map in add_border should be an array!");
+			return ;
+		}
 		if (map.length == 0)
 		{
+			console.log("adding all borders")
 			for (let i = 0; i < this.shapeParts.length; i++)
 				map.push(i);
 		}
+		else
+			console.log("adding border...");
 		for (let i = 0; i < map.length; i++)
 		{
 			let material = Array.isArray(lineBasicMaterial) ? lineBasicMaterial[i] : lineBasicMaterial;
+			console.log("adding to ", map[i]);
 			this.self.add(this.shapeParts[map[i]].get_borders(material));
 		}
 	}
 
-	add_object(xPercent, yPercent, index, object){
-		const bbox = new THREE.Box3().setFromObject(object.self);
+	add_object(xPercent, yPercent, index, object, obj_axis){
+		const bbox = new THREE.Box3().setFromObject(object);
 		const object_half_len = (bbox.max.y - bbox.min.y) / 2;
 		const surface = this.shapeParts[index];
 		const point = surface.get_points(xPercent, yPercent);
 		const normal = surface.get_normal(point, this.self);
 		//console.log("normal ", normal);
-		const axis = new THREE.Vector3(0, 1, 0);
+		const axis = new THREE.Vector3(obj_axis[0], obj_axis[1], obj_axis[2]);
+		console.log("axis ", axis);
 		if (normal.x != axis.x || normal.y != axis.y || normal.z != axis.z)
 		{
 			if (normal.x != Math.abs(axis.x) || normal.y != Math.abs(axis.y) || normal.z != Math.abs(axis.z))
 			{
-				//console.log("rotate");
+				console.log("rotate");
 				const angle = Math.acos(axis.dot(normal));
 				const rotationAxis = axis.cross(normal).normalize();
-				object.self.rotateOnAxis(rotationAxis, angle);
+				object.rotateOnAxis(rotationAxis, angle);
 			}
 			else
 			{
-				object.self.rotation.set(normal.x *-1, normal.y * -1, normal.z * -1);
-				//console.log("inverse rotate");
+				object.rotation.set(normal.x *-1, normal.y * -1, normal.z * -1);
+				console.log("inverse rotate");
 			}
 		}
-		object.self.position.set(
+		console.log("normal", normal);
+		object.position.set(
 			point[0] + (normal.x * object_half_len),
 			point[1] + (normal.y * object_half_len),
 			point[2] + (normal.z * object_half_len) 
 		);
+		this.self.add(object);
+		this.joined_components.push(object);
 	}
 }
 

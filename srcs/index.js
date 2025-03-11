@@ -5,10 +5,11 @@ import { backBox } from './backBox';
 import { Shape } from './utils/CustomShapes';
 import { Model , Component} from './utils/CustomModel';
 import { test1lay, test2lay } from './test';
+import {camera_global} from './utils/camera';
 
 // Scene setup
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const scene = new THREE.Scene(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = camera_global;
 
 // Renderer setup
 const renderer = new THREE.WebGLRenderer();
@@ -101,6 +102,11 @@ window.addEventListener('mousemove', (event) => {
 	raycaster.setFromCamera(mouse, camera);
 	const bbox = test1lay.userData.instance.get_bbox();
 	const intersectsModel = raycaster.ray.intersectBox(bbox, new THREE.Vector3());
+	let parameters = {
+		"window" : window,
+		"camera" : camera,
+		"document" : document,
+	}
 	if (intersectsModel)
 	{
 		test1lay.userData.instance.handle_click();
@@ -116,7 +122,8 @@ window.addEventListener('mousemove', (event) => {
 			const obj = validIntersects[0];
 			// console.log(obj.type, " Color: (", obj.material.color.r, obj.material.color.g, obj.material.color.b, ")");
 			// console.log("intersects", validIntersects);
-			obj.userData.instance.handle_click();
+			if (obj.userData.instance)
+				obj.userData.instance.handle_click(parameters);
 		}
 	}
 	

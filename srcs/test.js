@@ -1,6 +1,9 @@
 import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 // import { Shape } from './utils/CustomShapes';
 import { Model , Component} from './utils/CustomModel';
+import { camera_global } from './utils/camera';
 
 
 // //test 1 A: symetrical
@@ -40,38 +43,69 @@ const materialsgroup = [
 	new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide}),
 	new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }),
 ];
-const comp1 = new Component(
-	[[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], 
-	[[1, 0, 2], [1, 1, 2], [2, 1, 2], [2, 0, 2]],
-	materialsgroup
-);
+// const comp1 = new Component(
+// 	[[0, 0, 3], [0, 1, 3], [1, 1, 3], [1, 0, 3]], 
+// 	[[1, 0, 2], [1, 1, 2], [2, 1, 2], [2, 0, 2]],
+// 	materialsgroup
+// );
 
 const comp2 = new Component(
 	[[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]], 
 	1,
-	textureMat
+	materialsgroup
 );
 
-const mod1 = new Model(comp1);
+// const mod1 = new Model(comp1);
 comp2.self.scale.set(0.5, 0.5, 0.5);
 
 
 const lineBasicMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 });
 
-let x = 2;
-comp1.get_borders([x], lineBasicMaterial);
-mod1.add_component(0.5, 0.5, 0, x, comp2)
+// let x = 2;
+// comp1.add_borders([x], lineBasicMaterial);
+// mod1.add_component(0.5, 0.5, 0, x, comp2)
 
 function onClickMod(){
 	console.log("clicked model");
 }
-mod1.add_onclick(onClickMod);
+// mod1.add_onclick(onClickMod);
 
-let test1lay = mod1.self;
+// let test1lay = mod1.self;
 
 const test2lay = 2;
-// const geometry = new THREE.BoxGeometry(1, 1, 1);  // 1x1x1 Cube
-// test1lay = new THREE.Mesh(geometry, textureMat);
-// mod1.self.rotateOnAxis()
-// console.log("c4",comp2.self);
+// Create 3D text geometry
+comp2.add_borders([0], lineBasicMaterial);
+const mod2 = new Model(comp2);
+
+const loader = new FontLoader();
+let textMesh1, textMesh2;
+loader.load('https://threejs.org/examples/fonts/optimer_regular.typeface.json', (font) => {
+    const textGeometry1 = new TextGeometry('ALIAS:', {
+        font: font,
+        size: 0.06,
+        height: 0.04,
+		depth: 0.01,
+    });
+	const textGeometry2 = new TextGeometry('OPONNENT\'s ALIAS:', {
+        font: font,
+        size: 0.04,
+        height: 0.04,
+		depth: 0.01,
+    });
+	console.log(textGeometry1);
+
+	// textGeometry.center();
+	// const textMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff});
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff , wireframe:true});
+
+    textMesh1 = new THREE.Mesh(textGeometry1, textMaterial);
+	comp2.add_object(0.2, 0.6, 0, textMesh1, [0, 0, 1]);
+	textMesh2 = new THREE.Mesh(textGeometry2, textMaterial);
+	comp2.add_object(0.2, 0.3, 0, textMesh2, [0, 0, 1]);
+});
+
+comp2.self.position.z = 0;
+const test1lay = comp2.self;
+console.log(comp2.self.position);
+comp2.self.position.z += 4;
 export {test1lay, test2lay}
