@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
 const backgeometry = new THREE.BoxGeometry(1, 1, 1);
-
 let indices = backgeometry.index.array;
 let deleteTOP = true;
 let new_indices = [];
@@ -29,4 +28,3 @@ backBox.position.y = 4.5
 backBox.receiveShadow = true;
 
 export { backBox }
-// scene.add(cube);

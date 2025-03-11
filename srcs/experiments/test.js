@@ -3,7 +3,7 @@ import { scene1 } from './scene1'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 // import { Shape } from './utils/CustomShapes';
-import { Model , Component} from './utils/CustomModel';
+import { Model , Component} from '../utils/CustomModel';
 import { main_camera } from './utils/camera';
 
 

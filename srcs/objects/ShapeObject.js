@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { order_path, update_min_max } from './utils';
+import { order_path, update_min_max } from '../utils/utils';
 
 class Shape {
 	constructor(points, move_back = 0, geometry)
