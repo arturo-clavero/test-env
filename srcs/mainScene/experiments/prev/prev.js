@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { scene1 } from './scene1'
+import { scene1 } from '../scene1'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 // import { Shape } from './utils/CustomShapes';

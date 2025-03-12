@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
 class Object {
-	constructor(component){
-		this.base = component;
+	constructor(part){
+		this.basePart = part;
 		this.self = new THREE.Group();
-		this.self.add(this.base.self);
+		this.self.add(this.basePart.self);
 		this.self.userData.instance = this;
 		this.onclick = null;
 		this.self.raycasting = true;

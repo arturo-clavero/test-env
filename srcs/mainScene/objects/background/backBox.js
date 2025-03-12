@@ -26,5 +26,7 @@ backBox.scale.z = 5
 backBox.position.z = 2
 backBox.position.y = 4.5
 backBox.receiveShadow = true;
+backBox.castShadow = true;
+
 
 export { backBox }

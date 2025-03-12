@@ -27,23 +27,28 @@ class MainEngine {
 		this.clickableObjects = [];
 	}
 	setUpLights(){
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 		this.scene.add(ambientLight);
-		const directionalLight = new THREE.SpotLight(0x0053f9, 50);
-		directionalLight.position.set(0, 6, 2);
-		directionalLight.castShadow = true;
-		this.scene.add(directionalLight);
+
+		const topLight = new THREE.SpotLight(0x0053f9, 50);
+		topLight.position.set(0, 6, 2);
+		topLight.castShadow = true;
+		this.scene.add(topLight);
+
+		const spotLight = new THREE.SpotLight(0xd34dee, 50);
+		spotLight.position.set(0.75, 0.75, 4);
+		// spotLight.position.set(0, 0, 3.5);
+		spotLight.castShadow = true;
+		this.scene.add(spotLight);
 	}
 	animate(){
+		// console.log("background animate!");
 		this.controls.update();
 		this.renderer.render(this.scene, this.camera);
 	}
 	add(newObject, clickable){
 		if (! (newObject instanceof THREE.Object3D))
-		{
-			console.log(newObject);
 			newObject = newObject.self;
-		}
 		this.scene.add(newObject);
 		if (clickable)
 			this.clickableObjects.push(newObject);

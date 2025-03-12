@@ -33,8 +33,8 @@ class Part {
 		this.shapes.push(this.baseShape);
 		this.shapes.push(new Shape([], thickness, this.baseShape.geometry.clone()));
 		for (let i = points.length -1 ; i >= 0; i--){
-			const curr = points[i].length == 3 ? points[i] : [points[i][0], points[i][1], 0];
-			const next = i + 1 < points.length ? points[i + 1].length == 3 ? points[i + 1] : [points[i + 1][0], points[i + 1][1], 0] : points[0].length == 3 ? points[0] : [points[0][0], points[0][1], 0];
+			const curr = points[i];
+			const next = i + 1 < points.length ? points[i + 1] : points[0];
 			const curr_extruded = [curr[0], curr[1], curr[2] - thickness];
 			const next_extruded = [next[0], next[1], next[2] - thickness];
 			this.shapes.push(new Shape([curr, next, next_extruded, curr_extruded]));
