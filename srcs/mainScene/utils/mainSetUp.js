@@ -7,7 +7,7 @@ class MainEngine {
 			return MainEngine.instance;
 		this.setUpScene();
 		this.setUpLights();
-		window.addEventListener('resize', this.resize());
+		window.addEventListener('resize', (event) => {this.resize(event)});
 		window.addEventListener('click', (event) => {this.click(event)});
 		// window.addEventListener('mousemove', (event) => {this.mousemove(event);});
 		MainEngine.instance = this;
@@ -39,12 +39,16 @@ class MainEngine {
 		this.renderer.render(this.scene, this.camera);
 	}
 	add(newObject, clickable){
+		if (! (newObject instanceof THREE.Object3D))
+		{
+			console.log(newObject);
+			newObject = newObject.self;
+		}
 		this.scene.add(newObject);
 		if (clickable)
 			this.clickableObjects.push(newObject);
 	}
 	resize(){
-		console.log("window!");
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();

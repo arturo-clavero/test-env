@@ -1,11 +1,8 @@
-
 import * as THREE from 'three';
 
-
-class Model {
+class Object {
 	constructor(component){
 		this.base = component;
-		this.objects = [];
 		this.self = new THREE.Group();
 		this.self.add(this.base.self);
 		this.self.userData.instance = this;
@@ -15,7 +12,7 @@ class Model {
 		this.self.castShadow = true;
 	}
 	add_part(Xpercent, Ypercent, indexObject, indexFace, part, axis = [0, 1, 0]){
-		const object = part instanceof THREE.Object3D ? part : part.self;
+		const object = (part instanceof THREE.Object3D) ? part : part.self;
 		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, axis)
 	}
 	add_onclick(ft) {
@@ -42,4 +39,4 @@ class Model {
 	}
 }
 
-export { Model };
+export { Object };

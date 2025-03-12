@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { Shape } from "./ShapeObject";
-import { order_path } from '../utils/utils';
-import { mapToCenter } from '../utils/utils';
+import { Shape } from "./Shape";
+import { order_path, mapToCenter } from '../utils/utils';
 
 class Part {
 	constructor(pointsLeftXY, pointsRightXY, materials){
@@ -23,6 +22,11 @@ class Part {
 	}
 	init_symetrical(points, thickness){
 		this.width = thickness;
+		if (points[0].length == 2)
+		{
+			for (let i = 0; i < points.length; i++)
+				points[i] = [points[i][0], points[i][1], 0];
+		}
 		points = mapToCenter(points, thickness);
 		points = order_path(points);
 		this.baseShape = new Shape(points);

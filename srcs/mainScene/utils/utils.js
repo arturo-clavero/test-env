@@ -100,4 +100,4 @@ function mapToCenter(pointsLeft, pointsRight)
 	return {"left" : pointsLeft, "right": pointsRight};
 }
 
-export { order_path, mapToCenter, update_min_max};
+export { order_path, mapToCenter, update_min_max, };
