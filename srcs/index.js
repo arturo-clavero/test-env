@@ -11,8 +11,6 @@ engine.add(cube, false);
 
 const mat = new THREE.MeshStandardMaterial(0x0000ff);
 // cube.self.scale.x = 2;
-cube.basePart.shapes[0].add_material(scene1.renderMaterial);
-cube.basePart.add_borders([0], new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 }));
 
 function animate() {
 	// console.log("main animate");

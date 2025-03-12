@@ -16,6 +16,13 @@ topLight.position.set(0, 6, 2);
 topLight.castShadow = true;
 secondaryScene.add(topLight);
 
+
+const geo = new THREE.PlaneGeometry(100, 200);
+const mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const plane = new THREE.Mesh(geo, mat);
+secondaryScene.add(plane);
+plane.position.z = -10;
+
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 const cube = new THREE.Mesh(geometry, material);
@@ -25,9 +32,17 @@ secondaryScene.add(cube);
 
 const renderTarget = new THREE.WebGLRenderTarget(1000, 1000);
 const texture = renderTarget.texture;
-const renderMaterial = new THREE.MeshBasicMaterial({
+const renderMaterial = new THREE.MeshStandardMaterial({
     map: texture,
+    emissive: new THREE.Color(1, 1, 1),
+    emissiveMap: texture,
+    emissiveIntensity: 10,
+    roughness: 0.5,
+    metalness: 0.5,
 });
+// const renderMaterial = new THREE.MeshBasicMaterial({
+//     map: texture,
+// });
 
 secondaryCamera.position.z = 5;
 
