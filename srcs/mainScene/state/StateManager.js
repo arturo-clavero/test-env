@@ -30,13 +30,16 @@ class StateManager {
 
     handleKeyPress(event) {
 		console.log("key press ? state manager ... ");
-        if (this.currentState && this.currentState.handleKeyPress(event) === "next")
-            this.changeState();
+		const view = this.currentState?.handleKeyPress(event);
+		console.log("state M - result", view);
+		if (view && view.change === "state")
+		{
+			console.log('good');
+			this.changeState(view.index || undefined);
+		}
     }
     resize() { this.currentState?.resize(); }
-	animate() { 
-		//console.log("animate at state manager"); 
-		this.currentState?.animate(); }
+	animate() { this.currentState?.animate(); }
 	isActive() { return this.currentState?.isActive(); }
 	which() { console.log("state: ", this.currentStateIndex, this.currentState.name, "substate: ", this.currentState.currentSubstateIndex, this.currentState.currentSubstate.name);}
 }

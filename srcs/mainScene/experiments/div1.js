@@ -51,36 +51,25 @@ function keyHandler(event){
     if (event.key === 'Enter') {
         if (document.activeElement === aliasInput) {
             event.preventDefault();
-            opponentInput.focus(); // Move to opponent input
+            opponentInput.focus();
         } else if (document.activeElement === opponentInput) {
             event.preventDefault();
 			console.log("you: ", aliasInput.value, "oponent: ", opponentInput.value); // Submit form
-			return "next substate";
-           // submitForm(); // Submit form
+			return {change : "substate"};
         }
     } else if (event.key === 'ArrowDown') {
-        if (document.activeElement === aliasInput) //{
+        if (document.activeElement === aliasInput)
             opponentInput.focus();
-        // } else if (document.activeElement === opponentInput) {
-        //     button.focus();
-        // }
     } else if (event.key === 'ArrowUp') {
-        if (document.activeElement === opponentInput) //{
+        if (document.activeElement === opponentInput)
             aliasInput.focus();
-        // } else if (document.activeElement === button) {
-        //     opponentInput.focus();
-        // }
     }
-}//);
+}
 
+function enter(){
+	aliasInput.focus();
+	document.getElementById("aliasInput").value = ""; //should delete!
+}
 
-// const form1_2d = new CSS2DObject(form1_div);
-// form1_2d.position.set(0, 0, 0);
-
-// function updateFormSize(width, height) {
-//     form1_div.style.width = `${width}px`;
-//     form1_div.style.height = `${height}px`;
-// }
-
-const form1 = {'div': form1_div, 'keyHandler': keyHandler}
+const form1 = {'div': form1_div, 'keyHandler': keyHandler, 'enter' : enter}
 export { form1};

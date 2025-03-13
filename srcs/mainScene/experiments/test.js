@@ -31,7 +31,7 @@ const restScreen = new MeshSubState(
 		if (event.key === 'c')
 		{
 			console.log("next");
-			return "next substate";
+			return {change : "substate"};
 		}
 	}
 )
@@ -41,34 +41,11 @@ const formScreen = new CssSubState(
 	"form",
 	surface,
 	form1.div,
-	null,
+	form1.enter,
 	null,
 	null,
 	(event)=> {form1.keyHandler(event);}
 )
-	// document.addEventListener('keydown', (event, input) => {
-	// 	if (event.key === 'Enter') {
-	// 		console.log("element: ", input);
-	// 		console.log("1: ", document.activeElement.id);
-	// 		// if (document.activeElement.id === "aliasInput") {
-	// 		// 	event.preventDefault();
-	// 		// 	opponentInput.focus(); // Move to opponent input
-	// 		// } else if (document.activeElement.id === "opponentInput") {
-	// 		// 	event.preventDefault();
-	// 		// 	console.log("you: ", aliasInput.value, "oponent: ", opponentInput.value); // Submit form
-	// 		// 	return "next";
-	// 		// }
-	// 	} else if (event.key === 'ArrowDown') {
-	// 		if (document.activeElement === aliasInput) {
-	// 			opponentInput.focus();
-	// 		}
-	// 	} else if (event.key === 'ArrowUp') {
-	// 		if (document.activeElement === opponentInput) {
-	// 			aliasInput.focus();
-	// 		}
-	// 	}
-	// }),
-// )
 
 //2. GAME - cube scene replace actual game
 const endScreen = new MeshSubState(
@@ -78,10 +55,13 @@ const endScreen = new MeshSubState(
 	null,
 	null,
 	null,
-	(event)=>{ if (event.key === 'q') return "restart"; if (event.key === 'c') this.changeSubstate(1);}
+	(event)=>{
+		if (event.key === 'q')
+			return {change : "state", index : 0}; 
+		if (event.key === 'c')
+			return {change : "substate", index : 1};
+	}
 )
-
-
 
 //CREATE STATE
 const test = new State("test cube", null, [0,0,5], [restScreen, formScreen, endScreen])
@@ -95,7 +75,7 @@ const mainSub = new SubState("main controls", null, null, null, null,
 		if (event.key === 'x')
 		{
 			console.log("next");
-			return "next state";
+			return{change : "state", index : 0};
 		} 
 	},
 	()=>{

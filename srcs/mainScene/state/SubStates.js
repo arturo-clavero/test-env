@@ -15,8 +15,7 @@ class SubState {
     }
     enter() { this.setup(); }
     exit() { this.cleanup(); }
-    resize() {
-		this.updateSize(); }
+    resize() { this.updateSize(); }
 	animate() { this.animation(); }
     handleKeyPress(event) {
 		console.log("handle key press substate ? ", this.name);

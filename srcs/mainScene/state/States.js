@@ -43,14 +43,16 @@ class State {
 	handleKeyPress(event) {
 		console.log("handle key press - state ? ", this.name);
 		const view = this.currentSubstate?.handleKeyPress(event);
-		if (view == "next substate")
-			this.changeSubstate();
-		
+		console.log("state - result", view);
+		if (view && view.change === "substate")
+		{
+			console.log("good");
+			this.changeSubstate(view.index || undefined);
+		}
+		return view;
     }
     resize() { this.currentSubstate?.resize(); }
-	animate() { 
-		//console.log("animate at state ", this.name); 
-		this.currentSubstate?.animate(); }
+	animate() { this.currentSubstate?.animate(); }
 	isActive() { return this.currentSubstate?.active; }
 }
 
