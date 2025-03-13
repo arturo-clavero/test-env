@@ -91,4 +91,10 @@ function submitForm(){
 
 const form1_2d = new CSS2DObject(form1_div);
 form1_2d.position.set(0, 0, 0);
-export { form1_2d }
+
+function updateFormSize(width, height) {
+    form1_div.style.width = `${width}px`;
+    form1_div.style.height = `${height}px`;
+}
+
+export { form1_2d , updateFormSize};
