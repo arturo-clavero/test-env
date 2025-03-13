@@ -8,8 +8,11 @@ import { scene1 } from './scene1';
 
 const obj1 = new Object(part_sym_2d);
 obj1.self.position.z = 3;
-obj1.basePart.shapes[0].add_material(scene1.renderMaterial);
-obj1.basePart.add_borders([0], new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 }));
+
+//ADD A SCENE TO DIV
+// obj1.basePart.shapes[0].add_material(scene1.renderMaterial);
+
+
 const cube = obj1;
 
 //div registration

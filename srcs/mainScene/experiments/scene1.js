@@ -47,7 +47,6 @@ const renderMaterial = new THREE.MeshStandardMaterial({
 secondaryCamera.position.z = 5;
 
 function animate() {
-	// console.log("scene1 animate!");
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
 	engine.renderer.setRenderTarget(renderTarget);
@@ -74,8 +73,6 @@ function keyDown(event){
 		cube.material.color.set(0x00ff00);
 }
 
-//update camera perspective based on width/length of div is being presented on ... 
-//how to re direct keys to scenes ? 
 //how to mount a div  to 3d ... 
 
 const scene1 = {
