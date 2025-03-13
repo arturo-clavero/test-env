@@ -49,9 +49,9 @@ secondaryCamera.position.z = 5;
 function animate() {
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
-	engine.renderer.setRenderTarget(renderTarget);
-    engine.renderer.render(secondaryScene, secondaryCamera);
-    engine.renderer.setRenderTarget(null);
+	// engine.renderer.setRenderTarget(renderTarget);
+    // engine.renderer.render(secondaryScene, secondaryCamera);
+    // engine.renderer.setRenderTarget(null);
 }
 
 function updateSize(width, height){
@@ -77,8 +77,11 @@ function keyDown(event){
 
 const scene1 = {
 	"renderMaterial" : renderMaterial,
+	"renderTarget" : renderTarget,
 	"animate" : animate,
-	"updateSize" : updateSize,
+	"scene" : secondaryScene,
+	"camera" : secondaryCamera,
+
 }
 
 export { scene1 };

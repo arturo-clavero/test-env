@@ -1,27 +1,44 @@
-class StateManager{
-	constructor(){
+import * as THREE from 'three';
+
+class StateManager {
+    constructor(states = []) {
 		if (StateManager.instance)
 			return StateManager.instance;
-		this.states = [];
-		this.curr_state_index = 0;
-		window.addEventListener('onKeyPress', (event) => {this.onKeyPress(event)});
+        this.states = states;
+		if (this.states.length > 0) this.changeState(0);
+        window.addEventListener('keypress', (event) => this.handleKeyPress(event));
 		StateManager.instance = this;
 	}
-	curr_state(){ 
-		return (this.states[this.curr_state_index])
+	addState(states){
+		if (!(Array.isArray(states)))
+			this.states.push(states)
+		else
+		{
+			for (let i = 0; i < states.length; i++)
+				this.states.push(states[i]);
+		}
+		if (! this.currentState)
+			this.changeState(0);
 	}
-	update_state()
-	{
-		this.curr_state_index = this.curr_state_index + 1;
-		if (this.curr_state_index >= this.states.length)
-			this.curr_state_index = 0;
-		this.curr_state().move_camera();
-		this.curr_state().init();
-	}
-	onKeyPress(event){
-		if (this.curr_state().curr_substate().keyControls(event) == "next")
-			this.update_state();
-	}
+    changeState(index = (this.currentStateIndex + 1) % this.states.length) {
+        if (this.currentState) this.currentState.exit();
+        this.currentStateIndex = index;
+        this.currentState = this.states[this.currentStateIndex];
+        this.currentState.enter();
+		console.log("change state to ", index, this.currentState.name);
+    }
+
+    handleKeyPress(event) {
+		console.log("key press ? state manager ... ");
+        if (this.currentState && this.currentState.handleKeyPress(event) === "next")
+            this.changeState();
+    }
+    resize() { this.currentState?.resize(); }
+	animate() { 
+		//console.log("animate at state manager"); 
+		this.currentState?.animate(); }
+	isActive() { return this.currentState?.isActive(); }
+	which() { console.log("state: ", this.currentStateIndex, this.currentState.name, "substate: ", this.currentState.currentSubstateIndex, this.currentState.currentSubstate.name);}
 }
 
 export { StateManager }

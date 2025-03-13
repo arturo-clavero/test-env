@@ -7,26 +7,9 @@
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
-		#overlayDiv {
-            position: absolute;
-            pointer-events: none; /* Prevent the div from blocking mouse interactions */
-            background-color: rgba(255, 255, 255, 0.8); /* Optional styling */
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        input {
-            font-size: 14px;
-            padding: 5px;
-			display: none;
-		}
     </style>
 </head>
 <body>
-	<div id="overlayDiv">
-        <input type="text" placeholder="Enter text here" />
-    </div>
     <script src="./srcs/index.js" type="module"></script>
 </body>
 </html>

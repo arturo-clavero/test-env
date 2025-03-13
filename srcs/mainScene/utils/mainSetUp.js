@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Modern import path for modules
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
-
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
