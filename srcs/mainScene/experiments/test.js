@@ -44,7 +44,7 @@ const formScreen = new CssSubState(
 	form1.enter,
 	null,
 	null,
-	(event)=> {form1.keyHandler(event);}
+	(event)=> { return form1.keyHandler(event);}
 )
 
 //2. GAME - cube scene replace actual game

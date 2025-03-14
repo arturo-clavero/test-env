@@ -19,7 +19,9 @@ class SubState {
 	animate() { this.animation(); }
     handleKeyPress(event) {
 		console.log("handle key press substate ? ", this.name);
-		return this.keyHandler(event); 
+		let view = this.keyHandler(event); 
+		console.log("substate - ", view);
+		return view;
 	}
 }
 

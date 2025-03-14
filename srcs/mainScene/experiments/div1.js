@@ -64,6 +64,7 @@ function keyHandler(event){
         if (document.activeElement === opponentInput)
             aliasInput.focus();
     }
+	return undefined;
 }
 
 function enter(){
