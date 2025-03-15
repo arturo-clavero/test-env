@@ -8,7 +8,6 @@ class State {
 		this.cam = cameraPosition;
         this.substates = substates;
 		if (this.substates.length > 0) this.changeSubstate(0);
-		console.log("name...", this.name, "curr substate: ", this.currentSubstate.name)
     }
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
@@ -27,7 +26,6 @@ class State {
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
         this.currentSubstate.enter();
-		console.log("changed substate to ", index, this.currentSubstate.name);
     }
     enter() { 
 		// this.cameraController.moveCamera();
@@ -41,14 +39,9 @@ class State {
 
 	}
 	handleKeyPress(event) {
-		console.log("handle key press - state ? ", this.name);
 		const view = this.currentSubstate?.handleKeyPress(event);
-		console.log("state - result", view);
 		if (view && view.change === "substate")
-		{
-			console.log("good");
 			this.changeSubstate(view.index || undefined);
-		}
 		return view;
     }
     resize() { this.currentSubstate?.resize(); }

@@ -1,12 +1,55 @@
 import * as THREE from 'three';
 import { order_path, update_min_max } from '../utils/utils';
 
+function get_geometry_normal_vector(geometry)
+{
+	geometry.computeVertexNormals();
+	return new THREE.Vector3(geometry.attributes.normal.array[0], geometry.attributes.normal.array[1], geometry.attributes.normal.array[2]);
+}
+
+function reverse_order(points){
+	const new_points = [points[0]];
+	for (let i = points.length - 1; i >= 1; i--)
+		new_points.push(points[i]);
+	points = new_points;
+}
+
+function reverse_order_in_pairs(points){
+	const new_points = [points[0], points[1]];
+	for (let i = points.length - 1; i >= 1; i--)
+	{
+		i--;
+		new_points.push(points[i]);
+		i++;
+		new_points.push(points[i]);
+		i--;
+	}
+	points = new_points;
+}
+
+// function rotate(normal, axis){
+// 			// if (normal.x != axis.x || normal.y != axis.y || normal.z != axis.z)
+// 			// {
+// 			// 	if (normal.x != Math.abs(axis.x) || normal.y != Math.abs(axis.y) || normal.z != Math.abs(axis.z))
+// 			// 	{
+// 					// console.log("rotate");
+// 					const angle = Math.acos(axis.dot(normal));
+// 					const rotationAxis = axis.cross(normal).normalize();
+// 					object.rotateOnAxis(rotationAxis, angle);
+// 			// 	}
+// 			// 	else
+// 			// 	{
+// 			// 		object.rotation.set(normal.x *-1, normal.y * -1, normal.z * -1);
+// 			// 		console.log("inverse rotate");
+// 			// 	}
+// 			// }
+// }
 class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
 		this.z = move_back;
-		this.vertex = points;
-		this.geometry = points.length == 0 ? geometry : this.custom_geo(order_path(points));
+		this.vertex3d = order_path(points);
+		this.geometry = points.length == 0 ? geometry : this.custom_geo(this.vertex3d);
 		this.material = null;
 		this.self = null;
 		this.normal = null;
@@ -25,7 +68,6 @@ class Shape {
 			geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 			const indices = [0, 1, 2, 2, 3, 0];
 			geometry.setIndex(indices);
-			geometry.computeVertexNormals();
 		}
 		else if (points[0].length == 2)
 		{
@@ -36,11 +78,20 @@ class Shape {
 			shape.closePath();
 			geometry = new THREE.ShapeGeometry(shape);
 		}
-		const uvs = new Float32Array([0, 1, 0, 0, 1, 0, 1, 1]);
+		const uvs = this.calc_uvs(geometry);// const uvs = new Float32Array([0, 1, 0, 0, 1, 0, 1, 1]);
 		geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+		
 		return geometry;
 	}
-
+	calc_uvs(geometry)
+	{
+		const normal = get_geometry_normal_vector(geometry);
+		const axis = new THREE.Vector3(0, 0, 0);
+		const angle = Math.acos(axis.dot(normal));
+		const rotationAxis = axis.cross(normal).normalize();
+		object.rotateOnAxis(rotationAxis, angle);
+		this.vertex2d = this.vertex3d.apply(rotation);
+	}
 	add_material(material)
 	{
 		if (this.material == null)
@@ -110,12 +161,8 @@ class Shape {
 	get_normal(point, parentComponent){
 		if (this.normal == null)
 		{
-			this.geometry.computeVertexNormals();
-			this.normal = new THREE.Vector3(this.geometry.attributes.normal.array[0], this.geometry.attributes.normal.array[1], this.geometry.attributes.normal.array[2]);
-			console.log("point: ", point);
+			this.normal = get_geometry_normal_vector(this.geometry);
 			const origin = new THREE.Vector3(point[0], point[1],point[2]);
-			console.log("origin: ", origin);
-			console.log("direction: ", this.normal);
 			const raycaster = new THREE.Raycaster();
 			raycaster.set(origin, this.normal);
 			const intersection = raycaster.intersectObject(parentComponent);
@@ -125,16 +172,13 @@ class Shape {
 				if (intersection[i].distance == 0 && ! intersection[i].object.userData.raycaster)
 					validIntersections.push(intersection[i]);
 			}
-			console.log(validIntersections);
 			if (validIntersections.length > 0)
 			{
-				this.normal.x *= -1;
-				this.normal.y *= -1;
-				this.normal.z *= -1;
-				console.log("INCORRECT normal");
+				this.geometry.index.array = this.geometry.index.array.reverse();
+				reverse_order(this.vertex2d);
+				reverse_order(this.vertex3d);
+				reverse_order_in_pairs(this.geometry.attributes.uv);
 			}
-			//console.log("intersection normal", intersection[0].normal);
-			//console.log("inter", intersection);
 		}
 		return this.normal;
 	}

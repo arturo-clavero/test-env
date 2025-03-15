@@ -10,19 +10,12 @@ class SubState {
 		this.animation = animation || (() => {});
         this.keyHandler = keyHandler || (() => {});
 		this.active = false;
-		console.log(this.name, " key handler: ");
-		console.log(this.keyHandler);
     }
     enter() { this.setup(); }
     exit() { this.cleanup(); }
     resize() { this.updateSize(); }
 	animate() { this.animation(); }
-    handleKeyPress(event) {
-		console.log("handle key press substate ? ", this.name);
-		let view = this.keyHandler(event); 
-		console.log("substate - ", view);
-		return view;
-	}
+    handleKeyPress(event) { return this.keyHandler(event); }
 }
 
 export { SubState };

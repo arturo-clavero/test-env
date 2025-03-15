@@ -44,7 +44,6 @@ class MeshSubState extends SubState {
 	}
 
 	enter() {
-		//this.default_material = this.surface.material; //optional to updat ehere instead of ust once in constructor ?
 		this.surface.material = this.secondaryScene.renderMaterial;
 		super.enter(); 
 	}
@@ -64,7 +63,6 @@ class MeshSubState extends SubState {
 	}
 	
 	animate(){
-		//console.log("secondary scene animate.. ");
 		this.secondaryScene?.animate(); 
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);
     	this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);

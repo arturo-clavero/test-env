@@ -25,18 +25,12 @@ class StateManager {
         this.currentStateIndex = index;
         this.currentState = this.states[this.currentStateIndex];
         this.currentState.enter();
-		console.log("change state to ", index, this.currentState.name);
     }
 
     handleKeyPress(event) {
-		console.log("key press ? state manager ... ");
 		const view = this.currentState?.handleKeyPress(event);
-		console.log("state M - result", view);
 		if (view && view.change === "state")
-		{
-			console.log('good');
 			this.changeState(view.index || undefined);
-		}
     }
     resize() { this.currentState?.resize(); }
 	animate() { this.currentState?.animate(); }
