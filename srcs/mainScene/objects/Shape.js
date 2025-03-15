@@ -79,18 +79,25 @@ class Shape {
 			geometry = new THREE.ShapeGeometry(shape);
 		}
 		const uvs = this.calc_uvs(geometry);// const uvs = new Float32Array([0, 1, 0, 0, 1, 0, 1, 1]);
-		geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 		
 		return geometry;
 	}
 	calc_uvs(geometry)
 	{
 		const normal = get_geometry_normal_vector(geometry);
-		const axis = new THREE.Vector3(0, 0, 0);
+		const axis = new THREE.Vector3(0, 0, 1);
 		const angle = Math.acos(axis.dot(normal));
 		const rotationAxis = axis.cross(normal).normalize();
-		object.rotateOnAxis(rotationAxis, angle);
-		this.vertex2d = this.vertex3d.apply(rotation);
+		this.vertex2d = this.vertex3d;
+		for (let i = 0; i < this.vertex2d.length; i++)
+			this.vertex2d.rotateOnAxis(rotationAxis, angle);
+		const limits = update_min_max(this.vertex2d);
+		const uvs = new Float32Array([]);
+		for (let i = 0; i < this.vertex2d.length; i++){
+			uvs.push(this.vertex2d[i][0] - limits.min.x) / (limits.max.x - limits.min.x);
+			uvs.push(this.vertex2d[i][1] - limits.min.y) / (limits.max.y - limits.min.y);
+		}
+		geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 	}
 	add_material(material)
 	{
