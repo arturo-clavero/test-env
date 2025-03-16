@@ -12,6 +12,7 @@ class MainEngine {
 		this.controls = new OrbitControls(this.camera, this.css2drenderer.domElement);
 		window.addEventListener('resize', (event) => {this.resize()});
 		window.addEventListener('click', (event) => {this.click(event)});
+		
 		// window.addEventListener('mousemove', (event) => {this.mousemove(event);});
 		MainEngine.instance = this;
 	}
@@ -31,7 +32,7 @@ class MainEngine {
 	setUpScene(){
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-		this.camera.position.z = 5;
+		this.camera.position.z = 10;
 		this.raycaster = new THREE.Raycaster();
 		this.mouse = new THREE.Vector2();
 		this.clickableObjects = [];

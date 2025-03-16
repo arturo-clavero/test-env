@@ -7,6 +7,15 @@ class StateManager {
         this.states = states;
 		if (this.states.length > 0) this.changeState(0);
         document.addEventListener('keydown', (event) => this.handleKeyPress(event));
+		window.addEventListener('popstate', (event) => {
+			console.log("pop");
+			// event.state is the state object that was passed to pushState or replaceState
+			if (event.state) {
+			  console.log('Navigated to state:', event.state.num);
+			  this.changeState(event.state.num);
+			  // You can update your UI or application state based on the value
+			}
+		  });
 		StateManager.instance = this;
 	}
 	addState(states){
@@ -24,7 +33,9 @@ class StateManager {
         if (this.currentState) this.currentState.exit();
         this.currentStateIndex = index;
         this.currentState = this.states[this.currentStateIndex];
+		window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
         this.currentState.enter();
+
     }
 
     handleKeyPress(event) {

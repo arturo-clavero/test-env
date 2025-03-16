@@ -9,7 +9,29 @@ const materialsgroup = [
 	new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }),
 	new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide}),
 ]
+const loadingManager = new THREE.LoadingManager()
+loadingManager.onStart = () =>
+	{
+		console.log('loading started')
+	}
+	loadingManager.onLoad = () =>
+	{
+		console.log('loading finished')
+	}
+	loadingManager.onProgress = () =>
+	{
+		console.log('loading progressing')
+	}
+	loadingManager.onError = () =>
+	{
+		console.log('loading error')
+	}
+const textureLoader = new THREE.TextureLoader(loadingManager);
 
+const texture = textureLoader.load('../../../assets/image1.jpg');
+texture.colorSpace = THREE.SRGBColorSpace;
+
+const textureMat =   new THREE.MeshStandardMaterial({ map: texture, side: THREE.DoubleSide, opacity: 1 });
 
 const singleMaterial = materialsgroup[1];
 
@@ -18,7 +40,7 @@ const lineBasicMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewid
 const part_sym_2d = new Part(
 	[[0, 0], [0, 1], [2, 1], [2, 0]], 
 	1,
-	materialsgroup[1]
+	textureMat,
 );
 
 const part_sym_3d = new Part(
