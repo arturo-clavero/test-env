@@ -68,8 +68,7 @@ const endScreen = new MeshSubState(
 )
 
 //CREATE STATE
-const test = new State("test cube", null, [0,0,5], [restScreen, formScreen, endScreen])
-console.log("should be FIRST STATE!!!!!\n\n\n\n\n");
+const test = new State("test cube", {pos: [0,0,5], duration: 2, ease: "power2.inOut"}, [restScreen, formScreen, endScreen])
 
 //CREATE MAIN SUBSSTATE
 const mainSub = new SubState("main controls", null, null, null, null, 
@@ -86,7 +85,7 @@ const mainSub = new SubState("main controls", null, null, null, null,
 		restScreen.animate();
 	}
 )
-const main = new State("main view", null, [0, 0, 10], [mainSub]);
+const main = new State("main view", {pos: [0,0,10], duration: 4, ease: "power2.inOut"}, [mainSub]);
 
 const stateManager = new StateManager([main, test]);
 //FLOE: 'x', 'c', 'enter', 

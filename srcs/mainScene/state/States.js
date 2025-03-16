@@ -1,12 +1,13 @@
 import * as THREE from 'three';
-import { MainEngine } from "../utils/mainSetUp";
-
+import { moveCamera } from '../utils/cameraMovement';
 class State {
-    constructor(name, cameraController, cameraPosition, substates = []) {
+    constructor(name, cameraMovement, substates = []) {
         this.name = name;
-        this.cameraController = cameraController;
-		this.cam = cameraPosition;
+		this.cameraMovement = cameraMovement;
         this.substates = substates;
+		console.log("name: ", this.name);
+		console.log("move: ", this.cameraMovement);
+		console.log("subs: ", this.substates);
 		if (this.substates.length > 0) this.changeSubstate(0);
     }
 	addSubstate(substates){
@@ -25,12 +26,10 @@ class State {
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
-        this.currentSubstate.enter();
+		this.currentSubstate?.enter();
     }
     enter() { 
-		// this.cameraController.moveCamera();
-		const engine = new MainEngine();
-		engine.camera.position.set(this.cam[0], this.cam[1], this.cam[2]);
+		moveCamera(this.cameraMovement);
 		this.currentSubstate?.enter();
 	}
     exit() {

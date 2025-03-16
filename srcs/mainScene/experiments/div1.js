@@ -70,9 +70,11 @@ function keyHandler(event){
         }
 		else {
             event.preventDefault();
+			//EXIT
 			console.log("you: ", aliasInput.value, "oponent: ", opponentInput.value);
 			aliasInput.value = "";
 			opponentInput.value = "";
+			enterLabel.style.visibility = "hidden";
 			return {change : "substate"};
         }
     } else if (event.key === 'ArrowDown') {
