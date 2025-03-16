@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { MainEngine } from './mainScene/utils/mainSetUp';
 import { backBox } from './mainScene/objects/background/backBox';
-import { cube } from './mainScene/experiments/test';
+import { cube, stateManager } from './mainScene/experiments/test';
 import { scene1 } from './mainScene/experiments/scene1';
 import { StateManager } from './mainScene/state/StateManager';
 
@@ -14,11 +14,11 @@ engine.add(cube, false);
 
 const state  = new StateManager();
 state.which();
+engine.stateManager = state;
 
 function animate() {
 	requestAnimationFrame(animate);
 	engine.animate();
-	state.animate();
 }
 
 // scene1.updateSize(2000, 1000);

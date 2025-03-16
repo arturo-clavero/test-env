@@ -43,24 +43,30 @@ function order_path(points){
 
 function update_min_max(points, limits){
 	if (!limits)
+		limits = { "min" : [100, 100, 100], "max": [-100, -100, -100]};
+	if (!(points[0] instanceof THREE.Vector3))
 	{
-		let min = [], max = [];
-		for (let i = 0; i < points[0].length; i++)
-		{
-			min.push(100);
-			max.push(-100);
-		}
-		limits = { "min" : min, "max": max};
+		for (let i = 0; i < points.length; i++)
+			{
+				for (let j = 0; j < points[i].length; j ++)
+				{
+					if (points[i][j] < limits.min[j])
+						limits.min[j] = points[i][j];
+					if (points[i][j] > limits.max[j])
+						limits.max[j] = points[i][j]
+				}
+			}
 	}
-	for (let i = 0; i < points.length; i++)
+	else
 	{
-		for (let j = 0; j < points[i].length; j ++)
-		{
-			if (points[i][j] < limits.min[j])
-				limits.min[j] = points[i][j];
-			if (points[i][j] > limits.max[j])
-				limits.max[j] = points[i][j]
-		}
+		points.forEach((p, i) => {
+			if (p.x < limits.min[0]) limits.min[0] = p.x;
+			else if (p.x > limits.max[0]) limits.max[0] = p.x;
+			if (p.y < limits.min[1]) limits.min[1] = p.y;
+			else if (p.y > limits.max[1]) limits.max[1] = p.y;
+			if (p.z < limits.min[2]) limits.min[2] = p.z;
+			else if (p.z > limits.max[2]) limits.max[2] = p.z;
+		})
 	}
 	return limits;
 }

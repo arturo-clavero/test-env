@@ -12,7 +12,10 @@ import { StateManager } from '../state/StateManager';
 import { SubState } from '../state/SubStates';
 
 
-//CREATE MODEL
+// CREATE MODEL
+console.log("vertex of front!: ", part_sym_2d.shapes[0].geometry.attributes.position.array);
+console.log("uv of front!: ", part_sym_2d.shapes[0].geometry.attributes.uv.array);
+
 const obj1 = new Object(part_sym_2d);
 obj1.self.position.z = 3;
 
@@ -65,7 +68,7 @@ const endScreen = new MeshSubState(
 
 //CREATE STATE
 const test = new State("test cube", null, [0,0,5], [restScreen, formScreen, endScreen])
-
+console.log("should be FIRST STATE!!!!!\n\n\n\n\n");
 
 //CREATE MAIN SUBSSTATE
 const mainSub = new SubState("main controls", null, null, null, null, 
@@ -84,8 +87,7 @@ const mainSub = new SubState("main controls", null, null, null, null,
 )
 const main = new State("main view", null, [0, 0, 10], [mainSub]);
 
-
-new StateManager([main, test]);
+const stateManager = new StateManager([main, test]);
 //FLOE: 'x', 'c', 'enter', 
 //cube, main
 
@@ -102,4 +104,4 @@ const cube = obj1;
 
 
 console.log(cube);
-export {cube}
+export {cube, stateManager}

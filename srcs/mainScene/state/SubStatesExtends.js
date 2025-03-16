@@ -6,6 +6,7 @@ import { MainEngine } from "../utils/mainSetUp";
 class CssSubState extends SubState {
 	constructor(name, surface, element, setup, cleanup, updateSize, keyHandler){
 		super(name, surface, setup, cleanup, updateSize, keyHandler);
+		this.engine =  new MainEngine();;
 		this.element = element;
 		this.elementObj = new CSS2DObject(this.element);
 		this.elementObj.position.set(0, 0, 0);
@@ -16,6 +17,7 @@ class CssSubState extends SubState {
 	enter() 
 	{
 		this.element.style.visibility = "visible";
+		this.resize();
 		super.enter();
 	}
     exit() 
@@ -25,12 +27,18 @@ class CssSubState extends SubState {
 	}
     resize()
 	{ 
+		console.log("resize div");
+		this.engine.css2drenderer.setSize(window.innerWidth, window.innerHeight);
+		this.elementObj.updateMatrixWorld(true);
 		//get size of surface ?
 		//const size = this.surface.getSize();
 		// const width = size.width; //from normal to px
 		// this.element.style.width = `${width}px`;
 		// const height = size.height; //from normal to px
 		// this.element.style.height = `${height}px`;
+	}
+	animate(){
+		this.engine.css2drenderer.render(this.engine.scene, this.engine.camera);
 	}
 }
 

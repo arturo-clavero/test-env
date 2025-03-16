@@ -4,6 +4,7 @@ class StateManager {
     constructor(states = []) {
 		if (StateManager.instance)
 			return StateManager.instance;
+		console.log("first state");
         this.states = states;
 		if (this.states.length > 0) this.changeState(0);
         window.addEventListener('keypress', (event) => this.handleKeyPress(event));

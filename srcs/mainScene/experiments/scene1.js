@@ -23,15 +23,56 @@ const plane = new THREE.Mesh(geo, mat);
 secondaryScene.add(plane);
 plane.position.z = -10;
 
-const geometry = new THREE.BoxGeometry();
+const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 const cube = new THREE.Mesh(geometry, material);
 cube.receiveShadow = true;
 cube.castShadow = true;
 secondaryScene.add(cube);
+console.log("THREE VERSION!", THREE.REVISION);
+console.log(engine.renderer.capabilities.isWebGL2); // Should print `true`
 
-const renderTarget = new THREE.WebGLRenderTarget(1000, 1000);
-const texture = renderTarget.texture;
+// const renderTarget = new THREE.WebGLMultisampleRenderTarget(
+//     window.innerWidth, 
+//     window.innerHeight, 
+//     {
+//         format: THREE.RGBAFormat,
+//         type: THREE.UnsignedByteType,
+//         samples: 4 // Adjust sample count as needed (e.g., 4 or 8)
+//     }
+// );
+
+
+const renderTarget = new THREE.WebGLRenderTarget(4096, 2048, {
+	minFilter: THREE.LinearFilter,   // Use linear filtering for smoother results
+	magFilter: THREE.LinearFilter,
+	format: THREE.RGBAFormat,
+	type: THREE.UnsignedByteType,
+	samples: 8,
+  });
+  //0
+renderTarget.texture.anisotropy = engine.renderer.capabilities.getMaxAnisotropy();
+  //1
+renderTarget.texture.generateMipmaps = true;
+renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
+//2.
+renderTarget.depthTexture = new THREE.DepthTexture();
+renderTarget.depthTexture.format = THREE.DepthFormat;
+renderTarget.depthTexture.type = THREE.UnsignedShortType;
+
+//other
+//   renderTarget.depthTexture = new THREE.DepthTexture();
+// renderTarget.depthTexture.format = THREE.DepthFormat;
+// renderTarget.depthTexture.type = THREE.UnsignedShortType;
+renderTarget.texture.minFilter = THREE.LinearFilter;  // Smooths downscaled textures
+renderTarget.texture.magFilter = THREE.LinearFilter;  // Smooths upscaled textures
+// renderTarget.texture.anisotropy = engine.renderer.capabilities.getMaxAnisotropy(); 
+  const texture = renderTarget.texture;
+//   texture.minFilter = THREE.LinearMipmapLinearFilter;  // Use mipmaps
+// texture.magFilter = THREE.LinearFilter;  // Smooth filtering for magnified textures
+// texture.generateMipmaps = true;  
+texture.wrapS = THREE.ClampToEdgeWrapping;
+texture.wrapT = THREE.ClampToEdgeWrapping;
 const renderMaterial = new THREE.MeshStandardMaterial({
     map: texture,
     emissive: new THREE.Color(1, 1, 1),
@@ -39,7 +80,25 @@ const renderMaterial = new THREE.MeshStandardMaterial({
     emissiveIntensity: 10,
     roughness: 0.5,
     metalness: 0.5,
+	// shading: THREE.SmoothShading,
 });
+// const renderMaterial = new THREE.ShaderMaterial({
+//     uniforms: { texture: { value: renderTarget.texture } },
+//     vertexShader: ` 
+//         varying vec2 vUv;
+//         void main() {
+//             vUv = uv;
+//             gl_Position = vec4(position, 1.0);
+//         }
+//     `,
+//     fragmentShader: ` 
+//         uniform sampler2D mytexture;
+//         varying vec2 vUv;
+//         void main() {
+//             gl_FragColor = texture(mytexture, vUv);
+//         }
+//     `
+// });
 // const renderMaterial = new THREE.MeshBasicMaterial({
 //     map: texture,
 // });
@@ -74,13 +133,14 @@ function keyDown(event){
 }
 
 //how to mount a div  to 3d ... 
-
+// function init()
 const scene1 = {
 	"renderMaterial" : renderMaterial,
 	"renderTarget" : renderTarget,
 	"animate" : animate,
 	"scene" : secondaryScene,
 	"camera" : secondaryCamera,
+	// "init" : init,
 
 }
 

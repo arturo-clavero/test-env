@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Modern import path for modules
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
+import { StateManager } from '../state/StateManager';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
 			return MainEngine.instance;
+		console.log("constructing set up ...");
+		//this.stateManager = new StateManager();
 		this.setUpScene();
 		this.setUpRenderer();
 		this.setUpLights();
@@ -15,7 +18,7 @@ class MainEngine {
 		MainEngine.instance = this;
 	}
 	setUpRenderer(){
-		this.renderer = new THREE.WebGLRenderer();
+		this.renderer = new THREE.WebGLRenderer({ antialias: true });
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(this.renderer.domElement);
 		this.renderer.shadowMap.enabled = true;
@@ -28,7 +31,7 @@ class MainEngine {
 		document.body.appendChild( this.css2drenderer.domElement );
 	}
 	setUpScene(){
-		this.scene = new THREE.Scene(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 		this.camera.position.z = 5;
 		this.raycaster = new THREE.Raycaster();
@@ -54,7 +57,7 @@ class MainEngine {
 		// console.log("background animate!");
 		this.controls.update();
 		this.renderer.render(this.scene, this.camera);
-		this.css2drenderer.render(this.scene, this.camera);
+		this.stateManager.animate();
 	}
 	add(newObject, clickable){
 		if (! (newObject instanceof THREE.Object3D))
@@ -64,10 +67,17 @@ class MainEngine {
 			this.clickableObjects.push(newObject);
 	}
 	resize(){
+		console.log("resize?");
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.css2drender.setSize(window.innerWidth, window.innerHeight);
-		this.camera.aspect = window.innerWidth / window.innerHeight;
+		
+		const aspectRatio =  window.innerWidth / window.innerHeight;
+		//TODO Tweak FOV to maintain smae look ... 
+		this.camera.aspect = aspectRatio;
+		// const newFov = 75 * (aspectRatio / 1);  // You can tweak this factor for your needs
+  		// this.camera.fov = newFov;
 		this.camera.updateProjectionMatrix();
+		this.stateManager.resize();
+
 	}
 	click(event){
 		this.mousemove(event);

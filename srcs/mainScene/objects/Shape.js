@@ -48,7 +48,10 @@ class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
 		this.z = move_back;
-		this.vertex3d = order_path(points);
+		// console.log(points);
+		this.vertex3d = [];
+		this.vertex3d = points.length == 0 ? []: order_path(points);
+		this.vertex2d = [];
 		this.geometry = points.length == 0 ? geometry : this.custom_geo(this.vertex3d);
 		this.material = null;
 		this.self = null;
@@ -84,20 +87,39 @@ class Shape {
 	}
 	calc_uvs(geometry)
 	{
-		const normal = get_geometry_normal_vector(geometry);
-		const axis = new THREE.Vector3(0, 0, 1);
-		const angle = Math.acos(axis.dot(normal));
-		const rotationAxis = axis.cross(normal).normalize();
-		this.vertex2d = this.vertex3d;
-		for (let i = 0; i < this.vertex2d.length; i++)
-			this.vertex2d.rotateOnAxis(rotationAxis, angle);
+		const curr_normal = get_geometry_normal_vector(geometry);
+		const target = new THREE.Vector3(0, 0, 1);
+		// const angle = Math.acos(axis.dot(normal));
+		// const rotationAxis = axis.cross(normal).normalize();
+		let quaternion = new THREE.Quaternion();
+		quaternion.setFromUnitVectors(curr_normal, target);
+		this.vertex3d.forEach(p => this.vertex2d.push(new THREE.Vector3(p[0], p[1], p[2])));
+		// console.log("vertex before.. ", this.vertex2d);
+		this.vertex2d.forEach(v => v.applyQuaternion(quaternion));
+		// console.log("vertex after.. ", this.vertex2d);
 		const limits = update_min_max(this.vertex2d);
-		const uvs = new Float32Array([]);
-		for (let i = 0; i < this.vertex2d.length; i++){
-			uvs.push(this.vertex2d[i][0] - limits.min.x) / (limits.max.x - limits.min.x);
-			uvs.push(this.vertex2d[i][1] - limits.min.y) / (limits.max.y - limits.min.y);
-		}
-		geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+		const min = limits.min[0] < limits.min[1] ? limits.min[0] : limits.min[1];
+		const max = limits.max[0] > limits.max[1] ? limits.max[0] : limits.max[1];
+		// console.log("limits: ", limits);
+		const uvs =[]
+		this.vertex2d.forEach((v)=>{
+			let x = (v.x - min) / (max - min);
+			let y = (v.y - min) / (max - min);
+			// console.log("x: ", x);
+			// console.log("y: ", y);
+			uvs.push(x);
+			uvs.push(y);
+		});
+		// for (let i = 0; i < this.vertex2d.length; i++){
+		// 	let x  = (this.vertex2d[i][0] - limits.min.x) / (limits.max.x - limits.min.x);
+		// 	let y = (this.vertex2d[i][1] - limits.min.y) / (limits.max.y - limits.min.y);
+
+			
+		// 	// uvs.push((this.vertex2d[i][0] - limits.min.x) / (limits.max.x - limits.min.x));
+		// 	// uvs.push((this.vertex2d[i][1] - limits.min.y) / (limits.max.y - limits.min.y));
+		// }
+		// console.log("uvs: ", uvs);
+		geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
 	}
 	add_material(material)
 	{
