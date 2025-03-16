@@ -4,22 +4,22 @@ import { SubState } from "./SubStates";
 import { MainEngine } from "../utils/mainSetUp";
 
 class CssSubState extends SubState {
-	constructor(name, surface, element, setup, cleanup, updateSize, keyHandler){
-		super(name, surface, setup, cleanup, updateSize, keyHandler);
+	constructor(name, surface, element, setup, cleanup, updateSize, keyHandler, animate){
+		super(name, surface, setup, cleanup, updateSize, keyHandler, animate);
 		this.engine =  new MainEngine();;
 		this.element = element;
 		this.elementObj = new CSS2DObject(this.element);
 		this.elementObj.position.set(0, 0, 0);
 		this.surface.add(this.elementObj);
-		this.resize();
 	}
 
 	enter() 
 	{
-		this.element.style.visibility = "visible";
-		this.resize();
 		super.enter();
+		this.resize();
+		this.element.style.visibility = "visible";
 	}
+
     exit() 
 	{
 		this.element.style.visibility = "hidden";
@@ -30,15 +30,21 @@ class CssSubState extends SubState {
 		console.log("resize div");
 		this.engine.css2drenderer.setSize(window.innerWidth, window.innerHeight);
 		this.elementObj.updateMatrixWorld(true);
-		//get size of surface ?
-		//const size = this.surface.getSize();
-		// const width = size.width; //from normal to px
-		// this.element.style.width = `${width}px`;
-		// const height = size.height; //from normal to px
-		// this.element.style.height = `${height}px`;
+		this.surface.geometry.computeBoundingBox();
+		const bbox = this.surface.geometry.boundingBox;
+		const vector1 = new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.min.z);
+		const vector2 = new THREE.Vector3(bbox.max.x, bbox.max.y, bbox.max.z);
+		vector1.project(this.engine.camera);
+		vector2.project(this.engine.camera);
+		const widthInPixels = Math.abs(vector2.x - vector1.x) * window.innerWidth;
+		const heightInPixels = Math.abs(vector2.y - vector1.y) * window.innerHeight;
+		this.element.style.width =`${widthInPixels}px`;
+		this.element.style.height = `${heightInPixels}px`;
+		super.resize();
 	}
 	animate(){
 		this.engine.css2drenderer.render(this.engine.scene, this.engine.camera);
+		super.animate();
 	}
 }
 
