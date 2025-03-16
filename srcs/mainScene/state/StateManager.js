@@ -4,7 +4,6 @@ class StateManager {
     constructor(states = []) {
 		if (StateManager.instance)
 			return StateManager.instance;
-		console.log("first state");
         this.states = states;
 		if (this.states.length > 0) this.changeState(0);
         document.addEventListener('keydown', (event) => this.handleKeyPress(event));
@@ -33,10 +32,10 @@ class StateManager {
 		if (view && view.change === "state")
 			this.changeState(view.index || undefined);
     }
-    resize() { this.currentState?.resize(); }
+    resize() {this.currentState?.resize(); }
 	animate() { this.currentState?.animate(); }
 	isActive() { return this.currentState?.isActive(); }
-	which() { console.log("state: ", this.currentStateIndex, this.currentState.name, "substate: ", this.currentState.currentSubstateIndex, this.currentState.currentSubstate.name);}
+	which() {console.log("state: ", this.currentStateIndex, this.currentState.name, "substate: ", this.currentState.currentSubstateIndex, this.currentState.currentSubstate?.name);}
 }
 
 export { StateManager }

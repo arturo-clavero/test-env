@@ -3,7 +3,6 @@ import {MainEngine} from '../utils/mainSetUp.js';
 
 const engine = new MainEngine();
 
-console.log("scene 1 loading");
 const secondaryScene = new THREE.Scene();
 const secondaryCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 
@@ -29,8 +28,6 @@ const cube = new THREE.Mesh(geometry, material);
 cube.receiveShadow = true;
 cube.castShadow = true;
 secondaryScene.add(cube);
-console.log("THREE VERSION!", THREE.REVISION);
-console.log(engine.renderer.capabilities.isWebGL2); // Should print `true`
 
 // const renderTarget = new THREE.WebGLMultisampleRenderTarget(
 //     window.innerWidth, 

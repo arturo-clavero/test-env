@@ -5,9 +5,6 @@ class State {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
-		console.log("name: ", this.name);
-		console.log("move: ", this.cameraMovement);
-		console.log("subs: ", this.substates);
 		if (this.substates.length > 0) this.changeSubstate(0);
     }
 	addSubstate(substates){

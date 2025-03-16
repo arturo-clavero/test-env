@@ -13,9 +13,6 @@ import { SubState } from '../state/SubStates';
 
 
 // CREATE MODEL
-console.log("vertex of front!: ", part_sym_2d.shapes[0].geometry.attributes.position.array);
-console.log("uv of front!: ", part_sym_2d.shapes[0].geometry.attributes.uv.array);
-
 const obj1 = new Object(part_sym_2d);
 obj1.self.position.z = 3;
 

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { order_path, update_min_max } from '../utils/utils';
+import { or, orthographicDepthToViewZ } from 'three/tsl';
 
 function get_geometry_normal_vector(geometry)
 {
@@ -27,30 +28,24 @@ function reverse_order_in_pairs(points){
 	points = new_points;
 }
 
-// function rotate(normal, axis){
-// 			// if (normal.x != axis.x || normal.y != axis.y || normal.z != axis.z)
-// 			// {
-// 			// 	if (normal.x != Math.abs(axis.x) || normal.y != Math.abs(axis.y) || normal.z != Math.abs(axis.z))
-// 			// 	{
-// 					// console.log("rotate");
-// 					const angle = Math.acos(axis.dot(normal));
-// 					const rotationAxis = axis.cross(normal).normalize();
-// 					object.rotateOnAxis(rotationAxis, angle);
-// 			// 	}
-// 			// 	else
-// 			// 	{
-// 			// 		object.rotation.set(normal.x *-1, normal.y * -1, normal.z * -1);
-// 			// 		console.log("inverse rotate");
-// 			// 	}
-// 			// }
-// }
+function clean_vector(v, decimals = 5) {
+    let factor = Math.pow(10, decimals);
+    return new THREE.Vector3(
+        Math.round((Math.abs(v.x) < 1e-10 ? 0 : v.x) * factor) / factor,
+        Math.round((Math.abs(v.y) < 1e-10 ? 0 : v.y) * factor) / factor,
+        Math.round((Math.abs(v.z) < 1e-10 ? 0 : v.z) * factor) / factor
+    );
+}
+
 class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
 		this.z = move_back;
 		// console.log(points);
 		this.vertex3d = [];
+		// console.log("points: ", points);
 		this.vertex3d = points.length == 0 ? []: order_path(points);
+		// console.log("order path: ", this.vertex3d);
 		this.vertex2d = [];
 		this.geometry = points.length == 0 ? geometry : this.custom_geo(this.vertex3d);
 		this.material = null;
@@ -87,38 +82,22 @@ class Shape {
 	}
 	calc_uvs(geometry)
 	{
-		const curr_normal = get_geometry_normal_vector(geometry);
-		const target = new THREE.Vector3(0, 0, 1);
-		// const angle = Math.acos(axis.dot(normal));
-		// const rotationAxis = axis.cross(normal).normalize();
-		let quaternion = new THREE.Quaternion();
-		quaternion.setFromUnitVectors(curr_normal, target);
-		this.vertex3d.forEach(p => this.vertex2d.push(new THREE.Vector3(p[0], p[1], p[2])));
-		// console.log("vertex before.. ", this.vertex2d);
-		this.vertex2d.forEach(v => v.applyQuaternion(quaternion));
-		// console.log("vertex after.. ", this.vertex2d);
+		let curr = get_geometry_normal_vector(geometry);
+		let target = new THREE.Vector3(0, 0, 1);
+		let quaternion = new THREE.Quaternion().setFromUnitVectors(curr, target);
+		this.vertex2d = this.vertex3d.map(p => {
+			let v = new THREE.Vector3(p[0], p[1], p[2]);
+			v.applyQuaternion(quaternion);
+			return clean_vector(v);  // Rounding small values
+		});
 		const limits = update_min_max(this.vertex2d);
 		const min = limits.min[0] < limits.min[1] ? limits.min[0] : limits.min[1];
 		const max = limits.max[0] > limits.max[1] ? limits.max[0] : limits.max[1];
-		// console.log("limits: ", limits);
-		const uvs =[]
+		const uvs =[];
 		this.vertex2d.forEach((v)=>{
-			let x = (v.x - min) / (max - min);
-			let y = (v.y - min) / (max - min);
-			// console.log("x: ", x);
-			// console.log("y: ", y);
-			uvs.push(x);
-			uvs.push(y);
+			uvs.push((v.x - min) / (max - min));
+			uvs.push((v.y - min) / (max - min));
 		});
-		// for (let i = 0; i < this.vertex2d.length; i++){
-		// 	let x  = (this.vertex2d[i][0] - limits.min.x) / (limits.max.x - limits.min.x);
-		// 	let y = (this.vertex2d[i][1] - limits.min.y) / (limits.max.y - limits.min.y);
-
-			
-		// 	// uvs.push((this.vertex2d[i][0] - limits.min.x) / (limits.max.x - limits.min.x));
-		// 	// uvs.push((this.vertex2d[i][1] - limits.min.y) / (limits.max.y - limits.min.y));
-		// }
-		// console.log("uvs: ", uvs);
 		geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
 	}
 	add_material(material)
@@ -156,13 +135,6 @@ class Shape {
 		}
 		this.self.material.needsUpdate = true;
 	}
-
-	get_mesh(){
-		if (this.self)
-			return this.self;
-		console.log("Error: no mesh!");
-	}
-
 	get_borders(lineBasicMaterial){
 		const border = new THREE.LineLoop(this.geometry, lineBasicMaterial);
 		if (this.z != 0)
@@ -173,20 +145,22 @@ class Shape {
 	}
 
 	get_points(xPercent, yPercent){
-		let limits = update_min_max(this.vertex);
-		//console.log("limits: ", limits);
+		let limits = update_min_max(this.vertex2d);
+		let x = limits.min[0] + ((limits.max[0]- limits.min[0]) * xPercent);
+		let y = limits.min[1] + ((limits.max[1]- limits.min[1]) * yPercent);
+		let z = limits.min[2];
+		const curr = new THREE.Vector3(0, 0, 1);
+		const target = get_geometry_normal_vector(this.geometry);
+		console.log("this v3d: ", this.vertex3d);
+		if (curr.x == target.x && curr.y == target.y && curr.z == target.z)
+			return [x, y, this.vertex3d[0][2]];
+		let point = new THREE.Vector3(x, y, z);
 
-		let x1 = limits.min[0], x2 = limits.max[0], y1 = limits.min[1], y2 = limits.max[1];
-		let x = x1 + ((x2- x1) * xPercent);
-		let y = y1 + ((y2- y1) * yPercent);
-		//console.log("x ", x, "y ", y);
-		let f = (x2 - x1) * (y2 - y1)
-		let z = ((((x2 - x) * (y2 - y)) / (f)) * this.vertex[0][2]) +
-				((((x - x1) * (y2 - y)) / (f)) * this.vertex[1][2]) + 
-				((((x2 - x) * (y - y1)) / (f)) * this.vertex[2][2]) +
-				((((x - x1) * (y - y1)) / (f)) * this.vertex[3][2]);
-		return [x, y, z];
+		let quaternion = new THREE.Quaternion().setFromUnitVectors(curr, target);
+		let transformed_point = clean_vector(point.applyQuaternion(quaternion));
+		return [transformed_point.x, transformed_point.y, transformed_point.z];
 	}
+
 	get_normal(point, parentComponent){
 		if (this.normal == null)
 		{
@@ -196,14 +170,19 @@ class Shape {
 			raycaster.set(origin, this.normal);
 			const intersection = raycaster.intersectObject(parentComponent);
 			const validIntersections = [];
+			console.log("origin", origin);
+			console.log("curr normal / ray dir: ", this.normal);
+
 			for (let i = 0; i < intersection.length; i++)
 			{
-				if (intersection[i].distance == 0 && ! intersection[i].object.userData.raycaster)
+				if (!(intersection[i].distance == 0 && ! intersection[i].object.userData.raycaster))
 					validIntersections.push(intersection[i]);
 			}
 			if (validIntersections.length > 0)
 			{
+				console.log("INCORRECT NORMAL!");
 				this.geometry.index.array = this.geometry.index.array.reverse();
+				this.normal = get_geometry_normal_vector(this.geometry);
 				reverse_order(this.vertex2d);
 				reverse_order(this.vertex3d);
 				reverse_order_in_pairs(this.geometry.attributes.uv);

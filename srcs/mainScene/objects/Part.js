@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Shape } from "./Shape";
 import { order_path, mapToCenter } from '../utils/utils';
+import { objectPosition } from 'three/tsl';
 
 class Part {
 	constructor(pointsLeftXY, pointsRightXY, materials){
@@ -27,19 +28,29 @@ class Part {
 			for (let i = 0; i < points.length; i++)
 				points[i] = [points[i][0], points[i][1], 0];
 		}
-		points = mapToCenter(points, thickness);
-		points = order_path(points);
-		this.baseShape = new Shape(points);
-		this.shapes.push(this.baseShape);
-		this.shapes.push(new Shape([], thickness, this.baseShape.geometry.clone()));
-		for (let i = points.length -1 ; i >= 0; i--){
-			const curr = points[i];
-			const next = i + 1 < points.length ? points[i + 1] : points[0];
-			const curr_extruded = [curr[0], curr[1], curr[2] - thickness];
-			const next_extruded = [next[0], next[1], next[2] - thickness];
-			this.shapes.push(new Shape([curr, next, next_extruded, curr_extruded]));
-		}
+		let t_points = points.map(p => {
+			let v = [p[0], p[1], thickness];
+			return v;
+		})
+		return this.init_asymetrical(points, t_points);
 	}
+	// 	points = mapToCenter(points, thickness);
+	// 	points = order_path(points);
+	// 	this.baseShape = new Shape(points);
+	// 	this.shapes.push(this.baseShape);
+	// 	// let t_points = points.map(p => {
+	// 	// 	let v = [p[0], p[1], thickness];
+	// 	// 	return v;
+	// 	// })
+	// 	this.shapes.push(new Shape(t_points));
+	// 	for (let i = points.length -1 ; i >= 0; i--){
+	// 		const curr = points[i];
+	// 		const next = i + 1 < points.length ? points[i + 1] : points[0];
+	// 		const curr_extruded = [curr[0], curr[1], curr[2] - thickness];
+	// 		const next_extruded = [next[0], next[1], next[2] - thickness];
+	// 		this.shapes.push(new Shape([curr, next, next_extruded, curr_extruded]));
+	// 	}
+	// }
 	init_asymetrical(pLeft, pRight){
 		const newPoints = mapToCenter(pLeft, pRight);
 		pRight = order_path(newPoints.right);
@@ -76,6 +87,14 @@ class Part {
 		for (let i = 0; i < this.shapes.length; i++)
 			this.self.add(this.shapes[i].self);
 		this.self.userData.instance = this;
+		// let box = new THREE.Box3().setFromObject(this.self);
+   		// let center = new THREE.Vector3();
+		// console.log("center: ", center);
+    	// box.getCenter(center);
+		// this.self.children.forEach(child => {
+		// 		child.position.sub(center);
+		// 	});
+
 	}
 	add_borders(map, lineBasicMaterial){
 		if (!lineBasicMaterial)
@@ -90,50 +109,42 @@ class Part {
 		}
 		if (map.length == 0)
 		{
-			console.log("adding all borders")
 			for (let i = 0; i < this.shapes.length; i++)
 				map.push(i);
 		}
-		else
-			console.log("adding border...");
 		for (let i = 0; i < map.length; i++)
 		{
 			let material = Array.isArray(lineBasicMaterial) ? lineBasicMaterial[i] : lineBasicMaterial;
-			console.log("adding to ", map[i]);
 			this.self.add(this.shapes[map[i]].get_borders(material));
 		}
 	}
 
 	add_object(xPercent, yPercent, index, object, obj_axis){
+		//GET HALF HEIGHT OF OBJ!
+		object.updateMatrixWorld();
 		const bbox = new THREE.Box3().setFromObject(object);
-		const object_half_len = (bbox.max.y - bbox.min.y) / 2;
+		const object_half_len = (bbox.max.y - bbox.min.y) * 0.5;
+		console.log("object_half_lenL ", object_half_len);
+
+		//GET POINT OF INTERSECTION
 		const surface = this.shapes[index];
 		const point = surface.get_points(xPercent, yPercent);
-		const normal = surface.get_normal(point, this.self);
-		//console.log("normal ", normal);
-		const axis = new THREE.Vector3(obj_axis[0], obj_axis[1], obj_axis[2]);
-		console.log("axis ", axis);
-		if (normal.x != axis.x || normal.y != axis.y || normal.z != axis.z)
-		{
-			if (normal.x != Math.abs(axis.x) || normal.y != Math.abs(axis.y) || normal.z != Math.abs(axis.z))
-			{
-				console.log("rotate");
-				const angle = Math.acos(axis.dot(normal));
-				const rotationAxis = axis.cross(normal).normalize();
-				object.rotateOnAxis(rotationAxis, angle);
-			}
-			else
-			{
-				object.rotation.set(normal.x *-1, normal.y * -1, normal.z * -1);
-				console.log("inverse rotate");
-			}
-		}
-		console.log("normal", normal);
+		console.log("3d p: ", surface.vertex3d);
+		console.log("2d p : ", surface.vertex2d);
+		console.log("point: ", point);
+
+		const curr_orientation = new THREE.Vector3(obj_axis[0], obj_axis[1], obj_axis[2]);
+		console.log("curr orientation AAXIAS: ", obj_axis);
+		const target = surface.get_normal(point, this.self);
+		let quaternion = new THREE.Quaternion();
+		quaternion.setFromUnitVectors(curr_orientation, target);
+		object.applyQuaternion(quaternion);
 		object.position.set(
-			point[0] + (normal.x * object_half_len),
-			point[1] + (normal.y * object_half_len),
-			point[2] + (normal.z * object_half_len) 
+			point[0] + (target.x * object_half_len),
+			point[1] + (target.y * object_half_len),
+			point[2] + (target.z * object_half_len) 
 		);
+		console.log("obj: ", object.position);
 		this.self.add(object);
 		this.joined_parts.push(object);
 	}
