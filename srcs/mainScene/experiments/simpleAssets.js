@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Part } from '../objects/Part'
 
-const materialsgroup = [
+const materialsgroup = [//phong
 	new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }),
 	new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide}),
 	new THREE.MeshStandardMaterial({ color: 0xfff000, side: THREE.DoubleSide }),

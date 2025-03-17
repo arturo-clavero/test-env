@@ -8,13 +8,8 @@ class StateManager {
 		if (this.states.length > 0) this.changeState(0);
         document.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		window.addEventListener('popstate', (event) => {
-			console.log("pop");
-			// event.state is the state object that was passed to pushState or replaceState
-			if (event.state) {
-			  console.log('Navigated to state:', event.state.num);
+			if (event.state && event.state.num)
 			  this.changeState(event.state.num, false);
-			  // You can update your UI or application state based on the value
-			}
 		  });
 		StateManager.instance = this;
 	}

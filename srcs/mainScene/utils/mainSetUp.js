@@ -68,12 +68,9 @@ class MainEngine {
 	resize(){
 		console.log("resize?");
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		
 		const aspectRatio =  window.innerWidth / window.innerHeight;
 		//TODO Tweak FOV to maintain smae look ... 
 		this.camera.aspect = aspectRatio;
-		// const newFov = 75 * (aspectRatio / 1);  // You can tweak this factor for your needs
-  		// this.camera.fov = newFov;
 		this.camera.updateProjectionMatrix();
 		console.log("check?", this.stateManager);
 		this.stateManager.resize();

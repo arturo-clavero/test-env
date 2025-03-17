@@ -27,7 +27,6 @@ class CssSubState extends SubState {
 	}
     resize()
 	{ 
-		console.log("resize div");
 		this.engine.css2drenderer.setSize(window.innerWidth, window.innerHeight);
 		this.elementObj.updateMatrixWorld(true);
 		this.surface.geometry.computeBoundingBox();
@@ -66,16 +65,14 @@ class MeshSubState extends SubState {
 		this.surface.material = this.default_material;
 		super.exit(); 
 	}
-
-    resize(){
-		//get size of surface ?
-		//const size = this.surface.getSize(); 
-		//TOD MAGIC TO GET SIZE OF SURFACE
-		// this.secondaryScene.camera.aspect = size.width / size.height;
-		// this.secondaryScene.camera.updateProjectionMatrix();
-		// this.secondaryScene.renderTarget.setSize(size.width, size.height);
-	}
-	
+    // resize(){
+	// 	//get size of surface ?
+	// 	//const size = this.surface.getSize(); 
+	// 	//TOD MAGIC TO GET SIZE OF SURFACE
+	// 	// this.secondaryScene.camera.aspect = size.width / size.height;
+	// 	// this.secondaryScene.camera.updateProjectionMatrix();
+	// 	// this.secondaryScene.renderTarget.setSize(size.width, size.height);
+	// }
 	animate(){
 		this.secondaryScene?.animate(); 
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);

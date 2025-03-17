@@ -41,11 +41,8 @@ class Shape {
 	constructor(points, move_back = 0, geometry)
 	{
 		this.z = move_back;
-		// console.log(points);
 		this.vertex3d = [];
-		// console.log("points: ", points);
 		this.vertex3d = points.length == 0 ? []: order_path(points);
-		// console.log("order path: ", this.vertex3d);
 		this.vertex2d = [];
 		this.geometry = points.length == 0 ? geometry : this.custom_geo(this.vertex3d);
 		this.material = null;
@@ -76,8 +73,7 @@ class Shape {
 			shape.closePath();
 			geometry = new THREE.ShapeGeometry(shape);
 		}
-		const uvs = this.calc_uvs(geometry);// const uvs = new Float32Array([0, 1, 0, 0, 1, 0, 1, 1]);
-		
+		const uvs = this.calc_uvs(geometry);
 		return geometry;
 	}
 	calc_uvs(geometry)
@@ -88,7 +84,7 @@ class Shape {
 		this.vertex2d = this.vertex3d.map(p => {
 			let v = new THREE.Vector3(p[0], p[1], p[2]);
 			v.applyQuaternion(quaternion);
-			return clean_vector(v);  // Rounding small values
+			return clean_vector(v);
 		});
 		const limits = update_min_max(this.vertex2d);
 		const min = limits.min[0] < limits.min[1] ? limits.min[0] : limits.min[1];
@@ -151,7 +147,6 @@ class Shape {
 		let z = limits.min[2];
 		const curr = new THREE.Vector3(0, 0, 1);
 		const target = get_geometry_normal_vector(this.geometry);
-		console.log("this v3d: ", this.vertex3d);
 		if (curr.x == target.x && curr.y == target.y && curr.z == target.z)
 			return [x, y, this.vertex3d[0][2]];
 		let point = new THREE.Vector3(x, y, z);
@@ -170,9 +165,6 @@ class Shape {
 			raycaster.set(origin, this.normal);
 			const intersection = raycaster.intersectObject(parentComponent);
 			const validIntersections = [];
-			console.log("origin", origin);
-			console.log("curr normal / ray dir: ", this.normal);
-
 			for (let i = 0; i < intersection.length; i++)
 			{
 				if (!(intersection[i].distance == 0 && ! intersection[i].object.userData.raycaster))
@@ -180,7 +172,6 @@ class Shape {
 			}
 			if (validIntersections.length > 0)
 			{
-				console.log("INCORRECT NORMAL!");
 				this.geometry.index.array = this.geometry.index.array.reverse();
 				this.normal = get_geometry_normal_vector(this.geometry);
 				reverse_order(this.vertex2d);
@@ -190,10 +181,8 @@ class Shape {
 		}
 		return this.normal;
 	}
-	add_onclick(ft) { console.log("adding on click"); this.onclick = ft};
+	add_onclick(ft) {this.onclick = ft};
 	handle_click(){
-		console.log("called handle click...");
-		console.log(this);
 		if (this.onclick)
 		{
 			console.log(this);

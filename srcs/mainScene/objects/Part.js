@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { Shape } from "./Shape";
 import { order_path, mapToCenter } from '../utils/utils';
-import { objectPosition } from 'three/tsl';
 
 class Part {
 	constructor(pointsLeftXY, pointsRightXY, materials){
@@ -34,23 +33,6 @@ class Part {
 		})
 		return this.init_asymetrical(points, t_points);
 	}
-	// 	points = mapToCenter(points, thickness);
-	// 	points = order_path(points);
-	// 	this.baseShape = new Shape(points);
-	// 	this.shapes.push(this.baseShape);
-	// 	// let t_points = points.map(p => {
-	// 	// 	let v = [p[0], p[1], thickness];
-	// 	// 	return v;
-	// 	// })
-	// 	this.shapes.push(new Shape(t_points));
-	// 	for (let i = points.length -1 ; i >= 0; i--){
-	// 		const curr = points[i];
-	// 		const next = i + 1 < points.length ? points[i + 1] : points[0];
-	// 		const curr_extruded = [curr[0], curr[1], curr[2] - thickness];
-	// 		const next_extruded = [next[0], next[1], next[2] - thickness];
-	// 		this.shapes.push(new Shape([curr, next, next_extruded, curr_extruded]));
-	// 	}
-	// }
 	init_asymetrical(pLeft, pRight){
 		const newPoints = mapToCenter(pLeft, pRight);
 		pRight = order_path(newPoints.right);
@@ -82,19 +64,19 @@ class Part {
 		if (!this.self);
 			this.init_group();		
 	}
+	center_group(){
+		let box = new THREE.Box3().setFromObject(this.self);
+   		let center = new THREE.Vector3();
+		console.log("center: ", center);
+    	box.getCenter(center);
+		this.self.children.forEach(child => { child.position.sub(center);});
+	}
 	init_group(){
 		this.self = new THREE.Group();
 		for (let i = 0; i < this.shapes.length; i++)
 			this.self.add(this.shapes[i].self);
 		this.self.userData.instance = this;
-		// let box = new THREE.Box3().setFromObject(this.self);
-   		// let center = new THREE.Vector3();
-		// console.log("center: ", center);
-    	// box.getCenter(center);
-		// this.self.children.forEach(child => {
-		// 		child.position.sub(center);
-		// 	});
-
+		//this.center_group();
 	}
 	add_borders(map, lineBasicMaterial){
 		if (!lineBasicMaterial)
@@ -120,21 +102,14 @@ class Part {
 	}
 
 	add_object(xPercent, yPercent, index, object, obj_axis){
-		//GET HALF HEIGHT OF OBJ!
 		object.updateMatrixWorld();
 		const bbox = new THREE.Box3().setFromObject(object);
 		const object_half_len = (bbox.max.y - bbox.min.y) * 0.5;
-		console.log("object_half_lenL ", object_half_len);
 
-		//GET POINT OF INTERSECTION
 		const surface = this.shapes[index];
 		const point = surface.get_points(xPercent, yPercent);
-		console.log("3d p: ", surface.vertex3d);
-		console.log("2d p : ", surface.vertex2d);
-		console.log("point: ", point);
 
 		const curr_orientation = new THREE.Vector3(obj_axis[0], obj_axis[1], obj_axis[2]);
-		console.log("curr orientation AAXIAS: ", obj_axis);
 		const target = surface.get_normal(point, this.self);
 		let quaternion = new THREE.Quaternion();
 		quaternion.setFromUnitVectors(curr_orientation, target);
@@ -144,7 +119,6 @@ class Part {
 			point[1] + (target.y * object_half_len),
 			point[2] + (target.z * object_half_len) 
 		);
-		console.log("obj: ", object.position);
 		this.self.add(object);
 		this.joined_parts.push(object);
 	}
