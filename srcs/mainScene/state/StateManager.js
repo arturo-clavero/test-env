@@ -12,7 +12,7 @@ class StateManager {
 			// event.state is the state object that was passed to pushState or replaceState
 			if (event.state) {
 			  console.log('Navigated to state:', event.state.num);
-			  this.changeState(event.state.num);
+			  this.changeState(event.state.num, false);
 			  // You can update your UI or application state based on the value
 			}
 		  });
@@ -29,11 +29,12 @@ class StateManager {
 		if (! this.currentState)
 			this.changeState(0);
 	}
-    changeState(index = (this.currentStateIndex + 1) % this.states.length) {
+    changeState(index = (this.currentStateIndex + 1) % this.states.length, shouldPushHistory = true) {
         if (this.currentState) this.currentState.exit();
         this.currentStateIndex = index;
         this.currentState = this.states[this.currentStateIndex];
-		window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
+		if (shouldPushHistory)
+			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
         this.currentState.enter();
 
     }
