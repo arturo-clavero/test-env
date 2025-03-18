@@ -11,7 +11,8 @@ function moveCamera(data) {
 		tl.to(engine.camera.position, { 
 			x: data.pos[0], 
 			y: data.pos[1], 
-			z: data.pos[2] 
+			z: data.pos[2],
+			onUpdate: () => engine.stateManager.resize()
 		}, 0);
 	}
 	if (data.rot) {

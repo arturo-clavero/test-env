@@ -1,130 +1,119 @@
 
-import { CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
-import { RGBELoader } from 'three/examples/jsm/Addons.js';
+import { StateManager } from '../state/StateManager';
+import { Overlay, FlexBox, Text, Input, Button} from './Element';
 
-const form1_div = document.createElement('div');
-form1_div.className = 'label';
-form1_div.style.backgroundColor = 'transparent';
-form1_div.style.width = '300px';
-form1_div.style.height = '300px';
-form1_div.style.boxSizing = 'border-box';
-form1_div.style.padding = '0';
-form1_div.style.border = 'none';
+const overlay = new Overlay();
 
-form1_div.style.visibility = "hidden";
+const aliasInput = new Input(true);
+const oponentInput = new Input();
+const enterButton = new Button("ENTER", ()=>{
+	console.log('HELLO!?');
+	const stateManager = new StateManager();
+	stateManager.currentState.changeSubstate();
+});
 
-const inner_div = document.createElement('div');
-inner_div.style.height = '100%';
-inner_div.style.width = '100%';
-inner_div.style.display = 'flex';  // Flexbox to center and manage children
-inner_div.style.flexDirection = 'column';  // Stack children vertically
-inner_div.style.justifyContent = 'center';  // Center children vertically
-inner_div.style.alignItems = 'center';  // Center children horizontally
-form1_div.appendChild(inner_div);
+overlay.add(
+	new FlexBox({
+		dir: "column", 
+		children: [
+			new FlexBox({
+				dir: "column",
+				mainAxis: "space-evenly",
+				children: [
+					new Text("Your Alias"),
+					aliasInput,
+				],
+				full: true,
+			}),
+			new FlexBox({
+				dir: "column",
+				mainAxis: "space-evenly",
+				children: [
+					new Text("Player 2 Alias"),
+					oponentInput,
+				],
+				full: true,
+			}),
+		],
+		flex: 1,
+		full: true,
+	})
+);
 
-const aliasLabel = document.createElement('label');
-aliasLabel.textContent = 'Your alias:';
-aliasLabel.style.marginBottom = '4%';
-inner_div.appendChild(aliasLabel);
+overlay.add(
+	new FlexBox({
+		dir: "row", 
+		mainAxis:"end", 
+		children: [
+			enterButton
+		]
+	})
+);
 
-const aliasInput = document.createElement('input');
-aliasInput.id = "aliasInput";
-aliasInput.type = 'text';
-aliasInput.autofocus = true;  // <-- Automatically focuses this input
-aliasInput.style.marginBottom = '10%';
-aliasInput.style.textAlign = 'center';
-aliasInput.style.backgroundColor = 'transparent';
-aliasInput.style.border = 'none';
-aliasInput.style.outline = 'none';
-inner_div.appendChild(aliasInput);
+enterButton.element.addEventListener('click', () => {
+	console.log('Button clicked!');
+  });
 
-const opponentLabel = document.createElement('label');
-opponentLabel.textContent = "Player 2 alias:";
-opponentLabel.style.marginBottom = '4%';
-inner_div.appendChild(opponentLabel);
-
-const opponentInput = document.createElement('input');
-opponentInput.id = 'oponentInput';
-opponentInput.type = 'text';
-// opponentInput.style.marginBottom = '5%';
-opponentInput.style.textAlign = 'center';
-opponentInput.style.backgroundColor = 'transparent';
-opponentInput.style.border = 'none';
-opponentInput.style.outline = 'none';
-inner_div.appendChild(opponentInput);
-
-const enterLabel = document.createElement('label');
-enterLabel.textContent = "ENTER";
-// enterLabel.style.marginBottom = '2%';
-enterLabel.style.marginLeft= '95%';
-enterLabel.style.visibility = "visible";
-inner_div.appendChild(enterLabel);
-
-document.body.appendChild(form1_div);
 function keyHandler(event){
-	console.log("reached rest keyhandler custom ft!");
     if (event.key === 'Enter') {
-        if (document.activeElement != opponentInput) {
+        if (document.activeElement != oponentInput.element) {
             event.preventDefault();
-            opponentInput.focus();
+            oponentInput.element.focus();
         }
 		else {
             event.preventDefault();
-			//EXIT
-			console.log("you: ", aliasInput.value, "oponent: ", opponentInput.value);
-			aliasInput.value = "";
-			opponentInput.value = "";
-			enterLabel.style.visibility = "hidden";
+
 			return {change : "substate"};
         }
     } else if (event.key === 'ArrowDown') {
-        if (document.activeElement === aliasInput)
-            opponentInput.focus();
+        if (document.activeElement === aliasInput.element)
+            oponentInput.element.focus();
     } else if (event.key === 'ArrowUp') {
-        if (document.activeElement === opponentInput)
-            aliasInput.focus();
+        if (document.activeElement === oponentInput.element)
+            aliasInput.element.focus();
 			event.preventDefault();
     }
-	else if (document.activeElement != opponentInput)
-		aliasInput.focus()
+	else if (document.activeElement != oponentInput.element)
+		aliasInput.element.focus()
 	return undefined;
 }
-function resize(){
-	const w = form1_div.offsetWidth;
-	const h = form1_div.offsetHeight;
 
-	console.log("w: ", w);
-	console.log("h: ", h);
-	aliasInput.style.width = `${w * 0.9}px`;
-  	opponentInput.style.width = `${w * 0.9}px`;
-  	aliasInput.style.height = `${h * 0.1}px`;
-  	opponentInput.style.height = `${h * 0.1}px`;
-  	const p = 0.08;
-	  console.log("w: ", w);
-	  console.log("2h: ", h);
+function resize(){
+	const w = overlay.element.offsetWidth;
+	const h = overlay.element.offsetHeight;
+	aliasInput.element.style.width = `${w * 0.9}px`;
+	oponentInput.element.style.width = `${w * 0.9}px`;
+  	aliasInput.element.style.height = `${h * 0.1}px`;
+  	oponentInput.element.style.height = `${h * 0.1}px`;
+  	const p = 0.1;
  	const fontSize = Math.min( w  * p, h * p);
-	console.log("fontsize: ", fontSize);
-	form1_div.style.fontSize = `${fontSize}px`;
-	aliasInput.style.fontSize = `${fontSize}px`;
-	opponentInput.style.fontSize = `${fontSize}px`;
+	overlay.element.style.fontSize = `${fontSize}px`;
+	aliasInput.element.style.fontSize = `${fontSize}px`;
+	oponentInput.element.style.fontSize = `${fontSize}px`;
 }
 
 function enter(){
-	aliasInput.focus();
-	console.log("form enter");
-	aliasInput.value = "";
+	aliasInput.element.focus();
+	aliasInput.element.value = "";
+}
+
+function exit(){
+	console.log("you: ", aliasInput.element.value, "oponent: ", oponentInput.element.value);
+	aliasInput.element.value = "";
+	oponentInput.element.value = "";
+	enterButton.style.visibility = "hidden";
 }
 
 function animate(){
 	const r =  Math.random() * (10);
 	if (r > 9)
 	{
-		if (enterLabel.style.visibility === "visible")
-			enterLabel.style.visibility = "hidden";
+		if (enterButton.element.style.visibility === "visible")
+			enterButton.element.style.visibility = "hidden";
 		else
-			enterLabel.style.visibility = "visible";
+			enterButton.element.style.visibility = "visible";
 	}
 }
 
-const form1 = {'div': form1_div, 'keyHandler': keyHandler,'resize' : resize, "enter":enter, "animate": animate}
+const form1 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : resize, "enter":enter, "exit":exit, "animate": animate}
 export { form1};
