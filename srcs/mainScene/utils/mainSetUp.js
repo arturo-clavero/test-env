@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Modern import path for modules
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
-import { StateManager } from '../state/StateManager';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -9,7 +8,8 @@ class MainEngine {
 		this.setUpScene();
 		this.setUpRenderer();
 		this.setUpLights();
-		this.controls = new OrbitControls(this.camera, this.css2drenderer.domElement);
+		// this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+		// this.controls = new OrbitControls(this.camera, this.css2drenderer.domElement);
 		window.addEventListener('resize', (event) => {this.resize()});
 		window.addEventListener('click', (event) => {this.click(event)});
 		
@@ -54,7 +54,7 @@ class MainEngine {
 	}
 	animate(){
 		// console.log("background animate!");
-		this.controls.update();
+		// this.controls.update();
 		this.renderer.render(this.scene, this.camera);
 		this.stateManager.animate();
 	}

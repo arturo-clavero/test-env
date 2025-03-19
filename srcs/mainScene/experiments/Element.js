@@ -69,7 +69,8 @@ class Input{
 class Button{
 	constructor(content, onClick, flex = 0)
 	{
-		this.element = document.createElement('button');
+		this.element = document.createElement('label');
+		// this.element.style.pointerEvents = 'all';
 		this.element.textContent = content;
 		// this.element.style.visibility = "hidden";
 		// this.element.addEventListener('mouseover', ()=>{
@@ -85,6 +86,16 @@ class Button{
 		}); 
 		if (flex > 0)
 			this.element.style.flex = flex;
+	}
+	animate(){
+		const r =  Math.random() * (10);
+		if (r > 9)
+		{
+			if (this.element.style.color === "transparent")
+				this.element.style.color = "black";
+			else
+				this.element.style.color = "transparent";
+		}
 	}
 }
 

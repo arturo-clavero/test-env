@@ -95,9 +95,11 @@ function resize(){
 function enter(){
 	aliasInput.element.focus();
 	aliasInput.element.value = "";
+	enterButton.element.style.visibility = "visible";
 }
 
 function exit(){
+	console.log("EXITING!!!");
 	console.log("you: ", aliasInput.element.value, "oponent: ", oponentInput.element.value);
 	aliasInput.element.value = "";
 	oponentInput.element.value = "";
@@ -105,14 +107,7 @@ function exit(){
 }
 
 function animate(){
-	const r =  Math.random() * (10);
-	if (r > 9)
-	{
-		if (enterButton.element.style.visibility === "visible")
-			enterButton.element.style.visibility = "hidden";
-		else
-			enterButton.element.style.visibility = "visible";
-	}
+	enterButton.animate();
 }
 
 const form1 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : resize, "enter":enter, "exit":exit, "animate": animate}
