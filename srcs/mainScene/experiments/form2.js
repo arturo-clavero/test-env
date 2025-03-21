@@ -33,7 +33,9 @@ const overlay = new Overlay([
 			children: [
 				new Button({
 					id: "enter-button", 
-					content: "ENTER", 
+					content: "ENTER",
+					activate: ()=>{this.extensions.text.tempChangeSize(1.25)} ,
+					deactivate: ()=>{this.extensions.text.revertSize();},
 					onClick: ()=>{new StateManager().currentState.changeSubstate();}
 				}),
 			]
@@ -79,7 +81,7 @@ function enter(){
 
 function exit(){
 	console.log("EXITING!!!");
-	console.log("you: ", aliasInput.element.value, "oponent: ", oponentInput.element.value);
+	console.log("you: ", userInput.element.value, "oponent: ", oponentInput.element.value);
 	userInput.element.value = "";
 	oponentInput.element.value = "";
 	enterButton.element.style.visibility = "hidden";
@@ -89,5 +91,5 @@ function animate(){
 	enterButton.animate();
 }
 
-const form1 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : ()=>{overlay.resize}, "enter":enter, "exit":exit, "animate": animate}
-export { form1};
+const form2 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : ()=>{overlay.resize()}, "enter":enter, "exit":exit, "animate": animate}
+export { form2};

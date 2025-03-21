@@ -69,6 +69,7 @@ class Overlay extends BaseDivElement{
 	resize(){
 		const w = this.element.offsetWidth;
 		const h = this.element.offsetHeight;
+		console.log("resize overlay");
 		this.getElementsWith("size").forEach(element => { element.extensions.size.updateSize(w, h);});
 		const fontSize = Math.min( w  * this.resizeFactor, h * this.resizeFactor);
 		this.getElementsWith("text").forEach(element => { element.extensions.text.updateSize(fontSize);});
@@ -76,7 +77,7 @@ class Overlay extends BaseDivElement{
 }
 
 class FlexBox extends BaseDivElement {
-	constructor({dir, mainAxis = "center", crossAxis = "center", marginTopBottom = 0.5, children = [], flex = 0, full = false, id = "flexbox"}){
+	constructor({dir, mainAxis = "center", crossAxis = "center", marginTop = '0.5%', marginLeft= '0%', marginBottom= '0.5%', children = [], flex = 0, full = false, id = "flexbox"}){
 		super(id, children);
 		// this.element = document.createElement('div');
 		if (full)
@@ -88,8 +89,9 @@ class FlexBox extends BaseDivElement {
 		this.element.style.flexDirection = dir;
 		this.element.style.justifyContent = mainAxis;
 		this.element.style.alignItems = crossAxis;
-		this.element.style.marginTop = `${marginTopBottom}%`;
-		this.element.style.marginBottom = `${marginTopBottom}%`;
+		this.element.style.marginLeft = marginLeft;
+		this.element.style.marginTop = marginTop;
+		this.element.style.marginBottom = marginBottom;
 		if (flex > 0) this.element.style.flex = flex;
 	}
 }
@@ -128,7 +130,12 @@ class TextExtension {
 	tempChangeSize(factor){
 		this.prevFontSize = this.currFontSize;
 		this.currFontSize *= factor;
+		console.log("element: ", this.element);
+		console.log("Prev font: ", this.prevFontSize);
+		console.log( " ", this.element.style.fontSize);
 		this.element.style.fontSize = `${this.currFontSize}px`;
+		console.log("Next font: ", this.currFontSize, " ", this.element.style.fontSize);
+
 	}
 	revertSize(){
 		this.currFontSize = this.prevFontSize;
@@ -170,24 +177,76 @@ class Input extends BaseNonDivElement{
 }
 
 class Button extends BaseNonDivElement{
-	constructor({id = "button", content, onClick, flex = 0, fontSize = 1, w, h})
+	constructor({id = "button", content, onClick, flex = 0, fontSize = 1, w, h, activate, deactivate})
 	{
 		super('label', id, flex, fontSize, w, h);
+		this.isSelected = false;
+		this.activate = ()=>{
+			console.log("mouse over");
+			if (this.isSelected == false)
+			{
+				console.log("activating");
+				activate(this);
+				this.isSelected = true;
+			}
+		}
+		this.deactivate = ()=>{
+			console.log("mouse out");
+			if (this.isSelected == true)
+			{
+				deactivate(this);
+				this.isSelected = false;
+			}
+		}
 		// this.element.style.pointerEvents = 'all';
 		this.element.textContent = content;
 		// this.element.style.visibility = "hidden";
-		this.element.addEventListener('mouseover', ()=>{ this.extensions.text.tempChangeSize(1.25);});
-		this.element.addEventListener('mouseout', ()=> { this.extensions.text.revertSize(1.25);});
+		this.element.addEventListener('mouseover', ()=>{this.activate()});
+		this.element.addEventListener('mouseout', ()=> { this.deactivate()});
 		this.element.addEventListener('click', ()=>{ onClick();}); 
 	}
 	animate(){
-		const r =  Math.random() * (10);
-		if (r > 9)
+		const r =  Math.random() * (100);
+		if (r > 90)
 		{
 			if (this.element.style.color === "transparent") this.element.style.color = "black";
-			else this.element.style.color = "transparent";
+			else if (r > 95) this.element.style.color = "transparent";
 		}
 	}
 }
 
-export {Overlay, FlexBox, Text, Input, Button,}
+class SwitchButton {
+	constructor(buttons){
+		this.buttons = buttons;
+		this.activeButton = buttons[0];
+		this.activeIndex = 0;
+	}
+	switch_active(nextButton, index){
+		if (index == undefined){
+			this.buttons.forEach((button, i) => {
+				if (button.id == buttonNext.id && button.content == buttonNext.content)
+					index = i;
+			})
+			this.activeIndex = index;
+		}
+		this.activeButton.deactivate();
+		this.activeButton = nextButton;
+		this.activeButton.activate();
+	}
+	switch(dir = "next"){
+		if (dir == "next")
+		{
+			this.activeIndex += 1;
+			if (this.activeIndex >= this.buttons.length)
+				this.activeIndex = 0;
+		}
+		else if (dir == "prev")
+		{
+			this.activeIndex -= 1;
+			if (this.activeIndex <= 0)
+				this.activeIndex = 0;
+		}
+		this.switch_active(this.buttons[this.activeIndex], this.activeIndex);
+	}
+}
+export {Overlay, FlexBox, Text, Input, Button, SwitchButton}

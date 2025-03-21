@@ -28,11 +28,9 @@ class StateManager {
         if (this.currentState) this.currentState.exit();
         this.currentStateIndex = index;
         this.currentState = this.states[this.currentStateIndex];
-		console.log('changin state.. ', shouldPushHistory);
 		if (shouldPushHistory)
 			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
         this.currentState.enter();
-
     }
 
     handleKeyPress(event) {

@@ -3,14 +3,20 @@ import { Object } from '../objects/Object'
 import { materialsgroup, singleMaterial, 
 		part_sym_2d, part_sym_3d, 
 		part_asym, part_asym_ang,
-		threeCube} from './simpleAssets';
-import { scene1 } from './scene1';
-import { form1 } from './div1';
+		threeCube} from './prev/simpleAssets';
+
 import { State } from '../state/States';
 import { MeshSubState , CssSubState} from '../state/SubStatesExtends';
 import { StateManager } from '../state/StateManager';
 import { SubState } from '../state/SubStates';
 
+import { start } from './start'
+import { form1 } from './form1';
+import { scene1 } from './scene1';
+import {end } from './end';
+
+console.log("end: ");
+console.log(end);
 
 // CREATE MODEL
 const obj1 = new Object(part_sym_2d);
@@ -19,16 +25,39 @@ obj1.self.position.z = 3;
 //CREATE SUBSTATES
 const surface = obj1.basePart.shapes[0];
 //0. REST - cube scene replace GAME START rest
+
+const startScreen = new CssSubState(
+	"start",
+	surface,
+	start.div,
+	start.enter,
+	start.exit,
+	start.resize,
+	(event)=> { return start.keyHandler(event);},
+	start.animate,
+)
+//1. REGISTRATION 
+const formScreen = new CssSubState(
+	"form",
+	surface,
+	form1.div,
+	form1.enter,
+	form1.exit,
+	form1.resize,
+	(event)=> { return form1.keyHandler(event);},
+	form1.animate,
+)
+
 const restScreen = new MeshSubState(
 	"rest", 
 	surface,
 	scene1,
-	null,
-	null,
+	()=>{console.log("entering rest screen....")},
+	()=>{console.log("exiting rest screen....")},
 	null,
 	(event)=>{ 
 		console.log("reached ft key rest")
-		if (event.key === 'c')
+		if (event.key === 'Enter')
 		{
 			console.log("next");
 			return {change : "substate"};
@@ -36,36 +65,21 @@ const restScreen = new MeshSubState(
 	}
 )
 
-//1. REGISTRATION 
-const formScreen = new CssSubState(
-	"form",
-	surface,
-	form1.div,
-	form1.enter,
-	null,
-	form1.resize,
-	(event)=> { return form1.keyHandler(event);},
-	form1.animate,
-)
-
 //2. GAME - cube scene replace actual game
-const endScreen = new MeshSubState(
+const endScreen = new CssSubState(
 	"end", 
 	surface,
-	scene1,
-	null,
-	null,
-	null,
+	end.div,
+	end.enter,
+	end.exit,
+	end.resize,
 	(event)=>{
-		if (event.key === 'q')
-			return {change : "state", index : 0}; 
-		if (event.key === 'c')
-			return {change : "substate", index : 1};
+		end.keyHandler();
 	}
 )
 
 //CREATE STATE
-const test = new State("test cube", {pos: [0,0,5], duration: 2, ease: "power2.inOut"}, [restScreen, formScreen, endScreen])
+const test = new State("test cube", {pos: [0,0,5], duration: 2, ease: "power2.inOut"}, [startScreen, formScreen, restScreen, endScreen])
 
 //CREATE MAIN SUBSSTATE
 const mainSub = new SubState("main controls", null, null, null, null, 
@@ -80,6 +94,7 @@ const mainSub = new SubState("main controls", null, null, null, null,
 	},
 	()=>{
 		restScreen.animate();
+		//here animate the start screens!
 	}
 )
 const main = new State("main view", {pos: [0,0,10], duration: 4, ease: "power2.inOut"}, [mainSub]);

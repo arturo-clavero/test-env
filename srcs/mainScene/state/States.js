@@ -23,9 +23,11 @@ class State {
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
+		console.log("about to go to next substate ... ");
+		console.log("index: ", this.currentSubstateIndex, "name : ", this.currentSubstate.name);
 		this.currentSubstate?.enter();
     }
-    enter() { 
+    enter() {
 		moveCamera(this.cameraMovement);
 		this.currentSubstate?.enter();
 	}

@@ -18,6 +18,7 @@ class CssSubState extends SubState {
 		super.enter();
 		this.resize();
 		this.element.style.visibility = "visible";
+		console.log("entering...");
 	}
 
     exit() 
