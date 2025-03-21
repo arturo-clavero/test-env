@@ -44,6 +44,9 @@ const userInput = overlay.getElementById("user-alias");
 const oponentInput = overlay.getElementById("oponent-alias");
 const enterButton = overlay.getElementById("enter-button");
 
+console.log("\n\n\nUSER INPUT!", userInput.element);
+
+
 function keyHandler(event){
     if (event.key === 'Enter') {
         if (document.activeElement != oponentInput.element) {
@@ -68,21 +71,6 @@ function keyHandler(event){
 	return undefined;
 }
 
-function resize()
-{
-	const w = overlay.element.offsetWidth;
-	const h = overlay.element.offsetHeight;
-
-	// overlay.getElementsWith("size").forEach(element => { element.extensions.size.updateSize(w, h);});
-	userInput.element.style.width = `${w * 0.9}px`;
-	oponentInput.element.style.width = `${w * 0.9}px`;
-  	userInput.element.style.height = `${h * 0.1}px`;
-  	oponentInput.element.style.height = `${h * 0.1}px`;
-	const p = 0.1;
-	const fontSize = Math.min( w  * p, h * p);
-	overlay.getElementsWith("text").forEach(element => { element.extensions.text.updateSize(fontSize);});
-}
-
 function enter(){
 	userInput.element.focus();
 	userInput.element.value = "";
@@ -101,5 +89,5 @@ function animate(){
 	enterButton.animate();
 }
 
-const form1 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : resize, "enter":enter, "exit":exit, "animate": animate}
+const form1 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : ()=>{overlay.resize}, "enter":enter, "exit":exit, "animate": animate}
 export { form1};

@@ -1,26 +1,42 @@
 class BaseDivElement{
-	constructor(){
+	constructor(id, children){
 		this.element = document.createElement('div');
 		this.childElements = [];
+		this.element.id = id;
+		console.log("in ", id, " children: ", children);
+		children.forEach(child => {this.add(child);});
 	}
 	add(element){
 		if (! (element instanceof Element))
 		{
+			console.log("in ", this.element.id, " pushing ", element);
 			this.childElements.push(element);
 			element = element.element;
 		}
 		this.element.appendChild(element);
 	}
 	getElementById(id){
+		console.log("SEARCHIGN FOR ", id);
+		console.log("elements list: ", this.childElements);
 		for (let child of this.childElements) {
+			console.log("curr child: ", child);
 			if (child instanceof BaseDivElement)
 			{
+				console.log("nested search");
 				let child_found = child.getElementById(id);
 				if (child_found != undefined)
 					return child_found;
 			}
-			if (child.element.id == id)
-				return child;
+			else 
+			{
+				console.log("curr id: ", child.element.id);
+
+				if (child.element.id == id)
+				{
+					console.log("FOUND");
+					return child;
+				}
+			}
 		};
 		return undefined;
 	}
@@ -40,24 +56,28 @@ class BaseDivElement{
 }
 
 class Overlay extends BaseDivElement{
-	constructor(children = [], id = "overlay"){
-		super();
-		// this.element = document.createElement('div');
+	constructor(children = [], resizeFactor = 0.1, id = "overlay"){
+		super(id, children);
+		this.resizeFactor = resizeFactor;
 		this.element.style.backgroundColor = 'transparent';
 		this.element.style.boxSizing = 'border-box';
 		this.element.style.padding = '0';
 		this.element.style.border = 'none';
 		this.element.style.visibility = "hidden";
-		this.element.id = id;
 		document.body.appendChild(this.element);
-		children.forEach(child => {this.add(child);});
+	}
+	resize(){
+		const w = this.element.offsetWidth;
+		const h = this.element.offsetHeight;
+		this.getElementsWith("size").forEach(element => { element.extensions.size.updateSize(w, h);});
+		const fontSize = Math.min( w  * this.resizeFactor, h * this.resizeFactor);
+		this.getElementsWith("text").forEach(element => { element.extensions.text.updateSize(fontSize);});
 	}
 }
 
 class FlexBox extends BaseDivElement {
 	constructor({dir, mainAxis = "center", crossAxis = "center", marginTopBottom = 0.5, children = [], flex = 0, full = false, id = "flexbox"}){
-		super();
-		this.element.id = id;
+		super(id, children);
 		// this.element = document.createElement('div');
 		if (full)
 		{
@@ -71,7 +91,6 @@ class FlexBox extends BaseDivElement {
 		this.element.style.marginTop = `${marginTopBottom}%`;
 		this.element.style.marginBottom = `${marginTopBottom}%`;
 		if (flex > 0) this.element.style.flex = flex;
-		children.forEach(child => {this.add(child);});
 	}
 }
 
