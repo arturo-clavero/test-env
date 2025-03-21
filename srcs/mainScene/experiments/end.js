@@ -1,6 +1,5 @@
 import { StateManager } from '../state/StateManager';
-import { State } from '../state/States';
-import { Overlay, FlexBox, Text, Input, Button} from './Element';
+import { Overlay, FlexBox, Text, Button, SwitchButtons} from './Element';
 
 const overlay = new Overlay([
 	new FlexBox({
@@ -17,28 +16,23 @@ const overlay = new Overlay([
 		children : [
 			new Button({
 				content: "EXIT",
-				onClick : ()=> {
-					new StateManager.changeState(0);
-				}
+				activate: (self)=>{console.log(self); self.extensions.text.tempChangeSize(1.25)},
+				deactivate:(self)=>{ self.extensions.text.revertSize()},
+				onClick : ()=> {new StateManager().changeState(0);}
 			}),
 			new Button({
 				content: "RESTART",
-				onClick : ()=> {
-					new StateManager.currentState.changeSubState(1);
-				}
+				activate: (self)=>{console.log(self); self.extensions.text.tempChangeSize(1.25)},
+				deactivate:(self)=>{ self.extensions.text.revertSize()},
+				onClick : ()=> {new StateManager().currentState.changeSubstate(1);}
 			})
 		]
 	}),
 ])
 
+const switchButtons = new SwitchButtons([overlay.getElementsOfType(Button)]);
 function keyHandler(event){
-	if (event.key === 'Enter') {
-			event.preventDefault();
-			return {change : "substate"};
-	}
-	else if (document.activeElement != userInput.element)
-		userInput.element.focus()
-	return undefined;
+	switchButtons.keyHandler(event);
 }
 
 function enter(){

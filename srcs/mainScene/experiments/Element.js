@@ -53,6 +53,19 @@ class BaseDivElement{
 		};
 		return elements;
 	}
+	getElementsOfType(type, elements){
+		if (!elements)
+			elements = [];
+		for (let child of this.childElements) {
+			if (child instanceof BaseDivElement)
+				elements = child.getElementsWith(type, elements);
+			else if (child instanceof type)
+				elements.push(child);
+			else
+				console.log("no extensions of ", type, "for: ", child.element);
+		};
+		return elements;
+	}
 }
 
 class Overlay extends BaseDivElement{
@@ -215,11 +228,13 @@ class Button extends BaseNonDivElement{
 	}
 }
 
-class SwitchButton {
-	constructor(buttons){
+class SwitchButtons {
+	constructor(buttons,  nextKey="Arrow Left", prevKey="Arrow Right"){
 		this.buttons = buttons;
 		this.activeButton = buttons[0];
 		this.activeIndex = 0;
+		this.nextKey = nextKey;
+		this.prevKey = prevKey;
 	}
 	switch_active(nextButton, index){
 		if (index == undefined){
@@ -248,5 +263,17 @@ class SwitchButton {
 		}
 		this.switch_active(this.buttons[this.activeIndex], this.activeIndex);
 	}
+	keyHandler(event){
+		if (event.key === 'Enter') {
+				event.preventDefault();
+				this.activeButton.onClick();
+		}
+		else if (event.key == this.nextKey)
+			this.switch("next");
+		else if (event.key == this.prevKey)
+			this.switch("prev");
+		else
+			console.log("key: ", event.key);
+	}
 }
-export {Overlay, FlexBox, Text, Input, Button, SwitchButton}
+export {Overlay, FlexBox, Text, Input, Button, SwitchButtons}

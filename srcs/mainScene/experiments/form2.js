@@ -34,8 +34,8 @@ const overlay = new Overlay([
 				new Button({
 					id: "enter-button", 
 					content: "ENTER",
-					activate: ()=>{this.extensions.text.tempChangeSize(1.25)} ,
-					deactivate: ()=>{this.extensions.text.revertSize();},
+					activate: (self)=>{console.log(self); self.extensions.text.tempChangeSize(1.25)},
+					deactivate:(self)=>{ self.extensions.text.revertSize()},
 					onClick: ()=>{new StateManager().currentState.changeSubstate();}
 				}),
 			]
