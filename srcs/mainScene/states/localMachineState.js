@@ -3,8 +3,8 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
-import { screenSurface } from '../objects/machines/localMachineObj'
-import { start } from '../overlays/divs/start'
+import { screenSurface } from '../objects/machines/aiMachineObj'
+import { StartScreen } from '../overlays/divs/start'
 import { form1 } from '../overlays/divs/form1';
 import { scene1 } from '../overlays/scenes/scene1';
 import { end } from '../overlays/divs/end';
@@ -13,16 +13,16 @@ import { end } from '../overlays/divs/end';
 
 
 //CREATE SUBSTATES
-
+const div = new StartScreen();
 const startScreen = new CssSubState(
 	"start",
 	screenSurface,
-	start.div,
-	start.enter,
-	start.exit,
-	start.resize,
-	(event)=> { return start.keyHandler(event);},
-	start.animate,
+	div.div,
+	()=>{div.enter()},
+	()=>{div.exit()},
+	()=>{div.resize()},
+	(event)=> { return div.keyHandler(event);},
+	()=>{div.animate()},
 )
 
 const formScreen = new CssSubState(
@@ -64,7 +64,7 @@ const endScreen = new CssSubState(
 const localMachineState = new State(
 	"local game screen", 
 	{
-		pos: [0,0,5],
+		pos: [-2,2,5],
 		duration: 2,
 		ease: "power2.inOut"
 	}, 

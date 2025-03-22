@@ -22,8 +22,9 @@ class CssSubState extends SubState {
 
     exit() 
 	{
-		this.element.style.visibility = "hidden";
 		super.exit();
+		this.element.style.visibility = "hidden";
+
 	}
     resize()
 	{ 

@@ -1,27 +1,30 @@
 import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
 import { SubState } from '../../core/stateManager/SubStates';
+import { aiMachineState } from './aiMachineState';
 import { localMachineState } from "./localMachineState";
+import { tourMachineState } from './tournamentMachineState';
 
 const mainSub = new SubState(
 	"main controls", 
 	()=>{
-		// localMachineState.resize();
 	}, 
 	()=>{
-		localMachineState.substates[0].resize();
-		localMachineState.substates[0].enter();
 	}, 
 	null, 
 	()=>{
 		localMachineState.substates[0].resize();
+		aiMachineState.substates[0].resize();
+		tourMachineState.substates[0].resize();
 	}, 
 	(event)=>{
 		if (event.key === 'x')
 			return{change : "state", index : 0};
 	},
 	()=>{
-		localMachineState.animate();
+		localMachineState.substates[0].animate();
+		aiMachineState.substates[0].animate();
+		tourMachineState.substates[0].animate();
 		//here animate the start screens!
 	}
 )
@@ -39,6 +42,8 @@ const stateManager = new StateManager(
 	[
 		mainState, 
 		localMachineState,
+		aiMachineState,
+		tourMachineState,
 	]
 );
 

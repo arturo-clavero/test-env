@@ -4,7 +4,7 @@ class Overlay extends BaseDivElement{
 	constructor(children = [], resizeFactor = 0.1, id = "overlay"){
 		super(id, children);
 		this.resizeFactor = resizeFactor;
-		this.element.style.backgroundColor = 'red';
+		this.element.style.backgroundColor = 'transparent';
 		this.element.style.boxSizing = 'border-box';
 		this.element.style.padding = '0';
 		this.element.style.border = 'none';
