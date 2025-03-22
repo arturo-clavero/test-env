@@ -1,9 +1,9 @@
 
-import { MainEngine } from "../utils/mainSetUp";
+import { MainEngine } from "../../mainScene/utils/MainEngine";
 
 const engine = new MainEngine();
 
-function moveCamera(data) {
+function moveCamera(data, onComplete) {
 	const tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
@@ -32,6 +32,10 @@ function moveCamera(data) {
 		tl.to({}, { 
 			onUpdate: () => engine.camera.lookAt(data.lookAt)
 		}, 0);
+	}
+	if (onComplete) {
+		// console.log("on complete");
+		tl.then(onComplete);
 	}
 }
 

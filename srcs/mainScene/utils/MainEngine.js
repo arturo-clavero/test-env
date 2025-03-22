@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Modern import path for modules
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 class MainEngine {
 	constructor(){
@@ -47,13 +46,12 @@ class MainEngine {
 		this.scene.add(topLight);
 
 		const spotLight = new THREE.SpotLight(0xd34dee, 50);
-		spotLight.position.set(0.75, 0.75, 4);
+		spotLight.position.set(0, 2, 5);
 		// spotLight.position.set(0, 0, 3.5);
 		spotLight.castShadow = true;
 		this.scene.add(spotLight);
 	}
 	animate(){
-		// console.log("background animate!");
 		// this.controls.update();
 		this.renderer.render(this.scene, this.camera);
 		this.stateManager.animate();
@@ -66,13 +64,11 @@ class MainEngine {
 			this.clickableObjects.push(newObject);
 	}
 	resize(){
-		console.log("resize?");
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		const aspectRatio =  window.innerWidth / window.innerHeight;
 		//TODO Tweak FOV to maintain smae look ... 
 		this.camera.aspect = aspectRatio;
 		this.camera.updateProjectionMatrix();
-		console.log("check?", this.stateManager);
 		this.stateManager.resize();
 
 	}

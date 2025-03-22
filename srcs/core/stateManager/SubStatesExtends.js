@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
 import { SubState } from "./SubStates";
-import { MainEngine } from "../utils/mainSetUp";
+import { MainEngine } from "../../mainScene/utils/MainEngine";
 
 class CssSubState extends SubState {
 	constructor(name, surface, element, setup, cleanup, updateSize, keyHandler, animate){
@@ -18,7 +18,6 @@ class CssSubState extends SubState {
 		super.enter();
 		this.resize();
 		this.element.style.visibility = "visible";
-		console.log("entering...");
 	}
 
     exit() 
@@ -30,6 +29,7 @@ class CssSubState extends SubState {
 	{ 
 		this.engine.css2drenderer.setSize(window.innerWidth, window.innerHeight);
 		this.elementObj.updateMatrixWorld(true);
+		this.surface.geometry.computeVertexNormals(); 
 		this.surface.geometry.computeBoundingBox();
 		const bbox = this.surface.geometry.boundingBox;
 		const vector1 = new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.min.z);

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { order_path, update_min_max } from '../utils/utils';
+import { order_path, update_min_max } from '../../mainScene/utils/utils';
 import { or, orthographicDepthToViewZ } from 'three/tsl';
 
 function get_geometry_normal_vector(geometry)
@@ -184,10 +184,7 @@ class Shape {
 	add_onclick(ft) {this.onclick = ft};
 	handle_click(){
 		if (this.onclick)
-		{
-			console.log(this);
 			this.onclick();
-		}
 		else
 			console.log("no on click for surface ", this.material.color.r, this.material.color.g, this.material.color.b);
 	}

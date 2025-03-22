@@ -1,6 +1,7 @@
-import { StateManager } from '../state/StateManager';
-import { State } from '../state/States';
-import { Overlay, FlexBox, Text, Input, Button} from './Element';
+import { StateManager } from '../../../core/stateManager/StateManager';
+import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
+import { Text, Button } from '../../../core/UIFactory/Elements';
+
 
 const overlay = new Overlay([
 	new FlexBox({
@@ -13,15 +14,17 @@ const overlay = new Overlay([
 	}),
 	new FlexBox({
 		dir: "row",
-		marginLeft: '90%',
-		marginBottom : '5%',
+		// marginLeft: '90%',
+		marginBottom : '0%',
 		marginTop: '0%',
-		//mainAxis: "start-flex",
+		crossAxis: "end",
+		mainAxis: "end",
+		// mainAxis: "start-flex",
 		children : [
 			new Button({
 				content: "ENTER",
 				id: "enter-button",
-				activate: (self)=>{console.log(self); self.extensions.text.tempChangeSize(1.25)},
+				activate: (self)=>{self.extensions.text.tempChangeSize(1.25)},
 				deactivate:(self)=>{ self.extensions.text.revertSize()},
 				onClick: ()=>{new StateManager().currentState.changeSubstate();},
 			})
@@ -40,17 +43,17 @@ function keyHandler(event){
 }
 
 function enter(){
-	console.log("STARTING START SCREEN!");
+	enterButton.element.style.color = "black";
 }
 
+
 function exit(){
+	enterButton.element.style.color = "black";
 }
 
 function animate(){
 	enterButton.animate();
 }
-
-overlay.element.style.visibility = "visible";
 
 const start = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : ()=>{overlay.resize();}, "enter":enter, "exit":exit, "animate" : animate};
 export { start};

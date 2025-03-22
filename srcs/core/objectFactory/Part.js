@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Shape } from "./Shape";
-import { order_path, mapToCenter } from '../utils/utils';
+import { order_path, mapToCenter } from '../../mainScene/utils/utils';
 
 class Part {
 	constructor(pointsLeftXY, pointsRightXY, materials){
@@ -67,7 +67,6 @@ class Part {
 	center_group(){
 		let box = new THREE.Box3().setFromObject(this.self);
    		let center = new THREE.Vector3();
-		console.log("center: ", center);
     	box.getCenter(center);
 		this.self.children.forEach(child => { child.position.sub(center);});
 	}

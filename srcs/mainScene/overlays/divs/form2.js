@@ -1,6 +1,8 @@
 
-import { StateManager } from '../state/StateManager';
-import { Overlay, FlexBox, Text, Input, Button} from './Element';
+import { StateManager } from '../../../core/stateManager/StateManager';
+import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
+import { Text, Button, Input } from '../../../core/UIFactory/Elements';
+
 const overlay = new Overlay([
 	new FlexBox({
 			dir: "column", 
@@ -34,7 +36,7 @@ const overlay = new Overlay([
 				new Button({
 					id: "enter-button", 
 					content: "ENTER",
-					activate: (self)=>{console.log(self); self.extensions.text.tempChangeSize(1.25)},
+					activate: (self)=>{self.extensions.text.tempChangeSize(1.25)},
 					deactivate:(self)=>{ self.extensions.text.revertSize()},
 					onClick: ()=>{new StateManager().currentState.changeSubstate();}
 				}),
@@ -45,9 +47,6 @@ const overlay = new Overlay([
 const userInput = overlay.getElementById("user-alias");
 const oponentInput = overlay.getElementById("oponent-alias");
 const enterButton = overlay.getElementById("enter-button");
-
-console.log("\n\n\nUSER INPUT!", userInput.element);
-
 
 function keyHandler(event){
     if (event.key === 'Enter') {
@@ -80,7 +79,6 @@ function enter(){
 }
 
 function exit(){
-	console.log("EXITING!!!");
 	console.log("you: ", userInput.element.value, "oponent: ", oponentInput.element.value);
 	userInput.element.value = "";
 	oponentInput.element.value = "";

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {MainEngine} from '../utils/mainSetUp.js';
+import {MainEngine} from '../../utils/MainEngine';
 
 const engine = new MainEngine();
 
@@ -103,7 +103,6 @@ const renderMaterial = new THREE.MeshStandardMaterial({
 secondaryCamera.position.z = 5;
 
 function animate() {
-	console.log("scene1 animate");
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
 	// engine.renderer.setRenderTarget(renderTarget);

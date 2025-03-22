@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { MainEngine } from './mainScene/utils/mainSetUp';
+import { MainEngine } from './mainScene/utils/MainEngine';
 import { backBox } from './mainScene/objects/background/backBox';
-import { StateManager } from './mainScene/state/StateManager';
-import { cube } from './mainScene/experiments/test';
+import { stateManager } from './mainScene/states/mainMenuState';
+import { localMachineObj } from './mainScene/objects/machines/localMachineObj';
 // import { cube, stateManager } from './mainScene/experiments/test-basic';
 
 
@@ -10,11 +10,9 @@ import { cube } from './mainScene/experiments/test';
 const engine = new MainEngine();
 
 engine.add(backBox, false);
-engine.add(cube, false);
+engine.add(localMachineObj, false);
 
-console.log("hello?");
-const state  = new StateManager();
-engine.stateManager =state;
+engine.stateManager = stateManager;
 // state.which();
 
 

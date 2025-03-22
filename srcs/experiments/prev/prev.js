@@ -67,7 +67,6 @@ const lineBasicMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewid
 // mod1.add_component(0.5, 0.5, 0, x, comp2)
 
 function onClickMod(){
-	console.log("clicked model");
 }
 // mod1.add_onclick(onClickMod);
 
@@ -107,7 +106,6 @@ const mod2 = new Model(comp2);
 
 comp2.self.position.z = 0;
 const test1lay = comp2.self;
-console.log(comp2.self.position);
 comp2.self.position.z += 4;
 comp2.shapeParts[0].add_material(scene1.renderMaterial);
 export {test1lay, test2lay}

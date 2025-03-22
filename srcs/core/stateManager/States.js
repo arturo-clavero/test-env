@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { moveCamera } from '../utils/cameraMovement';
+import { moveCamera } from './cameraMovement';
 class State {
     constructor(name, cameraMovement, substates = []) {
         this.name = name;
@@ -23,13 +23,14 @@ class State {
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
-		console.log("about to go to next substate ... ");
-		console.log("index: ", this.currentSubstateIndex, "name : ", this.currentSubstate.name);
 		this.currentSubstate?.enter();
     }
     enter() {
-		moveCamera(this.cameraMovement);
-		this.currentSubstate?.enter();
+		moveCamera(this.cameraMovement, () =>{
+			this.currentSubstate?.enter();
+			console.log("triggering enter?");
+	})
+		// this.currentSubstate?.enter();
 	}
     exit() {
 		this.currentSubstate?.exit();
