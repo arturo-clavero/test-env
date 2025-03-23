@@ -4,6 +4,8 @@ class Text extends BaseNonDivElement{
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.element.textContent = content;
+		this.element.style.textAlign = "center";
+		// this.element.style.width = '100%';
 	}
 }
 

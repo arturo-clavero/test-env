@@ -5,6 +5,7 @@ class BaseDivElement{
 		this.element = document.createElement('div');
 		this.childElements = [];
 		this.element.id = id;
+		this.element.style.display = 'flex';
 		children.forEach(child => {this.add(child);});
 	}
 	add(element){

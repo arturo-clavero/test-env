@@ -1,10 +1,10 @@
 import {BaseDivElement} from './Base'
 
 class Overlay extends BaseDivElement{
-	constructor(children = [], resizeFactor = 0.1, id = "overlay"){
+	constructor(children = [], color='transparent', resizeFactor = 0.1, id = "overlay"){
 		super(id, children);
 		this.resizeFactor = resizeFactor;
-		this.element.style.backgroundColor = 'transparent';
+		this.element.style.backgroundColor =  color;
 		this.element.style.boxSizing = 'border-box';
 		this.element.style.padding = '0';
 		this.element.style.border = 'none';
@@ -23,17 +23,19 @@ class Overlay extends BaseDivElement{
 class FlexBox extends BaseDivElement {
 	constructor({dir, mainAxis = "center", crossAxis = "center", marginTop = '0.5%', marginLeft= '0%', marginBottom= '0.5%', children = [], flex = 0, full = false, id = "flexbox"}){
 		super(id, children);
-		if (full)
-		{
-			this.element.style.height = '100%';
+		if (full == "width" || full == "true")
 			this.element.style.width = '100%';
-		}
+		if (full == "height" || full == "true")
+			this.element.style.height = '100%';
 		this.element.style.display = 'flex';
-		this.element.style.flexDirection = dir;
+		if (dir)
+			this.element.style.flexDirection = dir;
 		this.element.style.justifyContent = mainAxis;
 		this.element.style.alignItems = crossAxis;
 		this.element.style.marginLeft = marginLeft;
 		this.element.style.marginTop = marginTop;
+		// this.element.style.backgroundColor =  'rgba(255,255,255,0.1)';
+
 		this.element.style.marginBottom = marginBottom;
 		if (flex > 0) this.element.style.flex = flex;
 	}

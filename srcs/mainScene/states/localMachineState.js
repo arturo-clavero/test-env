@@ -3,7 +3,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
-import { screenSurface } from '../objects/machines/aiMachineObj'
+import { screenSurface } from '../objects/machines/localMachineObj'
 import { StartScreen } from '../overlays/divs/start'
 import { form1 } from '../overlays/divs/form1';
 import { scene1 } from '../overlays/scenes/scene1';
@@ -13,7 +13,7 @@ import { end } from '../overlays/divs/end';
 
 
 //CREATE SUBSTATES
-const div = new StartScreen();
+const div = new StartScreen('rgba(255, 0, 0, 0.2)');
 const startScreen = new CssSubState(
 	"start",
 	screenSurface,

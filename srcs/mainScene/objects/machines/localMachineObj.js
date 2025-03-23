@@ -6,7 +6,7 @@ import { materialsgroup, singleMaterial,
 
 const obj1 = new Object(part_sym_2d);
 obj1.self.position.z = 3;
-obj1.self.position.x = -2;
+obj1.self.position.x = -4;
 obj1.self.position.y = 2;
 
 const localMachineObj = obj1;

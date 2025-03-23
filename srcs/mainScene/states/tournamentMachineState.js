@@ -13,7 +13,7 @@ import { end } from '../overlays/divs/end';
 
 //CREATE SUBSTATES
 
-const div = new StartScreen();
+const div = new StartScreen('rgba(0, 0, 255, 0.2)');
 const startScreen = new CssSubState(
 	"start",
 	screenSurface,
