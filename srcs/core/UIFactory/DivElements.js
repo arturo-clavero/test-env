@@ -1,7 +1,7 @@
 import {BaseDivElement} from './Base'
 
 class Overlay extends BaseDivElement{
-	constructor(children = [], color, padding='5%', resizeFactor = 0.1, id = "overlay"){
+	constructor(children = [], color, padding='5%', resizeFactor = 0.07, id = "overlay"){
 		super(id, [new FlexBox({
 									children: children, 
 									width: "100%", 
@@ -21,7 +21,8 @@ class Overlay extends BaseDivElement{
 		const w = this.element.offsetWidth;
 		const h = this.element.offsetHeight;
 		this.getElementsWith("size").forEach(element => { element.extensions.size.updateSize(w, h);});
-		const fontSize = Math.min( w  * this.resizeFactor, h * this.resizeFactor);
+		// const fontSize = Math.max( w  * this.resizeFactor, h * this.resizeFactor);
+		const fontSize = (((w + h) / 2) * this.resizeFactor);
 		this.getElementsWith("text").forEach(element => { element.extensions.text.updateSize(fontSize);});
 	}
 }

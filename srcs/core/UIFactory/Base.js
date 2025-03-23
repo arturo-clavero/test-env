@@ -51,8 +51,6 @@ class BaseDivElement{
 				elements = child.getElementsOfType(type, elements);
 			else if (child instanceof type)
 				elements.push(child);
-			else
-				console.log("no element of ", type, "for: ", child.element);
 		};
 		return elements;
 	}

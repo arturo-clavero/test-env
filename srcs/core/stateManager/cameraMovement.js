@@ -34,7 +34,6 @@ function moveCamera(data, onComplete) {
 		}, 0);
 	}
 	if (onComplete) {
-		// console.log("on complete");
 		tl.then(onComplete);
 	}
 }

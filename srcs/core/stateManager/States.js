@@ -28,9 +28,7 @@ class State {
     enter() {
 		moveCamera(this.cameraMovement, () =>{
 			this.currentSubstate?.enter();
-			console.log("triggering enter?");
-	})
-		// this.currentSubstate?.enter();
+		})
 	}
     exit() {
 		this.currentSubstate?.exit();

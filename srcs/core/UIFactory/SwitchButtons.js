@@ -2,9 +2,6 @@
 class SwitchButtons {
 	constructor(buttons,  nextKey="ArrowRight", prevKey="ArrowLeft"){
 		this.buttons = buttons;
-		//console.log("buttons L");
-		//console.log(buttons);
-		//this.switch_active(buttons[0], 0);
 		this.activeIndex = 0;
 		this.nextKey = nextKey;
 		this.prevKey = prevKey;
@@ -18,18 +15,9 @@ class SwitchButtons {
 			})
 			this.activeIndex = index;
 		}
-		// console.log("prev button cntent " , this.activeButton.element.textContent);
-		// console.log("prev button " , this.activeButton);
-		console.log("curr button cntent " , nextButton.element.textContent);
-		console.log("curr button " , nextButton);
-		console.log("curr index: ", index);
 		this.activeButton?.deactivate();
 		this.activeButton = nextButton;
 		this.activeButton.activate();
-		console.log("curr after button cntent " , nextButton.element.textContent);
-		console.log("curr after button " , nextButton);
-		console.log("curr after index: ", index);
-
 	}
 	switch(dir = "next"){
 		if (dir == "next")

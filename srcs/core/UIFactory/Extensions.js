@@ -7,6 +7,7 @@ class TextExtension {
 	updateSize(newFontsize) {
 		this.currFontSize = newFontsize * this.fontSizeFactor;
 		this.element.style.fontSize = `${this.currFontSize}px`;
+		this.element.style.lineHeight =  `${this.currFontSize * 1.5}px`;
 	}
 	tempChangeSize(factor){
 		this.prevFontSize = this.currFontSize;

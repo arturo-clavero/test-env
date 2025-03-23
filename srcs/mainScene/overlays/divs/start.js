@@ -35,7 +35,6 @@ class StartScreen{
 		], color)
 		this.div = this.overlay.element;
 		this.enterButton = this.overlay.getElementById("enter-button");
-		console.log("enter button: ", this.enterButton)
 ;	}
 
 keyHandler(event){

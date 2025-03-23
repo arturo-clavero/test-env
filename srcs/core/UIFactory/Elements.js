@@ -30,7 +30,6 @@ class Button extends BaseNonDivElement{
 		this.activate = ()=>{
 			if (this.isSelected == false)
 			{
-				console.log('activate');
 				activate(this);
 				this.isSelected = true;
 			}
