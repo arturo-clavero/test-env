@@ -5,12 +5,6 @@ import { Text, Button } from '../../../core/UIFactory/Elements';
 class StartScreen{
 	constructor(color){
 		this.overlay = new Overlay([
-			new FlexBox({
-				width: "100%",
-				height: "100%",
-				dir: "column",
-				padding: '5%',
-				children : [
 					new FlexBox({
 						flex: 1,
 						children : [
@@ -38,8 +32,6 @@ class StartScreen{
 							})
 						]
 					}),
-				]
-			})
 		], color)
 		this.div = this.overlay.element;
 		this.enterButton = this.overlay.getElementById("enter-button");

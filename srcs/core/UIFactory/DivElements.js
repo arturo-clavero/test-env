@@ -1,15 +1,21 @@
 import {BaseDivElement} from './Base'
 
 class Overlay extends BaseDivElement{
-	constructor(children = [], color='transparent', resizeFactor = 0.1, id = "overlay"){
-		super(id, children);
+	constructor(children = [], color, padding='5%', resizeFactor = 0.1, id = "overlay"){
+		super(id, [new FlexBox({
+									children: children, 
+									width: "100%", 
+									height: "100%", 
+									dir: "column", 
+									padding: padding
+								})]);
 		this.resizeFactor = resizeFactor;
 		this.element.style.backgroundColor =  color;
 		this.element.style.boxSizing = 'border-box';
-		// this.element.style.padding = '5%';
 		this.element.style.border = 'none';
 		this.element.style.visibility = "hidden";
 		document.body.appendChild(this.element);
+
 	}
 	resize(){
 		const w = this.element.offsetWidth;
