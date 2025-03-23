@@ -11,5 +11,6 @@ obj1.self.position.y = 2;
 
 const localMachineObj = obj1;
 const screenSurface = obj1.basePart.shapes[0];
-
-export {localMachineObj, screenSurface}
+const center = obj1.self.position.clone();
+center.z += 2;
+export {localMachineObj, screenSurface, center}
