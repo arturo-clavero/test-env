@@ -6,32 +6,34 @@ class StartScreen{
 	constructor(color){
 		this.overlay = new Overlay([
 			new FlexBox({
-				full: "true",
+				width: "100%",
+				height: "100%",
 				dir: "column",
+				padding: '5%',
 				children : [
 					new FlexBox({
 						flex: 1,
-						//full: true,
-						// dir: "column",
 						children : [
 							new Text({content: "START GAME", fontSize: 2})
 						]
 					}),
 					new FlexBox({
 						dir: "row",
-						full: "width",
-						// marginLeft: '90%',
-						marginBottom : '0%',
-						marginTop: '0%',
+						width: "100%",
 						crossAxis: "end",
 						mainAxis: "end",
-						// mainAxis: "start-flex",
 						children : [
 							new Button({
 								content: "ENTER",
 								id: "enter-button",
-								activate: (self)=>{self.extensions.text.tempChangeSize(1.25)},
-								deactivate:(self)=>{ self.extensions.text.revertSize()},
+								activate: (self)=>{
+									self.element.style.transition = "transform 0.1s ease-in-out";  // Smooth scaling transition
+    								self.element.style.transform = "scale(1.2)";
+								},
+								deactivate:(self)=>{
+									self.element.style.transition = "transform 0.2s ease-in-out";  // Smooth scaling transition
+									self.element.style.transform = "scale(1)";
+								},
 								onClick: ()=>{new StateManager().currentState.changeSubstate();},
 							})
 						]

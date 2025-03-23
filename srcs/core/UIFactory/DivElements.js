@@ -6,7 +6,7 @@ class Overlay extends BaseDivElement{
 		this.resizeFactor = resizeFactor;
 		this.element.style.backgroundColor =  color;
 		this.element.style.boxSizing = 'border-box';
-		this.element.style.padding = '0';
+		// this.element.style.padding = '5%';
 		this.element.style.border = 'none';
 		this.element.style.visibility = "hidden";
 		document.body.appendChild(this.element);
@@ -21,24 +21,36 @@ class Overlay extends BaseDivElement{
 }
 
 class FlexBox extends BaseDivElement {
-	constructor({dir, mainAxis = "center", crossAxis = "center", marginTop = '0.5%', marginLeft= '0%', marginBottom= '0.5%', children = [], flex = 0, full = false, id = "flexbox"}){
-		super(id, children);
-		if (full == "width" || full == "true")
-			this.element.style.width = '100%';
-		if (full == "height" || full == "true")
-			this.element.style.height = '100%';
-		this.element.style.display = 'flex';
-		if (dir)
-			this.element.style.flexDirection = dir;
-		this.element.style.justifyContent = mainAxis;
-		this.element.style.alignItems = crossAxis;
-		this.element.style.marginLeft = marginLeft;
-		this.element.style.marginTop = marginTop;
-		// this.element.style.backgroundColor =  'rgba(255,255,255,0.1)';
+	constructor({
+			id = "flexbox",
+			children = [],
+			width, height,
+			dir, mainAxis = "center", crossAxis = "center", flex = 0,
+			marginTop = '0.5%', marginLeft= '0%', marginRight='0%', marginBottom= '0.5%', padding, 
+		})
+		{
+			super(id, children);
+			if (width) this.element.style.width = width;
+			if (height) this.element.style.height = height;
 
-		this.element.style.marginBottom = marginBottom;
-		if (flex > 0) this.element.style.flex = flex;
-	}
+			// if (full == "height" || full == "true")
+			// 	this.element.style.height = '100%';
+			// this.element.style.display = 'flex';
+			if (dir)
+				this.element.style.flexDirection = dir;
+			this.element.style.justifyContent = mainAxis;
+			this.element.style.alignItems = crossAxis;
+			this.element.style.marginLeft = marginLeft;
+			this.element.style.marginRight = marginRight;
+			this.element.style.marginTop = marginTop;
+			this.element.style.marginBottom = marginBottom;
+			this.element.style.boxSizing = 'border-box';
+
+			if (padding) this.element.style.padding = padding;
+			// this.element.style.backgroundColor =  'rgba(255,255,255,0.1)';
+
+			if (flex > 0) this.element.style.flex = flex;
+		}
 }
 
 export {FlexBox, Overlay}
