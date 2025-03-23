@@ -3,91 +3,104 @@ import { StateManager } from '../../../core/stateManager/StateManager';
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 
-const overlay = new Overlay([
-	new FlexBox({
-			dir: "column", 
-			children: [
-				new FlexBox({
-					dir: "column",
-					mainAxis: "space-evenly",
-					children: [
-							new Text({content: "Your Alias"}),
-							new Input({id: "user-alias", autofocus: true, fontSize: 0.75}),
-					],
-					full: true,
-				}),
-				new FlexBox({
-					dir: "column",
-					mainAxis: "space-evenly",
-					children: [
-							new Text({content: "Player 2 Alias"}),
-							new Input({id: "oponent-alias", fontSize: 0.75}),
-					],
-					full: true,
-				}),
-			],
-			flex: 1,
-			full: true,
-		}),
-	new FlexBox({
-			dir: "row", 
-			mainAxis:"end", 
-			children: [
-				new Button({
-					id: "enter-button", 
-					content: "ENTER",
-					activate: (self)=>{self.extensions.text.tempChangeSize(1.25)},
-					deactivate:(self)=>{ self.extensions.text.revertSize()},
-					onClick: ()=>{new StateManager().currentState.changeSubstate();}
-				}),
-			]
-		})
-]);
+class Form2 {
+	constructor(){
+		this.overlay = new Overlay([
+			new FlexBox({
+				height: "100%",
+				flex: 1,
+				dir: "column", 
+				mainAxis: "space-around",
+				children: [
+					new FlexBox({
+						dir: "column",
+						mainAxis: "space-evenly",
+						children: [
+								new Text({content: "Your Alias", fontSize: 0.65}),
+								new Input({id: "user-alias", autofocus: true, fontSize: 0.5}),
+						],
+					}),
+					new FlexBox({
+						dir: "column",
+						mainAxis: "space-evenly",
+						children: [
+								new Text({content: "Player 2 Alias", fontSize: 0.65}),
+								new Input({id: "oponent-alias", fontSize: 0.5}),
+						],
+					}),
+				],
+			}),
+			new FlexBox({
+				dir: "row", 
+				width: "100%",
+				crossAxis: "end",
+				mainAxis: "end",
+				children: [
+					new Button({
+						id: "enter-button", 
+						content: "ENTER", 
+						fontSize: 0.55,
+						activate: (self)=>{
+							self.element.style.transition = "transform 0.1s ease-in-out";
+							self.element.style.transform = "scale(1.2)";
+						},
+						deactivate:(self)=>{
+							self.element.style.transition = "transform 0.2s ease-in-out";
+							self.element.style.transform = "scale(1)";
+						},
+						onClick: ()=>{new StateManager().currentState.changeSubstate();},
+					}),
+				]
+			})
+		])
+		this.div = this.overlay.element;
+		this.userInput = this.overlay.getElementById("user-alias");
+		this.oponentInput = this.overlay.getElementById("oponent-alias");
+		this.enterButton = this.overlay.getElementById("enter-button");
+	}
 
-const userInput = overlay.getElementById("user-alias");
-const oponentInput = overlay.getElementById("oponent-alias");
-const enterButton = overlay.getElementById("enter-button");
+	keyHandler(event){
+		if (event.key === 'Enter') {
+			if (document.activeElement != this.oponentInput.element) {
+				event.preventDefault();
+				this.oponentInput.element.focus();
+			}
+			else {
+				event.preventDefault();
+	
+				return {change : "substate"};
+			}
+		} else if (event.key === 'ArrowDown') {
+			if (document.activeElement === this.userInput.element)
+				this.oponentInput.element.focus();
+		} else if (event.key === 'ArrowUp') {
+			if (document.activeElement === this.oponentInput.element)
+				this.userInput.element.focus();
+				event.preventDefault();
+		}
+		else if (document.activeElement != this.oponentInput.element)
+			this.userInput.element.focus()
+		return undefined;
+	}
 
-function keyHandler(event){
-    if (event.key === 'Enter') {
-        if (document.activeElement != oponentInput.element) {
-            event.preventDefault();
-            oponentInput.element.focus();
-        }
-		else {
-            event.preventDefault();
+	enter(){
+		this.userInput.element.focus();
+		this.userInput.element.value = "";
+	}
 
-			return {change : "substate"};
-        }
-    } else if (event.key === 'ArrowDown') {
-        if (document.activeElement === userInput.element)
-            oponentInput.element.focus();
-    } else if (event.key === 'ArrowUp') {
-        if (document.activeElement === oponentInput.element)
-            userInput.element.focus();
-			event.preventDefault();
-    }
-	else if (document.activeElement != oponentInput.element)
-		userInput.element.focus()
-	return undefined;
+	exit(){
+		this.userInput.element.value = "";
+		this.oponentInput.element.value = "";
+
+	}
+
+	animate(){
+		this.enterButton.animate();
+	}
+
+	resize(){
+		this.overlay.resize();
+	}
 }
 
-function enter(){
-	userInput.element.focus();
-	userInput.element.value = "";
-	enterButton.element.style.visibility = "visible";
-}
-
-function exit(){
-	console.log("you: ", userInput.element.value, "oponent: ", oponentInput.element.value);
-	userInput.element.value = "";
-	oponentInput.element.value = "";
-	enterButton.element.style.visibility = "hidden";
-}
-
-function animate(){
-	enterButton.animate();
-}
-
-const form2 = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : ()=>{overlay.resize()}, "enter":enter, "exit":exit, "animate": animate}
-export { form2};
+export { Form2};

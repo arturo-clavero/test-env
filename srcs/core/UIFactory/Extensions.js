@@ -2,6 +2,7 @@
 class TextExtension {
 	constructor(element, fontSize){
 		this.element = element;
+		this.element.style.color = "white";
 		this.fontSizeFactor = fontSize;
 	}
 	updateSize(newFontsize) {

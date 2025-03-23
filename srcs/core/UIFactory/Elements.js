@@ -53,7 +53,7 @@ class Button extends BaseNonDivElement{
 		const r =  Math.random() * (100);
 		if (r > 90)
 		{
-			if (this.element.style.color === "transparent") this.element.style.color = "black";
+			if (this.element.style.color === "transparent") this.element.style.color = "white";
 			else if (r > 95) this.element.style.color = "transparent";
 		}
 	}

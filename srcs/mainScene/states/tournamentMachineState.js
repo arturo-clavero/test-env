@@ -4,37 +4,38 @@ import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExte
 
 import { screenSurface } from '../objects/machines/tournamentMachineObj'
 import { StartScreen } from '../overlays/divs/start'
-import { form1 } from '../overlays/divs/form1';
+import { Form1 } from '../overlays/divs/form1';
 import { scene1 } from '../overlays/scenes/scene1';
-import { end } from '../overlays/divs/end';
+import { End } from '../overlays/divs/end';
 
 // CREATE MODEL
 
 
 //CREATE SUBSTATES
 
-const div = new StartScreen('rgba(0, 0, 255, 0.2)');
+const divStart = new StartScreen('rgba(255, 0, 0, 0.2)');
 const startScreen = new CssSubState(
 	"start",
 	screenSurface,
-	div.div,
-	()=>{div.enter()},
-	()=>{div.exit()},
-	()=>{div.resize()},
-	(event)=> { return div.keyHandler(event);},
-	()=>{div.animate()},
+	divStart.div,
+	()=>{divStart.enter()},
+	()=>{divStart.exit()},
+	()=>{divStart.resize()},
+	(event)=> { return divStart.keyHandler(event);},
+	()=>{divStart.animate()},
 )
+
+const divForm = new Form1();
 const formScreen = new CssSubState(
 	"form",
 	screenSurface,
-	form1.div,
-	form1.enter,
-	form1.exit,
-	form1.resize,
-	(event)=> { return form1.keyHandler(event);},
-	form1.animate,
+	divForm.div,
+	()=>{divForm.enter()},
+	()=>{divForm.exit()},
+	()=>{divForm.resize()},
+	(event)=> { return divForm.keyHandler(event);},
+	()=>{divForm.animate()},
 )
-
 const restScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
@@ -48,16 +49,17 @@ const restScreen = new MeshSubState(
 	}
 )
 
+
+const divEnd = new End();
 const endScreen = new CssSubState(
 	"end", 
 	screenSurface,
-	end.div,
-	end.enter,
-	end.exit,
-	end.resize,
-	(event)=>{
-		end.keyHandler(event);
-	}
+	divEnd.div,
+	()=>{divEnd.enter()},
+	()=>{divEnd.exit()},
+	()=>{divEnd.resize()},
+	(event)=> { return divEnd.keyHandler(event);},
+	()=>{divEnd.animate()},
 )
 
 const tourMachineState = new State(
