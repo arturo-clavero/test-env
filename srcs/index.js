@@ -14,9 +14,9 @@ import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineOb
 const engine = new MainEngine();
 
 engine.add(backBox, false);
-engine.add(localMachineObj, false);
-engine.add(aiMachineObj, false);
-engine.add(tourMachineObj, false);
+engine.add(localMachineObj, true);
+engine.add(aiMachineObj, true);
+engine.add(tourMachineObj, true);
 
 
 engine.stateManager = stateManager;

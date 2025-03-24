@@ -4,28 +4,30 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 
 class Form2 {
-	constructor(){
+	constructor(color = "white"){
 		this.overlay = new Overlay([
 			new FlexBox({
 				height: "100%",
 				flex: 1,
 				dir: "column", 
-				mainAxis: "space-around",
+				mainAxis: "space-evenly",
 				children: [
 					new FlexBox({
+						flex: 1,
 						dir: "column",
 						mainAxis: "space-evenly",
 						children: [
-								new Text({content: "Your Alias", fontSize: 0.65}),
-								new Input({id: "user-alias", autofocus: true, fontSize: 0.5}),
+								new Text({content: "Your Alias", fontSize: 0.65, color: color}),
+								new Input({id: "user-alias", autofocus: true, fontSize: 0.5, color: color}),
 						],
 					}),
 					new FlexBox({
+						flex: 1,
 						dir: "column",
 						mainAxis: "space-evenly",
 						children: [
-								new Text({content: "Player 2 Alias", fontSize: 0.65}),
-								new Input({id: "oponent-alias", fontSize: 0.5}),
+								new Text({content: "Player 2 Alias", fontSize: 0.65, color: color}),
+								new Input({id: "oponent-alias", fontSize: 0.5, color: color}),
 						],
 					}),
 				],
@@ -37,6 +39,7 @@ class Form2 {
 				mainAxis: "end",
 				children: [
 					new Button({
+						color: color,
 						id: "enter-button", 
 						content: "ENTER", 
 						fontSize: 0.55,
@@ -54,6 +57,7 @@ class Form2 {
 			})
 		])
 		this.div = this.overlay.element;
+		this.div.style.color = color;
 		this.userInput = this.overlay.getElementById("user-alias");
 		this.oponentInput = this.overlay.getElementById("oponent-alias");
 		this.enterButton = this.overlay.getElementById("enter-button");
@@ -67,7 +71,6 @@ class Form2 {
 			}
 			else {
 				event.preventDefault();
-	
 				return {change : "substate"};
 			}
 		} else if (event.key === 'ArrowDown') {
@@ -84,6 +87,9 @@ class Form2 {
 	}
 
 	enter(){
+		this.div.style.visibility = "visible";
+		this.enterButton.element.style.color = this.div.style.color;
+		// console.log("this dic col ", this.div.st);
 		this.userInput.element.focus();
 		this.userInput.element.value = "";
 	}
@@ -91,6 +97,7 @@ class Form2 {
 	exit(){
 		this.userInput.element.value = "";
 		this.oponentInput.element.value = "";
+		this.enterButton.element.style.color = "transparent";
 
 	}
 

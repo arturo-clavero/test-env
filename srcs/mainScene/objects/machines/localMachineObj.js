@@ -1,4 +1,5 @@
 import { Object } from '../../../core/objectFactory/Object'
+import { StateManager } from '../../../core/stateManager/StateManager';
 import { materialsgroup, singleMaterial, 
 		part_sym_2d, part_sym_3d, 
 		part_asym, part_asym_ang,
@@ -12,6 +13,8 @@ obj1.self.position.x = -4;
 obj1.self.position.y = 2;
 
 const localMachineObj = obj1;
+localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+
 const screenSurface = obj1.basePart.shapes[0];
 screenSurface.add_material( screenMaterial);
 const center = obj1.self.position.clone();

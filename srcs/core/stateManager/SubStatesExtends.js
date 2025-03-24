@@ -4,8 +4,8 @@ import { SubState } from "./SubStates";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 
 class CssSubState extends SubState {
-	constructor(name, surface, element, setup, cleanup, updateSize, keyHandler, animate){
-		super(name, surface, setup, cleanup, updateSize, keyHandler, animate);
+	constructor(name, surface, element, setup, postCamMove, cleanup, updateSize, keyHandler, animate){
+		super(name, surface, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
 		this.engine =  new MainEngine();;
 		this.element = element;
 		this.elementObj = new CSS2DObject(this.element);
@@ -15,9 +15,9 @@ class CssSubState extends SubState {
 
 	enter() 
 	{
+	//	this.resize();
 		super.enter();
 		this.resize();
-		this.element.style.visibility = "visible";
 	}
 
     exit() 
@@ -66,8 +66,8 @@ class CssSubState extends SubState {
 }
 
 class MeshSubState extends SubState {
-	constructor(name, surface, scene, setup, cleanup, updateSize, keyHandler){
-		super(name, surface, setup, cleanup, updateSize, keyHandler);
+	constructor(name, surface, scene, setup, postCamMove, cleanup, updateSize, keyHandler){
+		super(name, surface, setup, postCamMove, cleanup, updateSize, keyHandler);
 		this.secondaryScene = scene;
 		this.default_material = this.surface.material;
 		this.resize();

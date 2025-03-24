@@ -8,8 +8,13 @@ class StateManager {
 		if (this.states.length > 0) this.changeState(0);
         document.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		window.addEventListener('popstate', (event) => {
+			console.log("pop state!");
 			if (event.state)
-			  this.changeState(event.state.num, false);
+			{
+				this.changeState(event.state.num, false);
+				console.log("poping... ", event.state.num);
+
+			}
 		  });
 		StateManager.instance = this;
 	}
@@ -25,11 +30,17 @@ class StateManager {
 			this.changeState(0);
 	}
     changeState(index = (this.currentStateIndex + 1) % this.states.length, shouldPushHistory = true) {
-        if (this.currentState) this.currentState.exit();
+        if (this.currentStateIndex == index)
+			return;
+		if (this.currentState) this.currentState.exit();
         this.currentStateIndex = index;
+		console.log("changing state : ", index);
         this.currentState = this.states[this.currentStateIndex];
 		if (shouldPushHistory)
+		{
+			console.log("pushing state: ", this.currentStateIndex);
 			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
+		}
         this.currentState.enter();
     }
 

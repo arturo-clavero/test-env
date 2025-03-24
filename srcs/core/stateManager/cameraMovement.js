@@ -1,6 +1,6 @@
 
 import { MainEngine } from "../../mainScene/utils/MainEngine";
-
+import { StateManager } from "./StateManager";
 const engine = new MainEngine();
 
 function moveCamera(data, onComplete) {
@@ -12,7 +12,8 @@ function moveCamera(data, onComplete) {
 			x: data.pos[0], 
 			y: data.pos[1], 
 			z: data.pos[2],
-			onUpdate: () => engine.stateManager.resize()
+			onUpdate: () => new StateManager().resize(),
+			overwrite: "auto",
 		}, 0);
 	}
 	if (data.rot) {
@@ -34,6 +35,8 @@ function moveCamera(data, onComplete) {
 		}, 0);
 	}
 	if (onComplete) {
+		// console.log("stte: ", new StateManager().currentState);
+		// new StateManager().currentState.substates[0].resize();
 		tl.then(onComplete);
 	}
 }

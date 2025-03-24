@@ -60,14 +60,16 @@ class Form1 {
 	}
 
 	enter(){
+		this.div.style.visibility = "visible";
+		this.enterButton.element.style.color = this.div.style.color;
 		this.userInput.element.focus();
 		this.userInput.element.value = "";
 	}
 
 	exit(){
 		this.userInput.element.value = "";
+		this.enterButton.element.style.color = "transparent";
 	}
-
 	animate(){
 		this.enterButton.animate();
 	}

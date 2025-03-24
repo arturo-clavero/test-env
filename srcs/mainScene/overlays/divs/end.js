@@ -4,11 +4,14 @@ import { Text, Button } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 
 class End{
-	constructor(){
+	constructor(color="white"){
 		this.overlay = new Overlay([
 			new FlexBox({
 				flex: 1,
-				dir: "column",
+				//dir: "column",
+				color: color,
+				fontSize: 2,
+
 				children : [
 					new Text({content: "GAME OVER"})
 				]
@@ -19,8 +22,10 @@ class End{
 				mainAxis: "space-around",
 				children : [
 					new Button({
+						color: color,
 						fontSize: 0.55,
 						content: "EXIT",
+						color: color,
 						activate: (self)=>{
 							self.element.style.transition = "transform 0.1s ease-in-out";
 							self.element.style.transform = "scale(1.4)";
@@ -33,7 +38,9 @@ class End{
 					}),
 					new Button({
 						fontSize: 0.55,
+						color: color,
 						content: "RESTART",
+						color: color,
 						activate: (self)=>{
 							self.element.style.transition = "transform 0.1s ease-in-out";
 							self.element.style.transform = "scale(1.4)";
@@ -49,12 +56,16 @@ class End{
 		]);
 		
 		this.div = this.overlay.element;
+		this.div.style.color = color;
+
 		this.keyHandlerswitchButtons = new SwitchButtons(this.overlay.getElementsOfType(Button));
 	}
 	keyHandler(event){
-		this.switchButtons.keyHandler(event);
+		this.keyHandlerswitchButtons.keyHandler(event);
 	}
 	enter(){
+		this.div.style.visibility = "visible";
+		// this.enterButton.element.style.color = this.div.style.color;
 
 	}
 	exit(){

@@ -3,12 +3,12 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
 
 class StartScreen{
-	constructor(){
+	constructor(color = "black"){
 		this.overlay = new Overlay([
 					new FlexBox({
 						flex: 1,
 						children : [
-							new Text({content: "START GAME", fontSize: 2})
+							//new Text({content: "START GAME", fontSize: 2})
 						]
 					}),
 					new FlexBox({
@@ -19,8 +19,10 @@ class StartScreen{
 						children : [
 							new Button({
 								fontSize: 0.65,
+								textcolor: "black",
 								content: "ENTER",
 								id: "enter-button",
+								color: color,
 								activate: (self)=>{
 									self.element.style.transition = "transform 0.1s ease-in-out";
     								self.element.style.transform = "scale(1.2)";
@@ -36,6 +38,8 @@ class StartScreen{
 		])
 		this.div = this.overlay.element;
 		this.enterButton = this.overlay.getElementById("enter-button");
+		this.div.style.color = color;
+
 	}
 
 	keyHandler(event){
@@ -47,10 +51,13 @@ class StartScreen{
 	}
 
 	enter(){
+		this.div.style.visibility = "visible";
+		this.enterButton.element.style.color = this.div.style.color;
 	}
 
 
 	exit(){
+		this.enterButton.element.style.color = "transparent";
 	}
 
 	animate(){

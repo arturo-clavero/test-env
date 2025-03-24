@@ -13,11 +13,9 @@ const mainSub = new SubState(
 		aiMachineRestScreen.enter();
 		tourMachineRestScreen.enter();
 
-	}, 
+	},
+	null,
 	()=>{
-		localMachineRestScreen.exit();
-		aiMachineRestScreen.exit();
-		tourMachineRestScreen.exit();
 
 	}, 
 	()=>{
@@ -42,8 +40,8 @@ const mainSub = new SubState(
 const mainState = new State(
 	"main view",
 	{
-		pos: [0,0,10], 
-		duration: 0, 
+		pos: [0,2,7], 
+		duration: 4, 
 		ease: "power2.inOut"
 	}, 
 	[ mainSub ]

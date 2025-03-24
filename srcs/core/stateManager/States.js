@@ -28,12 +28,14 @@ class State {
     enter() {
 		//effects before camera movement
 		this.changeSubstate(0);
-		moveCamera(this.cameraMovement, () =>{
-			//effects after camera movement
-			this.changeSubstate(0);
-		})
+		if (this.cameraMovement)
+			moveCamera(this.cameraMovement, () =>{
+				//effects after camera movement
+				this.currentSubstate.postCamEnter();
+			})
 	}
     exit() {
+		console.log("exit!");
 		this.currentSubstate?.exit();
 		//this.changeSubstate(0);
 
