@@ -2,7 +2,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
-import { screenSurface } from '../objects/machines/tournamentMachineObj'
+import { screenSurface, center } from '../objects/machines/tournamentMachineObj'
 import { StartScreen } from '../overlays/divs/start'
 import { Form1 } from '../overlays/divs/form1';
 import { scene1 } from '../overlays/scenes/scene1';
@@ -63,9 +63,9 @@ const endScreen = new CssSubState(
 )
 
 const tourMachineState = new State(
-	"local game screen", 
+	"tour game screen", 
 	{
-		pos: [-2,2,5],
+		pos: [center.x,center.y,center.z],
 		duration: 2,
 		ease: "power2.inOut"
 	}, 
@@ -79,4 +79,6 @@ const tourMachineState = new State(
 
 
 
-export { tourMachineState}
+const tourMachineRestScreen = restScreen;
+
+export { tourMachineState, tourMachineRestScreen}

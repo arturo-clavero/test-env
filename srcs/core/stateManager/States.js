@@ -5,7 +5,7 @@ class State {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
-		if (this.substates.length > 0) this.changeSubstate(0);
+		// if (this.substates.length > 0) this.changeSubstate(0);
     }
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
@@ -26,13 +26,16 @@ class State {
 		this.currentSubstate?.enter();
     }
     enter() {
+		//effects before camera movement
+		this.changeSubstate(0);
 		moveCamera(this.cameraMovement, () =>{
-			this.currentSubstate?.enter();
+			//effects after camera movement
+			this.changeSubstate(0);
 		})
 	}
     exit() {
 		this.currentSubstate?.exit();
-		this.changeSubstate(0);
+		//this.changeSubstate(0);
 
 	}
 	handleKeyPress(event) {

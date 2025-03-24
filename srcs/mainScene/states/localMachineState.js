@@ -9,6 +9,7 @@ import { Form2 } from '../overlays/divs/form2';
 import { scene1 } from '../overlays/scenes/scene1';
 import { End } from '../overlays/divs/end';
 
+
 const divStart = new StartScreen('rgba(255, 0, 0, 0.2)');
 const startScreen = new CssSubState(
 	"start",
@@ -73,6 +74,6 @@ const localMachineState = new State(
 	]
 )
 
+const localMachineRestScreen = restScreen;
 
-
-export { localMachineState}
+export { localMachineState, localMachineRestScreen}

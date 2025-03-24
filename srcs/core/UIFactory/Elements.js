@@ -6,6 +6,8 @@ class Text extends BaseNonDivElement{
 		this.element.textContent = content;
 		this.element.style.textAlign = "center";
 		// this.element.style.width = '100%';
+		// this.element.style.visibility = "hidden";
+
 	}
 }
 
@@ -19,6 +21,8 @@ class Input extends BaseNonDivElement{
 		this.element.style.backgroundColor = 'transparent';
 		this.element.style.border = 'none';
 		this.element.style.outline = 'none';
+		// this.element.style.visibility = "hidden";
+
 	}
 }
 

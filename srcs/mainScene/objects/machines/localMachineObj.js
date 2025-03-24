@@ -6,7 +6,7 @@ import { materialsgroup, singleMaterial,
 
 import { screenMaterial } from '../simpleAssets';
 
-const obj1 = new Object(part_sym_2d);
+const obj1 = new Object(part_sym_3d);
 obj1.self.position.z = 3;
 obj1.self.position.x = -4;
 obj1.self.position.y = 2;
