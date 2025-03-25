@@ -17,8 +17,8 @@ class Form2 {
 						dir: "column",
 						mainAxis: "space-evenly",
 						children: [
-								new Text({content: "Your Alias", fontSize: 0.65, color: color}),
-								new Input({id: "user-alias", autofocus: true, fontSize: 0.5, color: color}),
+								new Text({content: "Your Alias", fontSize: 0.65}),
+								new Input({id: "user-alias", autofocus: true, fontSize: 0.5}),
 						],
 					}),
 					new FlexBox({
@@ -26,8 +26,8 @@ class Form2 {
 						dir: "column",
 						mainAxis: "space-evenly",
 						children: [
-								new Text({content: "Player 2 Alias", fontSize: 0.65, color: color}),
-								new Input({id: "oponent-alias", fontSize: 0.5, color: color}),
+								new Text({content: "Player 2 Alias", fontSize: 0.65}),
+								new Input({id: "oponent-alias", fontSize: 0.5}),
 						],
 					}),
 				],
@@ -55,9 +55,11 @@ class Form2 {
 					}),
 				]
 			})
-		])
+			],
+			color,
+		);
+		this.color = color;
 		this.div = this.overlay.element;
-		this.div.style.color = color;
 		this.userInput = this.overlay.getElementById("user-alias");
 		this.oponentInput = this.overlay.getElementById("oponent-alias");
 		this.enterButton = this.overlay.getElementById("enter-button");
@@ -88,7 +90,8 @@ class Form2 {
 
 	enter(){
 		this.div.style.visibility = "visible";
-		this.enterButton.element.style.color = this.div.style.color;
+		this.enterButton.element.style.color = this.color;
+		console.log("this div style,color: ", this.div.style.color);
 		this.userInput.element.focus();
 		this.userInput.element.value = "";
 	}

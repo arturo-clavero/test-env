@@ -9,7 +9,6 @@ class End{
 			new FlexBox({
 				flex: 1,
 				//dir: "column",
-				color: color,
 				fontSize: 2,
 
 				children : [
@@ -25,7 +24,6 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "EXIT",
-						color: color,
 						activate: (self)=>{
 							self.element.style.transition = "transform 0.1s ease-in-out";
 							self.element.style.transform = "scale(1.4)";
@@ -37,10 +35,9 @@ class End{
 						onClick : ()=> {new StateManager().changeState(0);}
 					}),
 					new Button({
+						color: color,
 						fontSize: 0.55,
-						color: color,
 						content: "RESTART",
-						color: color,
 						activate: (self)=>{
 							self.element.style.transition = "transform 0.1s ease-in-out";
 							self.element.style.transform = "scale(1.4)";
@@ -53,11 +50,10 @@ class End{
 					})
 				]
 			}),
-		]);
-		
+			],
+			color,
+		);
 		this.div = this.overlay.element;
-		this.div.style.color = color;
-
 		this.keyHandlerswitchButtons = new SwitchButtons(this.overlay.getElementsOfType(Button));
 	}
 	keyHandler(event){
@@ -65,8 +61,6 @@ class End{
 	}
 	enter(){
 		this.div.style.visibility = "visible";
-		// this.enterButton.element.style.color = this.div.style.color;
-
 	}
 	exit(){
 

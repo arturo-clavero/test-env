@@ -4,7 +4,7 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 
 class Form1 {
-	constructor(){
+	constructor(color = "white"){
 		this.overlay = new Overlay([
 			new FlexBox({
 					flex: 1,
@@ -28,10 +28,10 @@ class Form1 {
 					mainAxis: "end",
 					children: [
 						new Button({
+							color: color,
 							id: "enter-button", 
 							content: "ENTER", 
 							fontSize: 0.55,
-							color: "white",
 							activate: (self)=>{
 								self.element.style.transition = "transform 0.1s ease-in-out";
 								self.element.style.transform = "scale(1.2)";
@@ -44,7 +44,10 @@ class Form1 {
 						}),
 					]
 				})
-		]);
+		], 
+		color,
+		);
+		this.color = color;
 		this.div = this.overlay.element;
 		this.userInput = this.overlay.getElementById("user-alias");
 		this.enterButton = this.overlay.getElementById("enter-button");
@@ -62,7 +65,8 @@ class Form1 {
 
 	enter(){
 		this.div.style.visibility = "visible";
-		this.enterButton.element.style.color = this.div.style.color;
+		this.enterButton.element.style.color = this.color;
+		console.log("this div style,color: ", this.div.style.color);
 		this.userInput.element.focus();
 		this.userInput.element.value = "";
 	}

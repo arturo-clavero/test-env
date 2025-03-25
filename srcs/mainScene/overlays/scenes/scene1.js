@@ -15,7 +15,7 @@ topLight.castShadow = true;
 secondaryScene.add(topLight);
 
 const geo = new THREE.PlaneGeometry(100, 200);
-const mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const mat = new THREE.MeshBasicMaterial({ color: 0x0000ff });
 const plane = new THREE.Mesh(geo, mat);
 secondaryScene.add(plane);
 plane.position.z = -10;

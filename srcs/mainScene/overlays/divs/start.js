@@ -19,10 +19,9 @@ class StartScreen{
 						children : [
 							new Button({
 								fontSize: 0.65,
-								textcolor: "black",
+								color: color,
 								content: "ENTER",
 								id: "enter-button",
-								color: color,
 								activate: (self)=>{
 									self.element.style.transition = "transform 0.1s ease-in-out";
     								self.element.style.transform = "scale(1.2)";
@@ -35,10 +34,10 @@ class StartScreen{
 							})
 						]
 					}),
-		])
+		]);
+		this.color = color;
 		this.div = this.overlay.element;
 		this.enterButton = this.overlay.getElementById("enter-button");
-		this.div.style.color = color;
 
 	}
 
@@ -52,7 +51,7 @@ class StartScreen{
 
 	enter(){
 		this.div.style.visibility = "visible";
-		this.enterButton.element.style.color = this.div.style.color;
+		this.enterButton.element.style.color = this.color;
 	}
 
 

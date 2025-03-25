@@ -10,12 +10,11 @@ class Overlay extends BaseDivElement{
 									padding: padding
 								})]);
 		this.resizeFactor = resizeFactor;
-		this.element.style.backgroundColor =  color;
 		this.element.style.boxSizing = 'border-box';
 		this.element.style.border = 'none';
 		this.element.style.visibility = "hidden";
 		document.body.appendChild(this.element);
-
+		this.getElementsWith("text").forEach(element => { element.element.style.color = color;});
 	}
 	resize(){
 		const w = this.element.offsetWidth;

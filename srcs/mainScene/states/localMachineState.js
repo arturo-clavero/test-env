@@ -79,7 +79,7 @@ const fakeGameScreen = new MeshSubState(
 	(event)=> { return divForm.keyHandler(event);},
 )
 
-const divEnd = new End();
+const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
 	screenSurface,
