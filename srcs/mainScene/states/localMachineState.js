@@ -2,7 +2,7 @@
 
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
-
+import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center } from '../objects/machines/localMachineObj';
 import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start'
@@ -10,7 +10,7 @@ import { Form2 } from '../overlays/divs/form2';
 import { fakeGame } from '../overlays/scenes/fakegame';
 import { End } from '../overlays/divs/end';
 
-
+console.log("screensurface: ", screenSurface.material);
 const restScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
@@ -115,7 +115,7 @@ const localMachineState = new State(
 		self.changeSubstate(0);
 	},
 	[
-		screenSurface.material,
+		screenMaterial,
 		scene1.renderMaterial,
 		fakeGame.renderMaterial,
 	],

@@ -3,6 +3,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
+import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center } from '../objects/machines/aiMachineObj'
 import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start';
@@ -113,7 +114,7 @@ const aiMachineState = new State(
 		self.changeSubstate(0);
 	},
 	[
-		screenSurface.material,
+		screenMaterial,
 		scene1.renderMaterial,
 		fakeGame.renderMaterial,
 	]

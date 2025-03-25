@@ -60,6 +60,7 @@ class End{
 		this.keyHandlerswitchButtons.keyHandler(event);
 	}
 	enter(){
+		this.keyHandlerswitchButtons.switch("prev");
 		this.div.style.visibility = "visible";
 	}
 	exit(){

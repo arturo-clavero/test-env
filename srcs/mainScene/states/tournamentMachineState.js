@@ -2,6 +2,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
+import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center } from '../objects/machines/tournamentMachineObj';
 import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start'
@@ -118,7 +119,7 @@ const tourMachineState = new State(
 		}
 	},
 	[
-		screenSurface.material,
+		screenMaterial,
 		scene1.renderMaterial,
 		fakeGame.renderMaterial,
 	],
