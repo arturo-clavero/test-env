@@ -40,8 +40,6 @@ class StateManager {
 	setAllowedDirection(){
 		if (this.currentStateIndex === 0)
 			this.allowedDirection = 1;
-		// else if (this.currentStateIndex === this.states.length - 1)
-		// 	this.allowedDirection = -1;
 		else
 			this.allowedDirection = 0;
 	}
@@ -50,12 +48,16 @@ class StateManager {
 		if (view && view.change === "state")
 			this.changeState(view.index || undefined);
     }
-    resize() {this.currentState?.resize(); }
+    resize() {
+		this.states.forEach(state => {
+		state.resize();
+	});
+}
 	animate() { 
 		this.states.forEach(state => {
 			state.animate();
 		});
-	 }
+	}
 	isActive() { return this.currentState?.isActive(); }
 	which() {console.log("state: ", this.currentStateIndex, this.currentState.name, "substate: ", this.currentState.currentSubstateIndex, this.currentState.currentSubstate?.name);}
 }

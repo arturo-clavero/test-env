@@ -42,9 +42,7 @@ class State {
 			})
 	}
     exit() {
-		this.currentSubstate?.exit();
 		this.exitState(this);
-
 	}
 	handleKeyPress(event) {
 		const view = this.currentSubstate?.handleKeyPress(event);

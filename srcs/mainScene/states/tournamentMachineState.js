@@ -111,8 +111,11 @@ const tourMachineState = new State(
 			self.changeSubstate();
 	},
 	(self)=>{
-		if (self.currentSubstateIndex != 4)
+		if (self.currentSubstateIndex != 2)
+		{
+			self.currentSubstate.exit();
 			self.changeSubstate(0);
+		}
 	},
 	[
 		screenSurface.material,

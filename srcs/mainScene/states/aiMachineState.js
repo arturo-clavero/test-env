@@ -108,7 +108,10 @@ const aiMachineState = new State(
 		endScreen
 	],
 	(self)=>{self.changeSubstate();},
-	(self)=>{self.changeSubstate(0);},
+	(self)=>{
+		self.currentSubstate.exit();
+		self.changeSubstate(0);
+	},
 	[
 		screenSurface.material,
 		scene1.renderMaterial,
