@@ -29,9 +29,11 @@ class StateManager {
 			this.changeState(0);
 	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
-        if (this.currentStateIndex == index || index < 0 || index > this.states.length - 1)
+        if (this.currentStateIndex == index || index < 0)
 			return;
 		if (this.currentState) this.currentState.exit();
+		if (index >= this.states.length)
+			index = 0;
         this.currentStateIndex = index;
 		console.log("changing state : ", index);
         this.currentState = this.states[this.currentStateIndex];
@@ -47,8 +49,8 @@ class StateManager {
 	setAllowedDirection(){
 		if (this.currentStateIndex === 0)
 			this.allowedDirection = 1;
-		else if (this.currentStateIndex === this.states.length - 1)
-			this.allowedDirection = -1;
+		// else if (this.currentStateIndex === this.states.length - 1)
+		// 	this.allowedDirection = -1;
 		else
 			this.allowedDirection = 0;
 	}
