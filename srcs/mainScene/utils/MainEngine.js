@@ -7,12 +7,8 @@ class MainEngine {
 		this.setUpScene();
 		this.setUpRenderer();
 		this.setUpLights();
-		// this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-		// this.controls = new OrbitControls(this.camera, this.css2drenderer.domElement);
-		window.addEventListener('resize', (event) => {this.resize()});
+		window.addEventListener('resize', () => {this.resize()});
 		window.addEventListener('click', (event) => {this.click(event)});
-		
-		// window.addEventListener('mousemove', (event) => {this.mousemove(event);});
 		MainEngine.instance = this;
 	}
 	setUpRenderer(){

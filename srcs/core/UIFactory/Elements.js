@@ -5,9 +5,6 @@ class Text extends BaseNonDivElement{
 		super('label', id, flex, fontSize, w, h);
 		this.element.textContent = content;
 		this.element.style.textAlign = "center";
-		// this.element.style.width = '100%';
-		// this.element.style.visibility = "hidden";
-
 	}
 }
 
@@ -21,8 +18,6 @@ class Input extends BaseNonDivElement{
 		this.element.style.backgroundColor = 'transparent';
 		this.element.style.border = 'none';
 		this.element.style.outline = 'none';
-		// this.element.style.visibility = "hidden";
-
 	}
 }
 
@@ -45,23 +40,21 @@ class Button extends BaseNonDivElement{
 				this.isSelected = false;
 			}
 		}
-		// this.element.style.pointerEvents = 'all';
 		this.element.textContent = content;
 		this.onClick = onClick;
 		this.element.style.color = color;
 		this.color = color;
-		// this.element.style.visibility = "hidden";
 		this.element.addEventListener('mouseover', ()=>{this.activate()});
 		this.element.addEventListener('mouseout', ()=> { this.deactivate()});
 		this.element.addEventListener('click', ()=>{ this.onClick();});
 	}
 	animate(){
-		// const r =  Math.random() * (100);
-		// if (r > 90)
-		// {
-		// 	if (this.element.style.color === "transparent") this.element.style.color = this.color;
-		// 	else if (r > 95) this.element.style.color = "transparent";
-		// }
+		const r =  Math.random() * (100);
+		if (r > 90)
+		{
+			if (this.element.style.color === "transparent") this.element.style.color = this.color;
+			else if (r > 95) this.element.style.color = "transparent";
+		}
 	}
 }
 

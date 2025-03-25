@@ -8,7 +8,6 @@ import { aiMachineObj } from './mainScene/objects/machines/aiMachineObj';
 import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineObj';
 import { StateManager } from './core/stateManager/StateManager';
 
-// import { cube, stateManager } from './mainScene/experiments/test-basic';
 
 document.addEventListener('keydown', (event) => {
 	if (event.key == "i")
@@ -32,14 +31,11 @@ engine.add(tourMachineObj, true);
 
 
 engine.stateManager = stateManager;
-// state.which();
 
 
 function animate() {
 	requestAnimationFrame(animate);
 	engine.animate();
 }
-
-// scene1.updateSize(2000, 1000);
 
 animate();

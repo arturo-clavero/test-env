@@ -56,39 +56,13 @@ class End{
 		this.div = this.overlay.element;
 		this.keyHandlerswitchButtons = new SwitchButtons(this.overlay.getElementsOfType(Button));
 	}
-	keyHandler(event){
-		this.keyHandlerswitchButtons.keyHandler(event);
-	}
+	keyHandler(event){this.keyHandlerswitchButtons.keyHandler(event);}
 	enter(){
 		this.keyHandlerswitchButtons.switch("prev");
 		this.div.style.visibility = "visible";
 	}
-	exit(){
-
-	}
-	resize(){
-		this.overlay.resize();
-	}
-	animate(){
-
-	}
-	
+	exit(){}
+	resize(){ this.overlay.resize();}
+	animate(){}
 }
-
-
-// function enter(){
-// 	// switchButtons.switch("next");
-// 	// switchButtons.buttons[0].activate();
-// 	// switchButtons.activeIndex = 0;
-// 	// switchButtons.activeButton = switchButtons.buttons[0];
-// 	// switchButtons.activeButton.isSelected = true;
-// 	// switchButtons.activeButton.activate();
-// 	// switchButtons.switch("prev");
-// 	// switchButtons.buttons[0].extensions.text.tempChangeSize(1.25);
-
-// }
-// function exit(){
-// }
-
-// const end = {'div': overlay.element, 'keyHandler': keyHandler,'resize' : ()=>{overlay.resize()}, "enter":enter, "exit":exit}
 export { End };

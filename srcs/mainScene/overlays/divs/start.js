@@ -7,9 +7,6 @@ class StartScreen{
 		this.overlay = new Overlay([
 					new FlexBox({
 						flex: 1,
-						children : [
-							//new Text({content: "START GAME", fontSize: 2})
-						]
 					}),
 					new FlexBox({
 						dir: "row",
@@ -38,9 +35,7 @@ class StartScreen{
 		this.color = color;
 		this.div = this.overlay.element;
 		this.enterButton = this.overlay.getElementById("enter-button");
-
 	}
-
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
@@ -48,23 +43,13 @@ class StartScreen{
 		}
 		return undefined;
 	}
-
 	enter(){
 		this.div.style.visibility = "visible";
 		this.enterButton.element.style.color = this.color;
 	}
-
-
-	exit(){
-		this.enterButton.element.style.color = "transparent";
-	}
-
-	animate(){
-		this.enterButton.animate();
-	}
-	resize(){
-		this.overlay.resize();
-	}
+	exit(){this.enterButton.element.style.color = "transparent";}
+	animate(){this.enterButton.animate();}
+	resize(){this.overlay.resize();}
 }
 
 export { StartScreen};

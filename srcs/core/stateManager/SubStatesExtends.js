@@ -15,7 +15,6 @@ class CssSubState extends SubState {
 
 	enter() 
 	{
-	//	this.resize();
 		super.enter();
 		this.resize();
 	}
@@ -50,7 +49,7 @@ class CssSubState extends SubState {
 		const rect = this.element.getBoundingClientRect();
 		const origin = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
 		const target = new THREE.Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
-		const percentage = 0.07;
+		const percentage = 0.12;
 		const direction = new THREE.Vector2().subVectors(target, origin);
 		const extension = direction.multiplyScalar(percentage);
 		const newTarget = target.clone().add(extension);
@@ -73,26 +72,7 @@ class MeshSubState extends SubState {
 		this.resize();
 		this.engine = new MainEngine();
 	}
-
-	enter() {
-		//this.surface.material = this.secondaryScene.renderMaterial;
-		super.enter(); 
-	}
-
-    exit() {
-		//this.surface.material = this.default_material;
-		super.exit(); 
-	}
-    // resize(){
-	// 	//get size of surface ?
-	// 	//const size = this.surface.getSize(); 
-	// 	//TOD MAGIC TO GET SIZE OF SURFACE
-	// 	// this.secondaryScene.camera.aspect = size.width / size.height;
-	// 	// this.secondaryScene.camera.updateProjectionMatrix();
-	// 	// this.secondaryScene.renderTarget.setSize(size.width, size.height);
-	// }
 	animate(){
-		// console.log("animate!");
 		this.secondaryScene?.animate(); 
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);
     	this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);

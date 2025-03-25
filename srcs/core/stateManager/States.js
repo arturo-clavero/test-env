@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import { moveCamera } from './cameraMovement';
 class State {
     constructor(name, cameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {

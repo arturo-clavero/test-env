@@ -52,7 +52,6 @@ class Form1 {
 		this.userInput = this.overlay.getElementById("user-alias");
 		this.enterButton = this.overlay.getElementById("enter-button");
 	}
-
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
@@ -62,7 +61,6 @@ class Form1 {
 			this.userInput.element.focus()
 		return undefined;
 	}
-
 	enter(){
 		this.div.style.visibility = "visible";
 		this.enterButton.element.style.color = this.color;
@@ -70,18 +68,12 @@ class Form1 {
 		this.userInput.element.focus();
 		this.userInput.element.value = "";
 	}
-
 	exit(){
 		this.userInput.element.value = "";
 		this.enterButton.element.style.color = "transparent";
 	}
-	animate(){
-		this.enterButton.animate();
-	}
-
-	resize(){
-		this.overlay.resize();
-	}
+	animate(){ this.enterButton.animate(); }
+	resize(){ this.overlay.resize();}
 }
 
 export { Form1};

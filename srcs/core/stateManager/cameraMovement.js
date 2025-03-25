@@ -56,6 +56,7 @@ function moveCamera(data, onComplete) {
 	}
 	tl.then(()=>{
 		isAnimating = false;
+		new StateManager().resize();
 		onComplete();
 	});
 }
