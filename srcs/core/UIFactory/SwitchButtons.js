@@ -37,15 +37,12 @@ class SwitchButtons {
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
-				console.log(this.activeButton);
 				this.activeButton.onClick();
 		}
 		else if (event.key == this.nextKey)
 			this.switch("next");
 		else if (event.key == this.prevKey)
 			this.switch("prev");
-		else
-			console.log("key: ", event.key);
 	}
 }
 

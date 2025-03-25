@@ -7,7 +7,7 @@ import { screenSurface, center } from '../objects/machines/tournamentMachineObj'
 import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start'
 import { Form1 } from '../overlays/divs/form1';
-import { fakeGame } from '../overlays/scenes/fakegame';
+import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
 
 const restScreen = new MeshSubState(

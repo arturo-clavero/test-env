@@ -7,10 +7,9 @@ import { screenSurface, center } from '../objects/machines/localMachineObj';
 import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start'
 import { Form2 } from '../overlays/divs/form2';
-import { fakeGame } from '../overlays/scenes/fakegame';
+import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
 
-console.log("screensurface: ", screenSurface.material);
 const restScreen = new MeshSubState(
 	"rest", 
 	screenSurface,

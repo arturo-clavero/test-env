@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {MainEngine} from '../../utils/MainEngine';
-
+import {createRenderTarget, createScreenMaterial } from './utils';
 const engine = new MainEngine();
 
 const secondaryScene = new THREE.Scene();
@@ -27,47 +27,14 @@ cube.receiveShadow = true;
 cube.castShadow = true;
 secondaryScene.add(cube);
 
-const renderTarget = new THREE.WebGLRenderTarget(4096, 2048, {
-	minFilter: THREE.LinearFilter,
-	magFilter: THREE.LinearFilter,
-	format: THREE.RGBAFormat,
-	type: THREE.UnsignedByteType,
-	samples: 8,
-  });
-
-renderTarget.texture.anisotropy = engine.renderer.capabilities.getMaxAnisotropy();
-renderTarget.texture.generateMipmaps = true;
-renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
-renderTarget.depthTexture = new THREE.DepthTexture();
-renderTarget.depthTexture.format = THREE.DepthFormat;
-renderTarget.depthTexture.type = THREE.UnsignedShortType;
-
-renderTarget.texture.minFilter = THREE.LinearFilter;
-renderTarget.texture.magFilter = THREE.LinearFilter;
-const texture = renderTarget.texture;
-texture.wrapS = THREE.ClampToEdgeWrapping;
-texture.wrapT = THREE.ClampToEdgeWrapping;
-const renderMaterial = new THREE.MeshStandardMaterial({
-    map: texture,
-    emissive: new THREE.Color(1, 1, 1),
-    emissiveMap: texture,
-    emissiveIntensity: 10,
-    roughness: 0.5,
-    metalness: 0.5,
-});
-renderMaterial.name = "rest screen";
+const renderTarget = createRenderTarget();
+const renderMaterial = createScreenMaterial(renderTarget);
 
 secondaryCamera.position.z = 5;
 
 function animate() {
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
-}
-
-function updateSize(width, height){
-	secondaryCamera.aspect = width / height;
-	secondaryCamera.updateProjectionMatrix();
-	renderTarget.setSize(width, height);
 }
 
 function keyDown(){
