@@ -185,8 +185,6 @@ class Shape {
 	handle_click(){
 		if (this.onclick)
 			this.onclick();
-		else
-			console.log("no on click for surface ", this.material.color.r, this.material.color.g, this.material.color.b);
 	}
 }
 

@@ -89,7 +89,6 @@ class Form2 {
 	enter(){
 		this.div.style.visibility = "visible";
 		this.enterButton.element.style.color = this.div.style.color;
-		// console.log("this dic col ", this.div.st);
 		this.userInput.element.focus();
 		this.userInput.element.value = "";
 	}

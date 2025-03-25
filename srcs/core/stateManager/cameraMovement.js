@@ -9,22 +9,14 @@ let isAnimating = false;
 
 window.addEventListener("wheel", (event) => {
 	const stateManager = new StateManager();
-	console.log("allowed dire:", new StateManager().allowedDirection);
-	console.log("index: ", new StateManager().currentStateIndex);
 	if (isAnimating || event.deltaY * 100 * stateManager.allowedDirection < 0)
 		return ;
-	if (scrollDelta == 0)
-		console.log("BEGIN!");
 	scrollDelta += event.deltaY;
-	console.log("scrolldata: ", scrollDelta);
 	engine.camera.position.z += event.deltaY * 0.00001;
 	if (Math.abs(scrollDelta) > scrollThreshold) {
 		isAnimating = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
 		scrollDelta = 0;
-		console.log("index: ", stateManager.currentStateIndex);
-		console.log("allowed dire:", stateManager.allowedDirection);
-		console.log("changing state to : ");
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
 	}
 });
@@ -62,14 +54,9 @@ function moveCamera(data, onComplete) {
 			onUpdate: () => engine.camera.lookAt(data.lookAt)
 		}, 0);
 	}
-	if (onComplete) {
-		// console.log("stte: ", new StateManager().currentState);
-		// new StateManager().currentState.substates[0].resize();
-		tl.then(onComplete);
-	}
 	tl.then(()=>{
-		console.log("finished");
-		isAnimating = false
+		isAnimating = false;
+		onComplete();
 	});
 }
 

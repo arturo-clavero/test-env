@@ -29,28 +29,21 @@ class State {
         this.currentSubstate = this.substates[this.currentSubstateIndex];
 		if (this.materialIndex != this.currentSubstate.materialIndex)
 		{
-			console.log("changing material from ", this.materialIndex, " to ", this.currentSubstate.materialIndex);
 			this.materialIndex = this.currentSubstate.materialIndex;
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];
 		}
 		this.currentSubstate.enter();
     }
     enter() {
-		//effects before camera movement
-		// this.changeSubstate(0);
 		this.enterState(this);
-		console.log("this current substate", this.currentSubstate);
 		if (this.cameraMovement)
 			moveCamera(this.cameraMovement, () =>{
-				//effects after camera movement
 				this.currentSubstate.postCamEnter();
 			})
 	}
     exit() {
-		console.log("exit!");
 		this.currentSubstate?.exit();
 		this.exitState(this);
-		//this.changeSubstate(0);
 
 	}
 	handleKeyPress(event) {

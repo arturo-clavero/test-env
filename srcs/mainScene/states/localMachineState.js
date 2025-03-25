@@ -34,7 +34,6 @@ const startScreen = new CssSubState(
 	1,
 	null,
 	()=>{
-		console.log(screenSurface.material);
 		divStart.enter();
 	},
 	()=>{
@@ -49,7 +48,6 @@ const startScreen = new CssSubState(
 		return (divStart.keyHandler(event) || restScreen.keyHandler(event));
 	},
 	()=>{
-		//console.log("animating local screen");
 		divStart.animate();
 		restScreen.animate();
 	},

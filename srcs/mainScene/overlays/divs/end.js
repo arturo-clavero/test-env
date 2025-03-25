@@ -49,7 +49,7 @@ class End{
 							self.element.style.transition = "transform 0.1s ease-in-out";
 							self.element.style.transform = "scale(1)";
 						},
-						onClick : ()=> {new StateManager().currentState.changeSubstate(1);}
+						onClick : ()=> {new StateManager().currentState.changeSubstate(2);}
 					})
 				]
 			}),
