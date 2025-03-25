@@ -1,7 +1,7 @@
 import {BaseDivElement} from './Base'
 
 class Overlay extends BaseDivElement{
-	constructor(children = [], color, padding='5%', resizeFactor = 0.07, id = "overlay"){
+	constructor(children = [], color, padding='10%', resizeFactor = 0.07, id = "overlay"){
 		super(id, [new FlexBox({
 									children: children, 
 									width: "100%", 
