@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 
 class SubState {
-    constructor(name, surface = null, setup, postCamMoveSetUp, cleanup, updateSize, keyHandler, animation) {
+    constructor(name, surface = null, materialIndex, setup, postCamMoveSetUp, cleanup, updateSize, keyHandler, animation) {
         this.name = name;
 		this.surface = !surface ? null : (surface instanceof THREE.Object3D) ? surface : surface.self;
-        this.setup = setup || (() => {});
+		this.materialIndex = materialIndex;
+		this.setup = setup || (() => {});
 		this.postCamMoveSetUp = postCamMoveSetUp || (() => {});
         this.cleanup = cleanup || (() => {});
 		this.updateSize = updateSize || (() => {});

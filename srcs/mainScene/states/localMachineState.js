@@ -15,6 +15,7 @@ const restScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	scene1,
+	1,
 	null,
 	null,
 	null,
@@ -30,8 +31,10 @@ const startScreen = new CssSubState(
 	"start",
 	screenSurface,
 	divStart.div,
+	1,
 	null,
 	()=>{
+		console.log(screenSurface.material);
 		divStart.enter();
 	},
 	()=>{
@@ -46,6 +49,7 @@ const startScreen = new CssSubState(
 		return (divStart.keyHandler(event) || restScreen.keyHandler(event));
 	},
 	()=>{
+		//console.log("animating local screen");
 		divStart.animate();
 		restScreen.animate();
 	},
@@ -56,6 +60,7 @@ const formScreen = new CssSubState(
 	"form",
 	screenSurface,
 	divForm.div,
+	0,
 	()=>{divForm.enter();},
 	null,
 	()=>{divForm.exit()},
@@ -68,6 +73,7 @@ const fakeGameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	fakeGame,
+	2,
 	null,
 	null,
 	null,
@@ -80,6 +86,7 @@ const endScreen = new CssSubState(
 	"end", 
 	screenSurface,
 	divEnd.div,
+	0,
 	()=>{divEnd.enter()},
 	null,
 	()=>{divEnd.exit()},
@@ -96,11 +103,21 @@ const localMachineState = new State(
 		ease: "power2.inOut"
 	}, 
 	[
+		restScreen,
 		startScreen, 
 		formScreen,
 		fakeGameScreen,
 		endScreen
-	]
+	],
+	(self)=>{
+		self.changeSubstate();
+	},
+	(self)=>{self.changeSubstate(0);},
+	[
+		screenSurface.material,
+		scene1.renderMaterial,
+		fakeGame.renderMaterial,
+	],
 )
 
 const localMachineRestScreen = restScreen;

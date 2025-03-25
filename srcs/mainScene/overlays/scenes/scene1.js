@@ -55,6 +55,7 @@ const renderMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.5,
     metalness: 0.5,
 });
+renderMaterial.name = "rest screen";
 
 secondaryCamera.position.z = 5;
 
@@ -84,7 +85,7 @@ const scene1 = {
 	"animate" : animate,
 	"scene" : secondaryScene,
 	"camera" : secondaryCamera,
-	"keyHandler" : keyDown()
+	"keyHandler" : keyDown,
 
 }
 

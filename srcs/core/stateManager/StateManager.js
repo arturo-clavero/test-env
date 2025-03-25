@@ -17,14 +17,6 @@ class StateManager {
 		  });
 		StateManager.instance = this;
 	}
-	setAllowedDirection(){
-		if (this.currentStateIndex === 0)
-			this.allowedDirection = 1;
-		else if (this.currentStateIndex === this.states.length - 1)
-			this.allowedDirection = -1;
-		else
-			this.allowedDirection = 0;
-	}
 	addState(states){
 		if (!(Array.isArray(states)))
 			this.states.push(states)
@@ -52,13 +44,25 @@ class StateManager {
 		console.log("this index: ", this.currentStateIndex, "direction: ", this.allowedDirection);
         this.currentState.enter();
     }
+	setAllowedDirection(){
+		if (this.currentStateIndex === 0)
+			this.allowedDirection = 1;
+		else if (this.currentStateIndex === this.states.length - 1)
+			this.allowedDirection = -1;
+		else
+			this.allowedDirection = 0;
+	}
     handleKeyPress(event) {
 		const view = this.currentState?.handleKeyPress(event);
 		if (view && view.change === "state")
 			this.changeState(view.index || undefined);
     }
     resize() {this.currentState?.resize(); }
-	animate() { this.currentState?.animate(); }
+	animate() { 
+		this.states.forEach(state => {
+			state.animate();
+		});
+	 }
 	isActive() { return this.currentState?.isActive(); }
 	which() {console.log("state: ", this.currentStateIndex, this.currentState.name, "substate: ", this.currentState.currentSubstateIndex, this.currentState.currentSubstate?.name);}
 }

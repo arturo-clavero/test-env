@@ -13,6 +13,7 @@ const restScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	scene1,
+	1,
 	null,
 	null,
 	null,
@@ -28,6 +29,7 @@ const startScreen = new CssSubState(
 	"start",
 	screenSurface,
 	divStart.div,
+	1,
 	null,
 	()=>{
 		divStart.enter();
@@ -55,6 +57,7 @@ const formScreen = new CssSubState(
 	"form",
 	screenSurface,
 	divForm.div,
+	0,
 	()=>{divForm.enter()},
 	null,
 	()=>{divForm.exit()},
@@ -67,6 +70,7 @@ const fakeGameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	fakeGame,
+	2,
 	null,
 	null,
 	null,
@@ -79,6 +83,7 @@ const endScreen = new CssSubState(
 	"end", 
 	screenSurface,
 	divEnd.div,
+	0,
 	()=>{divEnd.enter()},
 	null,
 	()=>{divEnd.exit()},
@@ -95,11 +100,26 @@ const tourMachineState = new State(
 		ease: "power2.inOut"
 	}, 
 	[
+		restScreen,
 		startScreen, 
 		formScreen, 
 		fakeGameScreen,
 		endScreen,
-	]
+	],
+	(self)=>{
+		if (self.currentSubstateIndex == 0)
+			self.changeSubstate();
+	},
+	(self)=>{
+		if (self.currentSubstateIndex != 4)
+			self.changeSubstate(0);
+	},
+	[
+		screenSurface.material,
+		scene1.renderMaterial,
+		fakeGame.renderMaterial,
+	],
+
 )
 
 

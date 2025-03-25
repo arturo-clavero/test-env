@@ -85,6 +85,7 @@ const renderMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.5,
     metalness: 0.5,
 });
+renderMaterial.userData.id = "game screen";
 
 
 function updateSize(width, height){

@@ -8,21 +8,11 @@ import { tourMachineState, tourMachineRestScreen } from './tournamentMachineStat
 const mainSub = new SubState(
 	"main controls", 
 	null,
-	()=>{
-		localMachineRestScreen.enter();
-		aiMachineRestScreen.enter();
-		tourMachineRestScreen.enter();
-
-	},
+	-1,
 	null,
-	()=>{
-
-	}, 
-	()=>{
-		localMachineRestScreen.resize();
-		aiMachineRestScreen.resize();
-		tourMachineRestScreen.resize();
-	}, 
+	null,
+	null, 
+	null, 
 	(event)=>{
 		if (event.key === 'x')
 			return{change : "state", index : 1};
@@ -31,11 +21,7 @@ const mainSub = new SubState(
 		if (event.key === 'z')
 			return{change : "state", index : 3};
 	},
-	()=>{
-		aiMachineRestScreen.animate();
-		aiMachineRestScreen.animate();
-		tourMachineRestScreen.animate();
-	}
+	null,
 )
 const mainState = new State(
 	"main view",
@@ -44,7 +30,13 @@ const mainState = new State(
 		duration: 4, 
 		ease: "power2.inOut"
 	}, 
-	[ mainSub ]
+	[ mainSub ],
+	(self)=>{
+		if (!self.currentSubstate)
+			self.changeSubstate(0);
+	},
+	()=>{},
+	[],
 );
 
 const stateManager = new StateManager(
@@ -53,7 +45,7 @@ const stateManager = new StateManager(
 		localMachineState,
 		aiMachineState,
 		tourMachineState,
-	]
+	],
 );
 
 export { stateManager }

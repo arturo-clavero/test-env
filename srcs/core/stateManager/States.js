@@ -1,11 +1,15 @@
 import * as THREE from 'three';
 import { moveCamera } from './cameraMovement';
 class State {
-    constructor(name, cameraMovement, substates = []) {
+    constructor(name, cameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
-		// if (this.substates.length > 0) this.changeSubstate(0);
+		this.enterState = enterState;
+		this.exitState = exitState;
+		this.materials = materials;
+		this.materialIndex = -1;
+		this.changeSubstate(0);
     }
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
@@ -23,11 +27,19 @@ class State {
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
-		this.currentSubstate?.enter();
+		if (this.materialIndex != this.currentSubstate.materialIndex)
+		{
+			console.log("changing material from ", this.materialIndex, " to ", this.currentSubstate.materialIndex);
+			this.materialIndex = this.currentSubstate.materialIndex;
+			this.currentSubstate.surface.material = this.materials[this.materialIndex];
+		}
+		this.currentSubstate.enter();
     }
     enter() {
 		//effects before camera movement
-		this.changeSubstate(0);
+		// this.changeSubstate(0);
+		this.enterState(this);
+		console.log("this current substate", this.currentSubstate);
 		if (this.cameraMovement)
 			moveCamera(this.cameraMovement, () =>{
 				//effects after camera movement
@@ -37,6 +49,7 @@ class State {
     exit() {
 		console.log("exit!");
 		this.currentSubstate?.exit();
+		this.exitState(this);
 		//this.changeSubstate(0);
 
 	}
