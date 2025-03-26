@@ -59,7 +59,9 @@ class End{
 		this.keyHandlerswitchButtons.switch("prev");
 		this.div.style.visibility = "visible";
 	}
-	exit(){}
+	exit(){
+		this.div.style.visibility = "hidden";
+	}
 	resize(){ this.overlay.resize();}
 	animate(){}
 }

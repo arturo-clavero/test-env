@@ -50,7 +50,11 @@ class StartScreen{
 		this.div.style.visibility = "visible";
 		this.enterButton.element.style.color = this.color;
 	}
-	exit(){this.enterButton.element.style.color = "transparent";}
+	exit(){
+		this.enterButton.element.style.color = "transparent";
+		this.div.style.visibility = "hidden";
+
+	}
 	animate(){this.enterButton.animate();}
 	resize(){this.overlay.resize();}
 }

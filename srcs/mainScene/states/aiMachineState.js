@@ -10,6 +10,7 @@ import { StartScreen } from '../overlays/divs/start';
 import { Form1 } from '../overlays/divs/form1';
 import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
+import { startPongGame, pongGame } from '../overlays/scenes/pong-game/init';
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -70,7 +71,7 @@ const fakeGameScreen = new MeshSubState(
 	screenSurface,
 	fakeGame,
 	1,
-	null,
+	()=>{startPongGame("AI");},
 	null,
 	null,
 	null,
@@ -102,8 +103,8 @@ const aiMachineState = new State(
 	}, 
 	[
 		restScreen,
-		startScreen, 
-		formScreen, 
+		startScreen,
+		formScreen,
 		fakeGameScreen, 
 		endScreen
 	],

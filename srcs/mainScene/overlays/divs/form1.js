@@ -68,6 +68,7 @@ class Form1 {
 		this.userInput.element.value = "";
 	}
 	exit(){
+		this.div.style.visibility = "hidden";
 		this.userInput.element.value = "";
 		this.enterButton.element.style.color = "transparent";
 	}

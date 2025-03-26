@@ -1,5 +1,22 @@
 import * as THREE from 'three';
 
+function dispose_object(object){
+	if (object instanceof THREE.Mesh) {
+		if (object.geometry) object.geometry.dispose();
+		if (object.material) {
+			if (Array.isArray(object.material)) {
+				object.material.forEach(mat => mat.dispose());
+			} else {
+				object.material.dispose();
+			}
+		}
+	} else if (object instanceof THREE.Group) {
+		object.children.forEach(child => {dispose_object(child)});
+		object.clear();
+	}
+}
+
+
 function order_path(points){
 	let start = [-100, 100];
 	let start_index;
@@ -106,4 +123,4 @@ function mapToCenter(pointsLeft, pointsRight)
 	return {"left" : pointsLeft, "right": pointsRight};
 }
 
-export { order_path, mapToCenter, update_min_max, };
+export { order_path, mapToCenter, update_min_max, dispose_object};

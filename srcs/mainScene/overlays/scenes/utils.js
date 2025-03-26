@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { MainEngine } from '../../utils/MainEngine';
-
 const engine = new MainEngine();
 function createRenderTarget(){
 	const renderTarget = new THREE.WebGLRenderTarget(4096, 2048, {
@@ -45,4 +44,5 @@ function createScreenMaterial(renderTarget){
 	});
 	return renderMaterial;
 }
+
 export {createRenderTarget, createScreenMaterial}

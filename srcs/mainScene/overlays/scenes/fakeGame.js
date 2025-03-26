@@ -67,7 +67,6 @@ const fakeGame = {
 	"scene" : secondaryScene,
 	"camera" : secondaryCamera,
 	"keyHandler" : keyDown,
-
 }
 
 export { fakeGame }

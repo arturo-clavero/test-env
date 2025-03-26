@@ -4,11 +4,12 @@ import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/localMachineObj';
-import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start'
 import { Form2 } from '../overlays/divs/form2';
-import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
+import { startPongGame, pongGame } from '../overlays/scenes/pong-game/init';
+			
+
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -24,7 +25,7 @@ const restScreen = new CssSubState(
 		divStart.enterButton.element.style.visibility = "hidden";
 	},
 	null,
-	()=>{ divStart.exit();},
+	null,
 	()=>{ divStart.resize();},
 	(event)=> { return divStart.keyHandler(event);},
 	null,
@@ -39,7 +40,6 @@ const startScreen = new CssSubState(
 	0,
 	null,
 	()=>{
-		divStart.enter();
 		divStart.enterButton.element.style.visibility = "visible";
 	},
 	()=>{ divStart.exit();},
@@ -58,7 +58,7 @@ const formScreen = new CssSubState(
 	0,
 	()=>{divForm.enter();},
 	null,
-	()=>{divForm.exit()},
+	()=>{divForm.exit();},
 	()=>{divForm.resize()},
 	(event)=> { return divForm.keyHandler(event);},
 	()=>{divForm.animate()},
@@ -67,9 +67,9 @@ const formScreen = new CssSubState(
 const fakeGameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
-	fakeGame,
-	2,
-	null,
+	pongGame,
+	1,
+	()=>{startPongGame("local");},
 	null,
 	null,
 	null,
@@ -115,8 +115,7 @@ const localMachineState = new State(
 	},
 	[
 		screenMaterial,
-		scene1.renderMaterial,
-		fakeGame.renderMaterial,
+		pongGame.renderMaterial,
 	],
 )
 

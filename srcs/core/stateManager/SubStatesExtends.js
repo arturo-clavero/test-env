@@ -26,7 +26,7 @@ class CssSubState extends SubState {
     exit() 
 	{
 		super.exit();
-		this.div.style.visibility = "hidden";
+		//this.div.style.visibility = "hidden";
 		//TO BE CHANGED set this as functin coming in cleanup isntead the hiddden bit because osemtimes you ไรสส ืนะ ้รกำ!	
 	}
     resize()
