@@ -4,17 +4,17 @@ export class Socket {
 		this.socket = null;
 		this.msgQueue = [];
 	
-		// this.myReceive = myReceive;
-		// this.onconnect = myConnect;
+		this.myReceive = myReceive;
+		this.onconnect = myConnect;
 	}
 	new (gameID, userID, myReceive) {
-		// if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-		// 	this.socket.close();
-		//   }
-		// this.socket = new WebSocket(`ws://localhost:8002/ws/game/${gameID}/${userID}/`);
-		// this.socket.onopen = this.myOpen.bind(this);
-		// this.socket.onclose = this.myClose.bind(this);
-		// this.socket.onmessage = myReceive;
+		if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+			this.socket.close();
+		  }
+		this.socket = new WebSocket(`ws://localhost:8002/ws/game/${gameID}/${userID}/`);
+		this.socket.onopen = this.myOpen.bind(this);
+		this.socket.onclose = this.myClose.bind(this);
+		this.socket.onmessage = myReceive;
 	}
 	myOpen(){
 		this.msgQueue.forEach(msg => {

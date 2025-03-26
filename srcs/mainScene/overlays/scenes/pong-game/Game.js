@@ -164,6 +164,6 @@ export class Game {
 		window.removeEventListener("keyup", (e) => this.key.handleKeyUp(e));
 		window.removeEventListener("resize", (e) => this.resize(e));
 		this.engine.scene.traverse(object => {dispose_object(object)});
-		//this.socket.socket.close();
+		this.socket.socket.close();
 	}
 }
