@@ -3,7 +3,7 @@ import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center } from '../objects/machines/tournamentMachineObj';
+import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/tournamentMachineObj';
 import { scene1 } from '../overlays/scenes/scene1';
 import { StartScreen } from '../overlays/divs/start'
 import { Form1 } from '../overlays/divs/form1';
@@ -28,7 +28,9 @@ const restScreen = new MeshSubState(
 const divStart = new StartScreen('black');
 const startScreen = new CssSubState(
 	"start",
-	screenSurface,
+	object,
+	partIndex,
+	surfaceIndex,
 	divStart.div,
 	1,
 	null,
@@ -56,7 +58,9 @@ const startScreen = new CssSubState(
 const divForm = new Form1("white");
 const formScreen = new CssSubState(
 	"form",
-	screenSurface,
+	object,
+	partIndex,
+	surfaceIndex,
 	divForm.div,
 	0,
 	()=>{divForm.enter()},
@@ -82,7 +86,9 @@ const fakeGameScreen = new MeshSubState(
 const divEnd = new End();
 const endScreen = new CssSubState(
 	"end", 
-	screenSurface,
+	object,
+	partIndex,
+	surfaceIndex,
 	divEnd.div,
 	0,
 	()=>{divEnd.enter()},

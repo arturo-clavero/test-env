@@ -6,16 +6,19 @@ import { materialsgroup, singleMaterial,
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { screenMaterial } from '../simpleAssets';
 
-const obj1 = new Object(part_sym_2d);
-obj1.self.position.z = 3;
-obj1.self.position.x = 0;
-obj1.self.position.y = 2;
+const object = new Object(part_sym_2d);
+object.self.position.z = 3;
+object.self.position.x = 0;
+object.self.position.y = 2;
 
-const aiMachineObj = obj1;
+const aiMachineObj = object;
 aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
 
-const screenSurface = obj1.basePart.shapes[0];
+const partIndex = 0;
+const surfaceIndex = 0;
+const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
 screenSurface.add_material( screenMaterial);
-const center = obj1.self.position.clone();
+const center = object.self.position.clone();
 center.z += 2;
-export {aiMachineObj, screenSurface, center}
+
+export {aiMachineObj, screenSurface, center,  object, partIndex, surfaceIndex }

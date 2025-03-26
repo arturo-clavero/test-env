@@ -7,16 +7,20 @@ import { materialsgroup, singleMaterial,
 
 import { screenMaterial } from '../simpleAssets';
 
-const obj1 = new Object(part_sym_3d);
-obj1.self.position.z = 3;
-obj1.self.position.x = -4;
-obj1.self.position.y = 2;
+const object = new Object(part_sym_3d);
+object.self.position.z = 3;
+object.self.position.x = -4;
+object.self.position.y = 2;
 
-const localMachineObj = obj1;
+const localMachineObj = object;
 localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
-const screenSurface = obj1.basePart.shapes[0];
+const partIndex = 0;
+const surfaceIndex = 0;
+// console.log("obj: ", object.self.children[partIndex].children[surfaceIndex]);
+const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
 screenSurface.add_material( screenMaterial);
-const center = obj1.self.position.clone();
+const center = object.self.position.clone();
 center.z += 2;
-export {localMachineObj, screenSurface, center}
+
+export {localMachineObj, screenSurface, center, object, partIndex, surfaceIndex}

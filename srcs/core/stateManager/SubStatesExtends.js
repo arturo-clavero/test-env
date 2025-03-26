@@ -1,16 +1,20 @@
 import * as THREE from 'three';
-import { CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
+import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { SubState } from "./SubStates";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 
 class CssSubState extends SubState {
-	constructor(name, surface, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate){
-		super(name, surface, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
+	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate){
+		super(name,  object.self.children[partIndex].children[surfaceIndex].userData.instance, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
+		// const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
+
 		this.engine =  new MainEngine();;
-		this.element = element;
-		this.elementObj = new CSS2DObject(this.element);
-		this.elementObj.position.set(0, 0, 0);
-		this.surface.add(this.elementObj);
+		this.div = element;
+
+		this.divObject = new CSS3DObject(this.div);
+		this.divObject.position.set(0, 0, 0);
+		object.add_part(0.5, 0.5, partIndex, surfaceIndex, this.divObject, [0, 0, 1]);
+		this.screenSurface =  object.self.children[partIndex].children[surfaceIndex];
 	}
 
 	enter() 
@@ -22,44 +26,37 @@ class CssSubState extends SubState {
     exit() 
 	{
 		super.exit();
-		this.element.style.visibility = "hidden";
-
+		this.div.style.visibility = "hidden";
+		//TO BE CHANGED set this as functin coming in cleanup isntead the hiddden bit because osemtimes you ไรสส ืนะ ้รกำ!	
 	}
     resize()
 	{
-		//adjust width andheight of div
-		this.engine.css2drenderer.setSize(window.innerWidth, window.innerHeight);
-		this.elementObj.updateMatrixWorld(true);
-		this.surface.geometry.computeVertexNormals(); 
-		this.surface.geometry.computeBoundingBox();
-		const bbox = this.surface.geometry.boundingBox;
-
-		const vector1 = new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.min.z);
-		const vector2 = new THREE.Vector3(bbox.max.x, bbox.max.y, bbox.max.z);
-		this.surface.updateMatrixWorld(true);
-		vector1.applyMatrix4(this.surface.matrixWorld);
-		vector2.applyMatrix4(this.surface.matrixWorld);
-		vector1.project(this.engine.camera);
-		vector2.project(this.engine.camera);
-		const widthInPixels = Math.abs(vector2.x - vector1.x) * window.innerWidth * 0.5;
-		const heightInPixels = Math.abs(vector2.y - vector1.y) * window.innerHeight * 0.5;
-		this.element.style.width = `${widthInPixels}px`;
-		this.element.style.height = `${heightInPixels }px`;
-		//fix fiv distorsion
-		const rect = this.element.getBoundingClientRect();
-		const origin = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
-		const target = new THREE.Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
-		const percentage = 0.12;
-		const direction = new THREE.Vector2().subVectors(target, origin);
-		const extension = direction.multiplyScalar(percentage);
-		const newTarget = target.clone().add(extension);
-		this.element.style.position = "absolute";
-		this.element.style.left = `${newTarget.x - target.x}px`;
-		this.element.style.top = `${newTarget.y - target.y}px`;
+		const boundingBox = new THREE.Box3().setFromObject(this.screenSurface);
+		const worldSize = new THREE.Vector3();
+		boundingBox.getSize(worldSize);
+		const topLeft = new THREE.Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.min.z);
+		const bottomRight = new THREE.Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z);
+		const toScreenPosition = (pos, camera) => {
+			const vector = pos.clone().project(camera);
+			return {
+				x: (vector.x * 0.5 + 0.5) * window.innerWidth,
+				y: (1 - (vector.y * 0.5 + 0.5)) * window.innerHeight
+			};
+		};
+		const screenTopLeft = toScreenPosition(topLeft, this.engine.camera);
+		const screenBottomRight = toScreenPosition(bottomRight, this.engine.camera);
+		const pixelWidth = Math.abs(screenBottomRight.x - screenTopLeft.x);
+		const pixelHeight = Math.abs(screenBottomRight.y - screenTopLeft.y);
+		const scaleX = pixelWidth / worldSize.x;
+		const scaleY = pixelHeight / worldSize.y;
+		const scaleFactor = 1 / Math.min(scaleX, scaleY);
+		this.div.style.width = `${pixelWidth}px`;
+		this.div.style.height = `${pixelHeight}px`;
+		this.divObject.scale.set(scaleFactor, scaleFactor, scaleFactor);
 		super.resize();
 	}
 	animate(){
-		this.engine.css2drenderer.render(this.engine.scene, this.engine.camera);
+		this.engine.css3DRenderer.render(this.engine.scene, this.engine.camera);
 		super.animate();
 	}
 }

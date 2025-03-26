@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
+import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -18,11 +18,11 @@ class MainEngine {
 		this.renderer.shadowMap.enabled = true;
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-		this.css2drenderer = new CSS2DRenderer();
-		this.css2drenderer.setSize( window.innerWidth, window.innerHeight );
-		this.css2drenderer.domElement.style.position = 'absolute';
-		this.css2drenderer.domElement.style.top = '0px';
-		document.body.appendChild( this.css2drenderer.domElement );
+		this.css3DRenderer = new CSS3DRenderer();
+		this.css3DRenderer.setSize(window.innerWidth, window.innerHeight);
+		this.css3DRenderer.domElement.style.position = "absolute";
+		this.css3DRenderer.domElement.style.top = 0;
+		document.body.appendChild(this.css3DRenderer.domElement);
 	}
 	setUpScene(){
 		this.scene = new THREE.Scene();
@@ -49,7 +49,7 @@ class MainEngine {
 	}
 	animate(){
 		this.renderer.render(this.scene, this.camera);
-		//this.stateManager.animate();
+		this.stateManager.animate();
 	}
 	add(newObject, clickable){
 		if (! (newObject instanceof THREE.Object3D))
@@ -60,11 +60,12 @@ class MainEngine {
 	}
 	resize(){
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.css3DRenderer.setSize(window.innerWidth, window.innerHeight);
 		const aspectRatio =  window.innerWidth / window.innerHeight;
 		//TODO Tweak FOV to maintain smae look ... 
 		this.camera.aspect = aspectRatio;
 		this.camera.updateProjectionMatrix();
-		//this.stateManager.resize();
+		this.stateManager.resize();
 
 	}
 	click(event){
