@@ -113,7 +113,9 @@ const aiMachineState = new State(
 		fakeGameScreen, 
 		endScreen
 	],
-	(self)=>{self.changeSubstate();},
+	(self)=>{
+		self.changeSubstate();
+	},
 	(self)=>{
 		self.currentSubstate.exit();
 		self.changeSubstate(0);

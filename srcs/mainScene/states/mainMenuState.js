@@ -13,14 +13,7 @@ const mainSub = new SubState(
 	null,
 	null, 
 	null, 
-	(event)=>{
-		if (event.key === 'x')
-			return{change : "state", index : 1};
-		if (event.key === 'y')
-			return{change : "state", index : 2};
-		if (event.key === 'z')
-			return{change : "state", index : 3};
-	},
+	null,
 	null,
 )
 const mainState = new State(
