@@ -48,9 +48,8 @@ class MainEngine {
 		this.scene.add(spotLight);
 	}
 	animate(){
-		// this.controls.update();
 		this.renderer.render(this.scene, this.camera);
-		this.stateManager.animate();
+		//this.stateManager.animate();
 	}
 	add(newObject, clickable){
 		if (! (newObject instanceof THREE.Object3D))
@@ -65,7 +64,7 @@ class MainEngine {
 		//TODO Tweak FOV to maintain smae look ... 
 		this.camera.aspect = aspectRatio;
 		this.camera.updateProjectionMatrix();
-		this.stateManager.resize();
+		//this.stateManager.resize();
 
 	}
 	click(event){

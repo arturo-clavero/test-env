@@ -100,11 +100,10 @@ class Part {
 		}
 	}
 
-	add_object(xPercent, yPercent, index, object, obj_axis){
+	add_object(xPercent, yPercent, index, object, obj_height, obj_axis){
 		object.updateMatrixWorld();
 		const bbox = new THREE.Box3().setFromObject(object);
-		const object_half_len = (bbox.max.y - bbox.min.y) * 0.5;
-
+		let object_half_len = obj_height ? (bbox.max.y - bbox.min.y) * 0.5: 0;
 		const surface = this.shapes[index];
 		const point = surface.get_points(xPercent, yPercent);
 

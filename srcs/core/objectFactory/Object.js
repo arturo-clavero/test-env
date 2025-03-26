@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 class Object {
 	constructor(part){
@@ -13,7 +14,8 @@ class Object {
 	}
 	add_part(Xpercent, Ypercent, indexObject, indexFace, part, axis = [0, 1, 0]){
 		const object = (part instanceof THREE.Object3D) ? part : part.self;
-		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, axis)
+		const obj_height = (part instanceof CSS3DObject) ? false : true;
+		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, obj_height, axis)
 	}
 	add_onclick(ft) {
 		this.onclick = ft
