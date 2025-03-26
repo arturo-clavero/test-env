@@ -11,48 +11,42 @@ import { Form1 } from '../overlays/divs/form1';
 import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
 
-const restScreen = new MeshSubState(
-	"rest", 
-	screenSurface,
-	scene1,
-	1,
-	null,
-	null,
-	null,
-	null,
-	(event)=>{ 
-		if (event.key === 'Enter')
-			return {change : "substate"};
+const divStart = new StartScreen('white', "START GAME");
+
+const restScreen = new CssSubState(
+	"rest",
+	object,
+	partIndex,
+	surfaceIndex,
+	divStart.div,
+	0,
+	()=>{
+		divStart.enter();
+		divStart.enterButton.element.style.visibility = "hidden";
 	},
+	null,
+	()=>{ divStart.exit();},
+	()=>{ divStart.resize();},
+	(event)=> { return divStart.keyHandler(event);},
+	null,
 )
 
-const divStart = new StartScreen('black');
 const startScreen = new CssSubState(
 	"start",
 	object,
 	partIndex,
 	surfaceIndex,
 	divStart.div,
-	1,
+	0,
 	null,
 	()=>{
 		divStart.enter();
+		divStart.enterButton.element.style.visibility = "visible";
 	},
-	()=>{
-		divStart.exit();
-		restScreen.exit();
-	},
-	()=>{
-		divStart.resize();
-		restScreen.resize();
-	},
-	(event)=> {
-		return (divStart.keyHandler(event) || restScreen.keyHandler(event));
-	},
-	()=>{
-		divStart.animate();
-		restScreen.animate();
-	},
+	()=>{ divStart.exit();},
+	()=>{ divStart.resize();},
+	(event)=> { return divStart.keyHandler(event);},
+	()=>{divStart.animate()},
 )
 
 const divForm = new Form1("white");
@@ -75,7 +69,7 @@ const fakeGameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	fakeGame,
-	2,
+	1,
 	null,
 	null,
 	null,
@@ -122,11 +116,8 @@ const aiMachineState = new State(
 	},
 	[
 		screenMaterial,
-		scene1.renderMaterial,
 		fakeGame.renderMaterial,
 	]
 )
 
-const aiMachineRestScreen = restScreen;
-
-export {aiMachineState, aiMachineRestScreen}
+export {aiMachineState}

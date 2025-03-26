@@ -1,9 +1,9 @@
 import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
 import { SubState } from '../../core/stateManager/SubStates';
-import { localMachineState, localMachineRestScreen } from "./localMachineState";
-import { aiMachineState, aiMachineRestScreen } from './aiMachineState';
-import { tourMachineState, tourMachineRestScreen } from './tournamentMachineState';
+import { localMachineState } from "./localMachineState";
+import { aiMachineState } from './aiMachineState';
+import { tourMachineState } from './tournamentMachineState';
 
 const mainSub = new SubState(
 	"main controls", 

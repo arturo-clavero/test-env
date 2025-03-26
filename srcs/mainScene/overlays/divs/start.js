@@ -3,10 +3,13 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
 
 class StartScreen{
-	constructor(color = "black"){
+	constructor(color = "black", title = "START GAME", fontSize=1.8){
 		this.overlay = new Overlay([
 					new FlexBox({
 						flex: 1,
+						children : [
+							new Text({content: title, fontSize: fontSize})
+						]
 					}),
 					new FlexBox({
 						dir: "row",

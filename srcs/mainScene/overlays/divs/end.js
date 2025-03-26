@@ -8,9 +8,7 @@ class End{
 		this.overlay = new Overlay([
 			new FlexBox({
 				flex: 1,
-				//dir: "column",
 				fontSize: 2,
-
 				children : [
 					new Text({content: "GAME OVER"})
 				]
