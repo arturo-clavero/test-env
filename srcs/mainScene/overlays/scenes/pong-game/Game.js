@@ -31,11 +31,37 @@ import * as THREE from 'three';
 	// }
 	let gameID, mode;
 
+	function startPongGame(type){
+		const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
+			fetch('http://localhost:8003/new-game/', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify(brutdata)
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data["error"])
+				{
+					alert(data["error"]);
+					return;
+				}
+			console.log("data : ", data);
+			// if (currentGame)
+			// 	currentGame.clean();
+		//	currentGame = new Game();
+			// new_round(123, 456, type);
+			new_round(data["gameID"], data["userID"], "local");
+			})
+			.catch(error => {
+				console.error('Error creating game:', error);
+			});
+		}
 	function	new_round(gameID_input, userID, player_mode)
 	{
 		console.log("called new: ", gameID_input, userID, player_mode);
 		gameID = gameID_input;
 		mode = player_mode;
+		console.log("connecting websokcet .... ")
 		socket.new(gameID, userID, ()=>{updatesFromBackend();});
 		socket.send({
 			request: "start game",
@@ -174,31 +200,7 @@ function	clean(){
 		socket.socket.close();
 	}
 
-	function startPongGame(type){
-		const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
-			fetch('http://localhost:8001/new-game/', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(brutdata)
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data["error"])
-				{
-					alert(data["error"]);
-					return;
-				}
 
-			// if (currentGame)
-			// 	currentGame.clean();
-		//	currentGame = new Game();
-			// new_round(123, 456, type);
-			new_round(data["gameID"], data["userID"], "local");
-			})
-			.catch(error => {
-				console.error('Error creating game:', error);
-			});
-		}
 	
 
 	const renderTarget = createRenderTarget();

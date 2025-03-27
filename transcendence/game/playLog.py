@@ -9,6 +9,7 @@ active_game_logs = {}
 @api_view(['POST'])
 def	new_game(request):
 	global active_game_logs
+	print("hello")
 	if request.method == 'POST':
 		userID = str(uuid1())
 		gameID = request.data.get('gameID')

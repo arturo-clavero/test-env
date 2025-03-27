@@ -12,9 +12,7 @@ import numpy as np
 import logging
 
 logger = logging.getLogger(__name__)
-logger.debug("This is a debug message")
-logger.info("This is an info message")
-logger.warning("This is a warning message")
+
 
 active_sessions = {}
 pending_sessions = {}
@@ -63,6 +61,7 @@ gameManager = GameManager()
 class GameConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		global loop_running, gameManager
+		print("websocket connected!")
 		self.gameID = self.scope['url_route']['kwargs']['game_id']
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		self.reconnected = False

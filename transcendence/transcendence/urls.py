@@ -4,11 +4,7 @@ from game import playLog
 
 from django.http import HttpResponse
 
-def root_view(request):
-    return HttpResponse("Welcome to the game app!")
-
 urlpatterns = [
-	path('', root_view, name='home'),
 	path('new-game/', playLog.new_game, name='new-game'),
 ]
 

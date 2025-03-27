@@ -25,7 +25,6 @@ SECRET_KEY = 'django-insecure-0qp__(58*yyzfn18b*)wg92+!k=^irpr10k_wr&$sgtx8d^12b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 CORS_ALLOW_ALL_ORIGINS = True  # For testing purposes, you can allow all origins
@@ -34,7 +33,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('redis', 6379)],  # Make sure Redis is running on your machine
+            "hosts": [('localhost', 6379)],  # Make sure Redis is running on your machine
         },
     },
 }
@@ -69,9 +68,11 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:5173",
+	"http://localhost:8003"
 ]
-
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"] 
 
 TEMPLATES = [
     {
