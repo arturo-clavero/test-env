@@ -10,7 +10,7 @@ import { StartScreen } from '../overlays/divs/start';
 import { Form1 } from '../overlays/divs/form1';
 import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
-import { startPongGame, pongGame } from '../overlays/scenes/pong-game/init';
+import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
 
 const divStart = new StartScreen('white', "START GAME");
 

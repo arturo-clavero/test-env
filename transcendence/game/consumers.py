@@ -9,6 +9,13 @@ from .playLog import get_player_alias
 from .playLog import store_game_results
 import numpy as np
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.debug("This is a debug message")
+logger.info("This is an info message")
+logger.warning("This is a warning message")
+
 active_sessions = {}
 pending_sessions = {}
 active_connections = {}
@@ -19,6 +26,10 @@ class GameManager():
 	def __init__(self):
 		self.channel_layer = get_channel_layer()
 		self.pending_timeout = 100
+		logger.debug("This is a debug message")
+		logger.info("This is an info message")
+		logger.warning("This is a warning message")
+
 
 	async def broadcast_game_state(self):
 		while True:
@@ -61,7 +72,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_add(f"game_{self.gameID}", self.channel_name)
 		await self.accept()
 		await self.verify_user()
-
+		print("loop running? ", loop_running)
 		if loop_running == False:
 			self.game_state_task = asyncio.create_task(gameManager.broadcast_game_state())
 			loop_running = True
@@ -105,6 +116,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		print("data received: ", data)
 		if "boundaries" in data:
 			self.dimensions = data["boundaries"]
 		if "request" in data:

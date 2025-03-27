@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 export class Engine {
-	constructor(window, canvas){
+	constructor(window){
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 1000);
+		this.camera =  new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 		this.camera.position.z = 10;
 		//this.renderer = new THREE.WebGLRenderer({ canvas });
 		this.lastUpdateTime = 0;

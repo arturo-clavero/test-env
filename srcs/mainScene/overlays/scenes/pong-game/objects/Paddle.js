@@ -42,8 +42,8 @@ class Paddle {
 		this.halfLen = len /2;
 		this.keyDown = "not allowed";
 		this.keyUp = "not allowed";
-		if (visibility == "hide")
-			this.hide();
+		// if (visibility == "hide")
+		// 	this.hide();
     }
 	hide()
 	{
