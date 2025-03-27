@@ -41,6 +41,7 @@ CHANNEL_LAYERS = {
 
 REDIS_HOST = 'redis'
 REDIS_PORT = 6379
+ROOT_URLCONF = 'transcendence.urls'
 
 INSTALLED_APPS = [
 	"corsheaders",

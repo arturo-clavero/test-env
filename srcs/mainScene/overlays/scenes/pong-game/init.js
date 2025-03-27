@@ -11,7 +11,8 @@ export function getCurrGame(){
 }
 
 export function startPongGame(type){
-		fetch('/api/game/new-game/', {
+	const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
+		fetch('http://localhost:8001/new-game/', {
 			method: 'POST',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(brutdata)
@@ -23,8 +24,8 @@ export function startPongGame(type){
 				alert(data["error"]);
 				return;
 			}
-		if (currentGame)
-			currentGame.clean();
+		// if (currentGame)
+		// 	currentGame.clean();
 		currentGame = new Game();
 		currentGame.new(123, 456, type);
 		// currentGame.new(data["gameID"], data["userID"], "local");
