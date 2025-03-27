@@ -62,7 +62,7 @@ import * as THREE from 'three';
 		gameID = gameID_input;
 		mode = player_mode;
 		console.log("connecting websokcet .... ")
-		socket.new(gameID, userID, ()=>{updatesFromBackend();});
+		socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		socket.send({
 			request: "start game",
 			game_id: gameID,
@@ -77,9 +77,13 @@ import * as THREE from 'three';
 	
 	function	updatesFromBackend(event){
 		const data = JSON.parse(event.data);
-		if (!data || data.type != "game update")
+		console.log("hello?")
+		if (!data )
 			return {};
-		console.log("received : ", data);
+		console.log("there is data , received : ", data);
+		if (data.type != "game update")
+			return {};
+		console.log("correct ....");
 		if (data.updates.state == "countdown")
 		{
 			if (state != "countdown")

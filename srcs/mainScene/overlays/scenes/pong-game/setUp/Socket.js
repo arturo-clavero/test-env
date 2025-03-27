@@ -14,7 +14,10 @@ export class Socket {
 		this.socket = new WebSocket(`ws://localhost:8003/ws/game/${gameID}/${userID}/`);
 		this.socket.onopen = this.myOpen.bind(this);
 		this.socket.onclose = this.myClose.bind(this);
-		this.socket.onmessage = myReceive;
+		this.socket.onmessage = (event)=>{
+			console.log("received");
+			myReceive(event);
+		}
 	}
 	myOpen(){
 		console.log("websocket opening");
