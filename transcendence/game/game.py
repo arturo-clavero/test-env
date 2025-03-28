@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 class Game:
-	duration = 60.0
+	duration = 6.0
 
 	def __init__(self, gameID):
 		self.id = gameID #needed for user validation for paddles

@@ -32,7 +32,12 @@ function moveCamera(data, onComplete) {
 			x: data.pos[0], 
 			y: data.pos[1], 
 			z: data.pos[2],
-			onUpdate: () => new StateManager().resize(),
+			onUpdate: () =>{ new StateManager().resize()
+				// engine.camera.position.x += (Math.random() - 0.5) * 0.2;
+				// engine.camera.position.y += (Math.random() - 0.5) * 0.2;
+				// engine.camera.position.z += (Math.random() - 0.5) * 0.2;
+			},
+
 			overwrite: "auto",
 		}, 0);
 	}
@@ -58,7 +63,51 @@ function moveCamera(data, onComplete) {
 		isAnimating = false;
 		new StateManager().resize();
 		onComplete();
+		engine.camera.position.x = data.pos[0];
+		engine.camera.position.y = data.pos[1];
+		engine.camera.position.z = data.pos[2];
+
 	});
 }
+function shakeCamera(camera, intensity = 0, duration = 2000) {
+    let startTime = performance.now();
+    let prev_position = camera.position;
+    function update() {
+        let elapsed = performance.now() - startTime;
+        if (elapsed < duration) {
+			intensity += 0.005
+            camera.position.x += (Math.random() - 0.5) * intensity;
+            camera.position.y += (Math.random() - 0.5) * intensity;
+            camera.position.z += (Math.random() - 0.5) * intensity;
+            requestAnimationFrame(update);
 
+        } else {
+            camera.position.set(prev_position.x, prev_position.y, prev_position.z); // Reset to default position
+        }
+    }
+    
+    update();
+}
+
+function shakeCameraWithRotation(camera, intensity = 0.1, duration = 5000, rotationAmount = 0.1) {
+    let startTime = performance.now();
+    let prevPosition = camera.position.clone();
+    let prevRotation = camera.rotation.clone();
+    function update() {
+        let elapsed = performance.now() - startTime;
+        if (elapsed < duration) {
+            let t = elapsed * 0.005;
+            camera.position.x += (Math.random() - 0.5) * intensity;
+            camera.position.y += (Math.random() - 0.5) * intensity;
+            camera.position.z += (Math.random() - 0.5) * intensity;
+            camera.rotation.z += Math.sin(t * 4) * rotationAmount * (Math.random() - 0.5) ;
+            requestAnimationFrame(update);
+        } else {
+            camera.position.copy(prevPosition);
+            camera.rotation.copy(prevRotation);
+        }
+    }
+    update();
+}
+	
 export {moveCamera}

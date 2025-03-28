@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { MainEngine } from '../../utils/MainEngine';
 const engine = new MainEngine();
 function createRenderTarget(){
-	const renderTarget = new THREE.WebGLRenderTarget(4096, 2048, {
+	const renderTarget = new THREE.WebGLRenderTarget(2048, 2048, {
 		minFilter: THREE.LinearFilter,
 		magFilter: THREE.LinearFilter,
 		format: THREE.RGBAFormat,

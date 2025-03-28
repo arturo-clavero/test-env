@@ -27,8 +27,8 @@ const height = 6 * scale;
 const width = 3 * scale;
 
 const materials = [
-	new THREE.MeshStandardMaterial({ color: 0x00ff00 ,}),
-	new THREE.MeshStandardMaterial({ color: 0xff0000 ,}),
+	new THREE.MeshStandardMaterial({ color: 0x0000ff ,}),
+	new THREE.MeshStandardMaterial({ color: 0x0000ff ,}),
 	new THREE.MeshStandardMaterial({ color: 0xff00ff ,}),
 
 ];
@@ -40,7 +40,7 @@ const base = new THREE.Mesh(baseGeometry, materials);
 arcadeMachine.add(base);
 
 const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
-const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff, linewidth: 5 });
+const edgesMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff, linewidth: 1 });
 // const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
 // arcadeMachine.add(edges);
 
@@ -71,7 +71,7 @@ for (let i = 0; i < edgesPositions.length; i += 3) {
     }
 }
 
-let materialtest = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+let materialtest = new THREE.MeshBasicMaterial({ color: 0x0000ff });
 const shapetest = new THREE.Mesh(new THREE.ShapeGeometry(shapeGroup[0]), materialtest);
 // arcadeMachine.add(shapetest);
 const filteredEdgesGeometry = new THREE.BufferGeometry();
@@ -103,4 +103,5 @@ arcadeMachine.castShadow = true;
 arcadeMachine.position.y = -0.45;
 arcadeMachine.position.z = 2;
 
+arcadeMachine.scale.set(2, 2, 2);
 export { arcadeMachine }

@@ -12,8 +12,7 @@ import { createRenderTarget, createScreenMaterial } from '../utils';
 import * as THREE from 'three';
 
 //STATES: waiting, playing, error, completed
-// export class Game {
-// 	constructor(){
+
 	let state = "0";
 	let engine = new Engine(window);
 	let middleBars = new MiddleBars("hide", engine);
@@ -22,16 +21,16 @@ import * as THREE from 'three';
 	let socket = new Socket();
 	let key = new KeyControls(paddles, socket);
 	let header = new Header(engine);
-	let body = new Font(engine);
+	let content_body = new Font(engine);
 	let end = false;
 	window.addEventListener("resize", (e) => {resize(e);});
-	let animationFrameId = null;
+	// let animationFrameId = null;
 	let animate_state = () => {};
 	animate();
 	// }
 	let gameID, mode;
 
-	function startPongGame(type){
+export	function startPongGame(type){
 		const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
 			fetch('http://localhost:8003/new-game/', {
 				method: 'POST',
@@ -89,7 +88,7 @@ import * as THREE from 'three';
 			if (state != "countdown")
 				countdown();
 			num = data.updates.num == 1 ? "|" : data.updates.num;
-			body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
+			content_body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
 		}
 		if (data.updates.state == "playing")
 		{
@@ -124,10 +123,10 @@ function	waiting(){
 		//paddles.hide();
 		ball.object.position.z = 7;
 		ball.object.position.y = -0.06;
-		body.new("waiting for players...", "thick", 0, 0.3, 0, 50, 1.5, engine);
+		content_body.new("waiting for players...", "thick", 0, 0.3, 0, 50, 1.5, engine);
 	}
 	function	countdown(){
-		body.delete();
+		content_body.delete();
 		state = "countdown";
 		//ball.hide();
 		//paddles.hide();
@@ -136,7 +135,7 @@ function	waiting(){
 	function	playing(){
 		state = "playing";
 		ball.object.position.set(0, 0, 0);
-		body.delete();
+		content_body.delete();
 		middleBars.show();
 		ball.show();
 		paddles.show(mode);
@@ -151,13 +150,13 @@ function	waiting(){
 		//middleBars.hide();
 		if (msg)
 		{
-			body.new("game over", "thick", 0, 0.15, 0, 15, 1.5, engine);
+			content_body.new("game over", "thick", 0, 0.15, 0, 15, 1.5, engine);
 			let info = new Font(engine);
 			info.new(msg, "thick", 0, -.15, 0, 80, 1.5, engine);
 		}
 		else
 		{
-			body.new("game over", "thick", 0, 0, 0, 15, 1.5, engine);
+			content_body.new("game over", "thick", 0, 0, 0, 15, 1.5, engine);
 		}
 		new StateManager().currentState.changeSubstate();
 		clean();
@@ -179,10 +178,9 @@ function	waiting(){
 
 	function	resize(e) {
 		console.log("resize game");
-		body.initPositions(engine);
-	engine.camera.aspect = window.innerWidth / window.innerHeight;
-
-	engine.camera.updateProjectionMatrix();
+		content_body.initPositions(engine);
+		engine.camera.aspect = window.innerWidth / window.innerHeight;
+		engine.camera.updateProjectionMatrix();
 		engine.setRendererSize(window);
 		ball.initPositions(engine);
 		paddles.initPositions(engine);
@@ -204,13 +202,10 @@ function	clean(){
 		socket.socket.close();
 	}
 
-
+const renderTarget = createRenderTarget();
+const renderMaterial = createScreenMaterial(renderTarget);
 	
-
-	const renderTarget = createRenderTarget();
-	const renderMaterial = createScreenMaterial(renderTarget);
-	
-	const pongGame = {
+export	const pongGame = {
 		"renderMaterial" : renderMaterial,
 		"renderTarget" : renderTarget,
 		"animate" : ()=>{animate();},
@@ -218,4 +213,216 @@ function	clean(){
 		"camera" : engine.camera,
 		"keyHandler" : null,
 	}
-	export {pongGame, startPongGame}
+	
+// export class Game {
+// 	constructor(){
+// 		if (!Game.instance)
+// 		{
+// 			console.log("new instance!\n\n");
+// 			this.state = "0";
+// 			this.engine = new Engine(window);
+// 			this.middleBars = new MiddleBars("hide", this.engine);
+// 			this.ball = new Ball("hide", this.engine);
+// 			this.paddles = new PaddleGroup("hide", this.engine);
+// 			this.socket = new Socket();
+// 			this.key = new KeyControls(this.paddles, this.socket);
+// 			this.header = new Header(this.engine);
+// 			this.body = new Font(this.engine);
+// 			this.end = false;
+// 			window.addEventListener("resize", (e) => this.onWindowResize(e));
+// 			this.animationFrameId = null;
+// 			this.animate = this.animate.bind(this);
+// 			this.animate_state = () => {};
+// 			this.animate();
+// 			Game.instance = this;
+// 		}
+// 		return Game.instance;
+// 	}
+
+// 	new_match(gameID, userID, player_mode)
+// 	{
+// 		console.log(gameID, userID);
+// 		this.gameID = gameID;
+// 		this.mode = player_mode;
+// 		this.socket.new(gameID, userID, this.updatesFromBackend.bind(this));
+// 		this.socket.send({
+// 			request: "start game",
+// 			game_id: this.gameID,
+// 			boundaries: { x: this.paddles.collisionPos(this.ball), y: this.engine.boundaryY },
+// 			left_paddle_type: this.mode === "AI" ? "local" : (this.mode === "player2" ? "X" : this.mode),
+// 			right_paddle_type: this.mode === "player1" ? "X" : this.mode,
+// 			paddle_half_len: this.paddles.paddles[0].halfLen,
+// 		});
+// 		if (this.mode == "player1" || this.mode == "player2")
+// 			this.waiting();
+// 	}
+	
+// 	updatesFromBackend(event){
+// 		const data = JSON.parse(event.data);
+// 		if (!data || data.type != "game update")
+// 			return {};
+// 		// console.log("received : ", data);
+// 		if (data.updates.state == "countdown")
+// 		{
+// 			if (this.state != "countdown")
+// 				this.countdown();
+// 			let num = data.updates.num == 1 ? "|" : data.updates.num;
+// 			this.body.new(num, "thin", 0, 0, 0, 1.5, 1, this.engine);
+// 		}
+// 		if (data.updates.state == "playing")
+// 		{
+// 			if (this.state != "playing")
+// 				this.playing();
+// 			this.paddles.paddles[0].object.position.y = data.updates.paddle_left;
+// 			this.paddles.paddles[1].object.position.y = data.updates.paddle_right;
+// 			this.ball.object.position.x = data.updates.ball.x;
+// 			this.ball.object.position.y = data.updates.ball.y;
+// 			this.header.updateScores(data.updates.score1, data.updates.score2, this.engine);
+// 		}
+// 		// else
+// 		// 	console.log("updates -> ", data.updates.state);
+// 		if (data.updates.state == "game end")
+// 		{
+// 			console.log("game end received in front end")
+// 			console.log("this state :", this.state);
+// 			if (this.state != "completed")
+// 				this.completed();
+// 		}
+// 		if (data.updates.state == "error")
+// 		{
+// 			if (this.state != "error")
+// 				this.completed(data.updates.info);
+// 		}
+// 		if (data.updates.state == "player names")
+// 			this.header.new("hide", data.updates.name1, data.updates.name2, this.engine);
+// 	}
+
+// 	waiting(){
+// 		this.state = "waiting";
+// 		this.paddles.hide();
+// 		this.ball.object.position.z = 7;
+// 		this.ball.object.position.y = -0.06;
+// 		this.body.new("waiting for players...", "thick", 0, 0.3, 0, 50, 1.5, this.engine);
+// 	}
+// 	countdown(){
+// 		this.body.delete();
+// 		this.state = "countdown";
+// 		this.ball.hide();
+// 		this.paddles.hide();
+// 		// this.animate_state = ()=>{// 	// };
+// 	}
+
+// 	playing(){
+// 		this.state = "playing";
+// 		this.ball.object.position.set(0, 0, 0);
+// 		this.body.delete();
+// 		this.middleBars.show();
+// 		this.ball.show();
+// 		this.paddles.show(this.mode);
+// 		this.header.show();
+// 		// this.animate_state = ()=>{// };
+// 	}
+
+// 	completed(msg){
+// 		console.log("completed...");
+// 		this.state = "completed";
+// 		this.ball.hide();
+// 		this.paddles.hide();
+// 		this.middleBars.hide();
+// 		// this.header.hide();
+// 		if (msg)
+// 		{
+// 			this.body.new("game over", "thick", 0, 0.15, 0, 15, 1.5, this.engine);
+// 			let info = new Font(this.engine);
+// 		initPositions	info.new(msg, "thick", 0, -.15, 0, 80, 1.5, this.engine);
+// 		}
+// 		else
+// 		{
+// 			console.log("just game over...");
+// 			this.body.new("game over", "thick", 0, 0, 0, 15, 1.5, this.engine);
+// 		}
+// 		window.addEventListener("keydown",(event) => {
+// 			if (event.key === "Enter") {
+// 				this.clean();
+// 				window.location.href = "/";
+// 			}
+// 		});
+// 		new StateManager().currentState.changeSubstate();
+// 		this.clean();
+// 	}
+// 	animate() {
+// 		if (this.end == true)
+// 		{
+// 			cancelAnimationFrame(this.animationFrameId);
+// 			return ;
+// 		}
+// 		//this.animate_state(this);
+// 		if (this.state == "waiting")
+// 			this.ball.rotate();
+// 		this.animationFrameId = requestAnimationFrame(this.animate);
+// 		// this.engine.renderer.render(this.engine.scene, this.engine.camera);
+// 	}
+
+// 	onWindowResize(e) {
+// 		this.body.initPositions(this.engine);
+// 		this.engine.camera.aspect = window.innerWidth / window.innerHeight;
+// 		this.engine.camera.updateProjectionMatrix();
+// 		this.engine.setRendererSize(window);
+// 		this.ball.initPositions(this.engine);
+// 		this.paddles.initPositions(this.engine);
+// 		this.header.initPositions(this.engine);
+// 		this.socket.send({
+// 			"boundaries" : {
+// 				"x" : this.paddles.collisionPos(this.ball),
+// 				"y" : this.engine.boundaryY,
+// 			},
+// 			})
+// 	}
+
+// 	clean(){
+// 		this.end = true;
+// 		this.engine.scene.traverse(object => {dispose_object(object)});
+// 		//this.engine.renderer.dispose();
+// 		this.socket.socket.close();
+// 		window.removeEventListener("keydown", (e) => this.key.handleKeyDown(e));
+// 		window.removeEventListener("keyup", (e) => this.key.handleKeyUp(e));
+// 		window.removeEventListener("resize", (e) => this.onWindowResize(e));
+// 		console.log("cleaning");
+// 		Game.instance = null;
+// 	}
+// }
+
+// export function startPongGame(type){
+// 			const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
+// 				fetch('http://localhost:8003/new-game/', {
+// 					method: 'POST',
+// 					headers: {'Content-Type': 'application/json'},
+// 					body: JSON.stringify(brutdata)
+// 				})
+// 				.then(response => response.json())
+// 				.then(data => {
+// 					if (data["error"])
+// 					{
+// 						alert(data["error"]);
+// 						return;
+// 					}
+// 				console.log("data : ", data);
+// 				// if (currentGame)
+// 				// 	currentGame.clean();
+// 			//	currentGame = new Game();
+// 				// new_round(123, 456, type);
+// 				new Game().new_match(data["gameID"], data["userID"], "local");
+// 				})
+// 				.catch(error => {
+// 					console.error('Error creating game:', error);
+// 				});
+// 			}
+
+// // 	const renderTarget = createRenderTarget();
+// // 	const renderMaterial = createScreenMaterial(renderTarget);
+	
+// // 	export const pongGame = {
+// // 		"renderMaterial" : renderMaterial,
+// // 		"renderTarget" : renderTarget,
+// // 		"animate" : ()=>{new Game().animate();},
+// // 		"

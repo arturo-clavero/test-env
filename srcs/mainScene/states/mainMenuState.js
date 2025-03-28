@@ -20,7 +20,7 @@ const mainState = new State(
 	"main view",
 	{
 		pos: [0,2,7], 
-		duration: 4, 
+		duration: 5, 
 		ease: "power2.inOut"
 	}, 
 	[ mainSub ],

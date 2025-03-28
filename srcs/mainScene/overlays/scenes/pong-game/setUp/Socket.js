@@ -15,7 +15,7 @@ export class Socket {
 		this.socket.onopen = this.myOpen.bind(this);
 		this.socket.onclose = this.myClose.bind(this);
 		this.socket.onmessage = (event)=>{
-			console.log("received");
+			// console.log("received");
 			myReceive(event);
 		}
 	}
@@ -31,7 +31,7 @@ export class Socket {
 	send(obj){
 		if (this.socket && this.socket.readyState == WebSocket.OPEN)
 			{
-				console.log("sending message...");
+				// console.log("sending message...");
 				this.socket.send(JSON.stringify(obj));
 			}else{
 			this.msgQueue.push(obj);

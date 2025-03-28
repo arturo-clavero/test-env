@@ -11,6 +11,8 @@ import { StateManager } from './core/stateManager/StateManager';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { screenSurface } from './mainScene/objects/machines/aiMachineObj';
 
+import { arcadeMachine } from './mainScene/objects/arcadeMachine';
+
 document.addEventListener('keydown', (event) => {
 	if (event.key == "i")
 	{
@@ -31,9 +33,9 @@ engine.add(localMachineObj, true);
 engine.add(aiMachineObj, true);
 engine.add(tourMachineObj, true);
 
-
 engine.stateManager = stateManager;
 
+//shakeCamera(engine.camera);
 function animate() {
 	requestAnimationFrame(animate);
 	engine.animate();
