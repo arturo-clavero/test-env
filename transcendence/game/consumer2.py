@@ -1,165 +1,186 @@
-import json, asyncio, time, logging
-import numpy as np
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
-from .playLog import get_max_players, get_player_alias, store_game_results
-from .game import Game
+import random
 
-logger = logging.getLogger(__name__)
+all_players = {}
+remaining_players = {}
+remaining_rounds = {}
+active_tournaments = {}
 
-# player_sesions = {}
-# tournament_sesions = {}
-# loop_running = False
-# gameManager = GameManager()
-
-# def register_player(user, gameID= None, tournamentID = None):
-# 	if user not in player_sesions:
-# 		player_sesions[user] = {}
-# 	if game_id is not None:
-# 		player_sesions[user]["gameID"] = gameID
-# 	if tournament_id is not None:
-# 		player_sesions[user]["tournamentID"] = tournamentID
-
-# def remove_player(user):
-# 	player_data = player_sesions.pop(user, None)
-# 	if player_data is not None:
-#     if "gameID" in player_data:
-#         game_session = game_sessions.get(player_data["gameID"], None)
-#         if session:
-#             game_session.disconnect()
-# 	if "tournamentID" in player_data:
-#         tournament_sesion = tournament_sesions.get(player_data["gametournamentIDID"], None)
-#         if tournament_sesion:
-#             tournament_sesion.disconnect()
-
-game_sessions = {}
-game_channels = {}
-
-async def game_consumer(data, socket, user, gameID):
-	game_session = game_sessions[gameID, None]
-	if "request" in data:
-		if data["request"] == "start game":
-			if game_session is None:
-				game_session = GameSession(socket, gameID)
-			game_session.register(socket, user)
-			game_channels[user] = socket
-		elif data["request"] == "update paddles":
-			game_session.game_logic.update_paddles(data)
-	elif "boundaries" in data:
-		game_session.dimensions = data["boundaries"]
-	
-async def braodcast(message, channel)
-
-async def send(message, user)
-
-class GameSession(){
-	async def __init__(self, socket, gameID):
-		global loop_running, gameManager
-		game_sessions[gameID] = self
-		self.gameID = gameID
-		self.max_players = get_max_players(gameID)
-		self.players = []
-		self.pending_start_time = time.time()
-		self.dimensions = {"x" : 0, "y": 0}
-		if loop_running == False:
-			self.game_state_task = asyncio.create_task(gameManager.broadcast_game_state())
-			loop_running = True
-		await socket.channel_layer.group_add(f"game_{gameID}", socket.channel_name)
-		self.channel_layer = socket.channel_layer
-	
-	def register(user):
-		self.players.append(user)
-		total_players = len(self.players)
-		if total_players < self.max_players:
-			self.status = "pending"
-		elif total_players == self.max_players:
-			self.status = "active"
-			self.start_game(socket, user)
-		elif total_players > self.max_players:
-			self.disconnect(socket, user)
-
-	async def disconnect(user):
-		self.players.remove(user)
-		self.end_game(user, "player disconnected from game")
-
-	async def start_game(user):
-		self.active_start_time = time.time() 
-		self.game_logic = Game(self.gameID)
-		names = get_player_alias(self.gameID)
-		await self.channel_layer.group_send(f"game_{self.gameID}", 
-		{
-			"type": "game.updates", 
-			"updates": {
-				"state" : "player names", 
-				"name1" : names[0], 
-				"name2" : names[1]
-			}
-		})
-
-	async def update(user):
-		updates = self.game_logic.update_state()
-		if updates:
-			await self.channel_layer.group_send(f"game_{gameID}", 
-			{
-				"type": "game.updates", 
-				"updates": updates
-			})
-			if updates["state"] == "game end":
-				self.end_game()
-
-	async def end_game(error):
-		results = {
-			"score1": self.game_logic.paddles[-1].score,
-			"score2": self.game_logic.paddles[1].score,
-			"start_time": self.active_start_time,
-			"type": "game end",
-			"error": error if error else None
-		}
-		if results["score1"] > results["score2"]:
-			looser = self.game_logic.player1
-			winner= self.game_logic.player2
-		elif results["score2"] > results["score1"]:
-			looser = self.game_logic.player2
-			winner= self.game_logic.player1
-		elif error 
-			looser = user
-			self.players.remove(user)
-			winner = self.players[0]
-		results.update({
-			"looser": looser,
-			"winner": winner
-		})
-		store_game_results({results})
-		# await self.channel_layer.group_send(f"game_{self.gameID}",
-		# {
-		# 	"type": "game.updates",
-		# 	"updates" : {results}
-		# })
-		# broadcast(results)
-		del game_sessions[self.gameID]
-}
-
-
-
-class GameManager():
+class TourManager():
 	def __init__(self):
 		self.channel_layer = get_channel_layer()
-		self.pending_timeout = 20
+		self.running_tasks = set()
 
-	async def broadcast_game_state(self):
+	async def matchmaking(self):
 		while True:
 			try:
-				for gameID, game_session in game_sessions:
-					if game_session.status == "active":
-						game_session.update()
-					elif game_session.status == "pending":
-						if time.time() - game_session.pending_start_time > self.pending_timeout:
-							game_session.end_game()
+				
 
-				await asyncio.sleep(0.016)
+				await asyncio.sleep(0.016)  # ~60 updates per second
 			except Exception as e:
-				print(f"Error in game loop: {e}")
+				print(f"Error in tour loop: {e}")
 				break
 
-gameManager = GameManager()
-asyncio.create_task(gameManager.broadcast_game_state())
+tourManager = TourManager()
+queue = []
+max_players = 8
+
+active_tournaments = {}
+class TournamentConsumer(AsyncWebsocketConsumer):
+	async def connect(self):
+		global active_tournaments
+		self.tour_id = self.scope['url_route']['kwargs']['tour_id']
+		self.user_id = self.scope['url_route']['kwargs']['user_id']
+		self.alias = self.scope['url_route']['kwargs']['alias']
+		self.tournament = active_tournaments.get(self.tour_id, Tournament[self.tour_id])
+		if self.tournament.add_player(self.user_id, self) == "full":
+			next_tournament(self.tour_id)
+			return
+		await self.channel_layer.group_add(f"tournament_{self.tour_id}", self.channel_name)
+		accept()
+
+	async def disconnect(self):
+		if self.tournament.status == "pending":
+			self.tournament.all_players.remove(self.user_id)
+		elif self.tournament.status == "active":
+			self.tournament.remaining_players.remove(self.user_id)
+		self.tournament.sockets.pop(self)
+
+class Tournament():
+	def __init__(self, tour_id):
+		self.id = tour_id
+		self.all_players = []
+		self.remaining_players = []
+		self.state = "pending"
+		self.sockets = {}
+		self.total_matches = 0
+		self.current_round = 0
+		self.max_rounds = 3
+		self.immunity
+
+	def add_player(self, user_id, socket):
+		global max_players
+		if self.all_players + 1 > max_players:
+			if self.status == "pending":
+				self.start()
+			return "full"
+		self.all_players.append(user_id)
+		self.sockets[user_id] = socket
+		if self.all_players + 1 == max_players:
+			self.start()
+
+	def start(self):
+		self.state = "active"
+		self.remaining_players = self.all_players.copy()
+		await self.matchmaking()
+
+	def matchmaking():
+		random.shuffle(self.remaining_players)
+		self.total_matches = len(self.remaining_players) + len(self.remaining_players % 2)
+		self.current_round += 1
+		self.socket[0].channel_layer.group_send(f"tour_"{self.tour_id}, {
+			"type" : "matchmaking rounds"
+			"total matches" : self.total_matches,
+			"current round" : self.current_round,
+			"max rounds" : self.max_rounds,
+			"players" : self.remaining_players,
+		})
+		#now wait 5 seconds
+		while len(self.remaining_players) > 0:
+			player1_id = self.remaining_players.pop()
+			player1_alias = self.sockets[player1_id].alias
+			if len(self.remaining_players ) == 1:
+				player2_id = player1_id
+				player2_alias = "AI"
+				match_type = "AI"
+			else : 
+				player2_id = self.remaining_players.pop()
+				player2_alias = self.sockets[player2_id].alias
+				match_type = "remote"
+			game_id = log_match(player1_id, player2_id, player1_alias, player2_alias, match_type)
+			self.sockets[player1_id].send({
+				"type" : "start match",
+				"game type": match_type,
+				"user alias" : player1_alias,
+				"opponent" : player2_alias,
+			})
+			self.sockets[player2_id].send({
+				"type" : "start match",
+				"game type": match_type,
+				"user alias" : player2_alias,
+				"opponent" : player1_alias,
+			})
+	
+	def match_output(data):
+		winner = data.get("winner")
+		self.remaining_players.append(winner)
+		if (data.get("match_type") == "AI" )
+			
+		self.total_matches -= 1
+
+	async def matchmake(self):
+		global remaining_players, remaining_rounds
+		random.shuffle(remaining_players[self.tour_id])
+		remaining_rounds[self.tour_id] = len(remaining_players) + len(remaining_players) % 2
+		async def broadcast_next_rounds()
+		# wait 5 seconds
+		while (remaining_players)
+
+	async def receive(self, text_data):
+
+	
+
+	async def receive(self, text_data):
+		data = json.loads(text_data)
+		print("data received: ", data)
+		if "boundaries" in data:
+			self.dimensions = data["boundaries"]
+		if "request" in data:
+			if data["request"] == "start game":
+				await self.start_game()
+			if data["request"] == "update paddles":
+				active_sessions[self.gameID].update_paddles(data)
+
+	async def start_game(self):
+		players[self.gameID]["ready"] += 1
+		if self.reconnected == True:
+			active_sessions[self.gameID] = self.old_game
+			active_connections[self.user_id] = self
+			ready_connections[self.gameID] += 1
+		if players[self.gameID]["ready"] == self.max_players:
+			active_sessions[self.gameID] = Game(self.gameID)
+			names = get_player_alias(self.gameID)
+			await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
+		else:
+			pending_sessions[self.gameID] = time.time()
+		
+	async def game_updates(self, event):
+		updates = event["updates"]
+		if (updates["state"] == "error"):
+			await self.send(text_data=json.dumps({
+							"type": "game update",
+							"updates": {"state" : updates["state"], "info" : updates["info"]}
+						}))
+			store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
+			self.disconnect
+		elif (updates["state"] == "playing" or updates["state"] == "game end"):
+			await self.send(text_data=json.dumps({
+							"type": "game update",
+							"updates": {
+								"ball" : {
+									"x" : updates["x"][0]  * self.dimensions["x"], 
+									"y" : updates["y"][0] * self.dimensions["y"],
+								},
+								"paddle_left" : updates["y"][1] * self.dimensions["y"],
+								"paddle_right" : updates["y"][2] * self.dimensions["y"],
+								"score1" : updates["score1"],
+								"score2" : updates["score2"],
+								"state" : updates["state"],
+							}
+						}))
+			if (updates["state"] == "game end"):
+				self.disconnect
+		else:
+			await self.send(text_data=json.dumps({
+							"type": "game update",
+							"updates": updates,
+						}))
