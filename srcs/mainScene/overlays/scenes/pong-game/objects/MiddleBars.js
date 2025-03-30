@@ -3,8 +3,7 @@ import * as THREE from 'three';
 export class MiddleBars{
 	constructor(visibility, engine){
 		this.object = this.setUpMiddleBars(engine.scene);
-	// 	if (visibility == "hide")
-	// 		this.object.visible = false;
+		this.object.visible = visibility;
 	}
 	setUpMiddleBars(scene){
 		const totalBars = 40;

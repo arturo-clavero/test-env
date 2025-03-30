@@ -8,8 +8,7 @@ export class Ball {
 		this.object = new THREE.Mesh(geoCube, material);
 		engine.scene.add(this.object);
 		this.rotationSpeed = 0.01;
-		// if (visibility == false)
-		// 	this.hide();
+		this.object.visible = visibility;
 	}
 	initPositions(engine){
 		this.object.geometry.parameters.width = engine.boundaryY * 0.04;

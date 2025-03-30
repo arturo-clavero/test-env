@@ -62,18 +62,22 @@ class CssSubState extends SubState {
 }
 
 class MeshSubState extends SubState {
-	constructor(name, surface, scene, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler){
-		super(name, surface, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler);
+	constructor(name, surface, scene, materialIndex, setup, postCamMove, cleanup, keyHandler){
+		super(name, surface, materialIndex, setup, postCamMove, cleanup, scene?.resize || (()=>{}), keyHandler);
 		this.secondaryScene = scene;
 		this.default_material = this.surface.material;
-		this.resize();
+		this.animateScene = this.secondaryScene?.animate || (()=>{});
 		this.engine = new MainEngine();
+	}
+	exit(){
+		super.exit();
+		this.animate();
 	}
 	animate(){
 		// console.log("animate!");
-		this.secondaryScene?.animate(); 
+		if (this.animateScene() == "stop") return; 
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);
-    	this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);
+		this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);
 		this.engine.renderer.setRenderTarget(null); 
 	}
 }

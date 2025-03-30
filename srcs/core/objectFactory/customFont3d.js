@@ -48,10 +48,11 @@ const blueprint = [
 const fonts = preRenderFonts();
 
 export class Font{
-	constructor(engine){
+	constructor(isVisible, engine){
 		this.value = "";
 		this.group =  new THREE.Group();
 		engine.scene.add(this.group);
+		this.group.visible = isVisible;
 		this.max_width = 0;
 		this.scale = 0;
 		this.x = 0;
@@ -128,6 +129,12 @@ export class Font{
 		this.z = 0;
 		this.max_width = 0;
 		this.style = "";
+	}
+	hide(){
+		this.group.visible = false;
+	}
+	show(){
+		this.group.visible = true;
 	}
 }
 

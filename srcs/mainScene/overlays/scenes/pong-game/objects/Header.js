@@ -2,11 +2,11 @@ import { Font } from "../../../../../core/objectFactory/customFont3d";
 import * as THREE from 'three';
 
 export class Header {
-	constructor(engine){
-		this.name1 = new Font(engine);
-		this.name2 = new Font(engine);
-		this.score1 = new Font(engine);
-		this.score2 = new Font(engine);
+	constructor(visibility, engine){
+		this.name1 = new Font(visibility, engine);
+		this.name2 = new Font(visibility, engine);
+		this.score1 = new Font(visibility, engine);
+		this.score2 = new Font(visibility, engine);
 	}
 	
 	new(visibility, name1, name2, engine){
@@ -47,16 +47,16 @@ export class Header {
 	}
 
 	hide(){
-		this.name1.group.visible = false;
-		this.name2.group.visible = false;
-		this.score1.group.visible = false;
-		this.score2.group.visible = false;
+		this.name1.hide();
+		this.name2.hide();
+		this.score1.hide();
+		this.score2.hide();
 	}
 	
 	show(){
-		this.name1.group.visible = true;
-		this.name2.group.visible = true;
-		this.score1.group.visible = true;
-		this.score2.group.visible = true;
+		this.name1.show();
+		this.name2.show();
+		this.score1.show();
+		this.score2.show();
 	}
 }
