@@ -13,21 +13,11 @@ class StateManager {
 		  });
 		StateManager.instance = this;
 	}
-	addState(states){
-		if (!(Array.isArray(states)))
-			this.states.push(states)
-		else
-		{
-			for (let i = 0; i < states.length; i++)
-				this.states.push(states[i]);
-		}
-		if (! this.currentState)
-			this.changeState(0);
-	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
         if (this.currentStateIndex == index || index < 0)
 			return;
-		if (this.currentState) this.currentState.exit();
+		if (this.currentState && this.currentState.exit() == "cancelled")
+			return "cancelled";
 		if (index >= this.states.length)
 			index = 0;
         this.currentStateIndex = index;

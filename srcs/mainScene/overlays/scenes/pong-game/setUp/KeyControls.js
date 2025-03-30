@@ -4,8 +4,9 @@ export class KeyControls{
 		this.paddleRight = paddles.paddles[1];
 		this.socket = socket;
 		this.keyStates = {};
-		window.addEventListener("keydown", (e) => this.handleKeyDown(e));
-		window.addEventListener("keyup", (e) => this.handleKeyUp(e));
+		this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
+
 	}
 	handleKeyDown(event) {
 		console.log("on key down");

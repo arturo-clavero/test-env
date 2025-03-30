@@ -1,6 +1,11 @@
 
+import { arcadeMachine } from "../../mainScene/objects/arcadeMachine";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from "./StateManager";
+import * as THREE from 'three';
+
+
+
 const engine = new MainEngine();
 
 let scrollDelta = 0;
@@ -66,7 +71,9 @@ function moveCamera(data, onComplete) {
 		engine.camera.position.x = data.pos[0];
 		engine.camera.position.y = data.pos[1];
 		engine.camera.position.z = data.pos[2];
+		// fitCameraToObject(objectGroup, engine.camera);
 
+		// fitCameraToObject(localMachineObj.self, engine.camera);
 	});
 }
 function shakeCamera(camera, intensity = 0, duration = 2000) {
@@ -109,5 +116,31 @@ function shakeCameraWithRotation(camera, intensity = 0.1, duration = 5000, rotat
     }
     update();
 }
-	
+
+function fitCameraToObject(object, camera) {
+	const box = new THREE.Box3();  // Initialize an empty bounding box
+    object.children.forEach(child => {
+        child.updateMatrixWorld(true); // Ensure world matrices are updated
+        box.expandByObject(child);    // Expand the box to include the child’s bounding box
+    });
+
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+	console.log("size: ", size);
+    const aspect = window.innerWidth / window.innerHeight;
+    
+    let fov = THREE.MathUtils.degToRad(camera.fov); 
+    let distance;
+
+    if (aspect >= 1) {
+        distance = (size.x / 2) / Math.tan(fov / 2);
+    } else {
+        distance = (size.y / 2) / Math.tan(fov / 2);
+    }
+	console.log("distnace + maxDm", distance + maxDim);
+    camera.position.set(0, 0, distance + maxDim);
+    camera.lookAt(box.getCenter(new THREE.Vector3()));
+}
+
+
 export {moveCamera}

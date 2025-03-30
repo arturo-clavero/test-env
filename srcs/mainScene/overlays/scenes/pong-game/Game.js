@@ -22,11 +22,11 @@ import * as THREE from 'three';
 	let key = new KeyControls(paddles, socket);
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
-	let end = true;
+	let end = false;
 	let round = 0;
 	let gameID, mode, num;
 
-export	function startPongGame(type){
+export	function startPongGame(type = "local"){
 		const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
 			fetch('http://localhost:8003/new-game/', {
 				method: 'POST',
@@ -55,9 +55,8 @@ export	function startPongGame(type){
 	{
 		round++;
 		console.log("called new: ", gameID_input, userID, player_mode);
-		window.addEventListener("keydown", (e) => key.handleKeyDown(e));
-		window.addEventListener("keyup", (e)=>(key.handleKeyUp(e)));
-		window.addEventListener("resize", (e) => {resize(e)});
+		window.addEventListener("keydown", key.handleKeyDown);
+		window.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
 		mode = player_mode;
 		console.log("connecting websokcet .... ")
@@ -117,6 +116,7 @@ function	countdown(){
 }
 
 function	playing(){
+	end = false;
 	state = "playing";
 	ball.object.position.set(0, 0, 0);
 	content_body.delete();
@@ -145,16 +145,15 @@ function completed(msg){
 
 
 function	clean(){
-		end = true;
-		window.removeEventListener("keydown", (e) => key.handleKeyDown(e));
-		window.removeEventListener("keyup", (e)=>(key.handleKeyUp(e)));
-		window.removeEventListener("resize", (e) => {resize(e)});
+		window.removeEventListener("keydown", key.handleKeyDown);
+		window.removeEventListener("keyup", key.handleKeyUp);
 		ball.hide();
 		paddles.hide();
 		middleBars.hide();
 		content_body.hide();
 		header.hide();
 		socket.socket.close();
+		end = true;
 	}
 
 
@@ -175,6 +174,23 @@ function	resize(e) {
 		})
 }
 
+
+function exit(){
+	if (end == false){
+		console.log("tesssssssssst");
+		const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
+        if (userConfirmed) {
+            clean();
+        }
+		else
+		{
+			console.log("should nto exit");
+			return "forbidden";
+		}
+	}
+	console.log("not running....");
+}
+
 const renderTarget = createRenderTarget();
 const renderMaterial = createScreenMaterial(renderTarget);
 	
@@ -183,6 +199,7 @@ export	const pongGame = {
 		"renderTarget" : renderTarget,
 		"scene" : engine.scene,
 		"camera" : engine.camera,
-		"keyHandler" : null,
 		"resize":resize,
+		"exit": exit,
+		"enter": startPongGame,
 	}

@@ -22,7 +22,8 @@ class State {
 			this.changeSubstate(0);
 	}
 	changeSubstate(index = this.currentSubstateIndex + 1) {
-        if (this.currentSubstate) this.currentSubstate.exit();
+        if (this.currentSubstate && this.currentSubstate.exit() == "cancelled")
+			return "cancelled";
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
@@ -41,7 +42,8 @@ class State {
 			})
 	}
     exit() {
-		this.exitState(this);
+		if (this.exitState(this)=="cancelled")
+			return "cancelled";
 	}
 	handleKeyPress(event) {
 		const view = this.currentSubstate?.handleKeyPress(event);

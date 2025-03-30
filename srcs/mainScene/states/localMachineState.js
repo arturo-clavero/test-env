@@ -68,11 +68,6 @@ const fakeGameScreen = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	()=>{startPongGame("local");},
-	null,
-	null,
-	null,
-	(event)=> { return divForm.keyHandler(event);},
 )
 
 const divEnd = new End("white");
@@ -109,7 +104,8 @@ const localMachineState = new State(
 		self.changeSubstate();
 	},
 	(self)=>{
-		self.currentSubstate.exit();
+		if (self.currentSubstate.exit() == "cancelled")
+			return "cancelled";
 		self.changeSubstate(0);
 	},
 	[

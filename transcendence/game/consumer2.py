@@ -1,99 +1,68 @@
-import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from .game import Game
-import asyncio
-import time
-from channels.layers import get_channel_layer
-from .playLog import get_max_players
-from .playLog import get_player_alias
-from .playLog import store_game_results
+import json, asyncio, time, logging
 import numpy as np
-
-import logging
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.layers import get_channel_layer
+from .playLog import get_max_players, get_player_alias, store_game_results
+from .game import Game
 
 logger = logging.getLogger(__name__)
 
-
-active_sessions = {}
-pending_sessions = {}
+active_game_sessions = {}
+pending_game_sessions = {}
 active_connections = {}
 players = {}
-loop_running = False
+game_loop_running = False
 
 class GameManager():
 	def __init__(self):
 		self.channel_layer = get_channel_layer()
-		self.pending_timeout = 100
+		self.pending_timeout = 20
 
 	async def broadcast_game_state(self):
 		while True:
 			try:
-				for gameID, game in active_sessions.items():
+				for gameID, game in active_game_sessions.items():
 					updates = game.update_state()
 					if updates:
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
 						if updates["state"] == "game end":
 							store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
-							del active_sessions[gameID]
-							if gameID in active_sessions:
-								del pending_sessions[gameID]
+							del active_game_sessions[gameID]
+							if gameID in pending_game_sessions:
+								del pending_game_sessions[gameID]
 							break
-				for gameID, start_time in pending_sessions.items():
-					if gameID in active_sessions:
-						del pending_sessions[gameID]
+				for gameID, start_time in pending_game_sessions.items():
+					if gameID in active_game_sessions:
+						del pending_game_sessions[gameID]
 						break
 					if time.time() - start_time > self.pending_timeout:
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "oponent did not join the game", "score1":"", "score2":"", "start_time": start_time}})
-						del pending_sessions[gameID]
+						del pending_game_sessions[gameID]
 						break 
 
-				await asyncio.sleep(0.016)  # ~60 updates per second
+				await asyncio.sleep(0.016)
 			except Exception as e:
 				print(f"Error in game loop: {e}")
 				break
 
 gameManager = GameManager()
+asyncio.create_task(gameManager.broadcast_game_state())
 
-class GameConsumer(AsyncWebsocketConsumer):
-	async def connect(self):
-		global loop_running, gameManager
-		print("websocket connected!")
-		self.gameID = self.scope['url_route']['kwargs']['game_id']
-		self.user_id = self.scope['url_route']['kwargs']['user_id']
-		self.reconnected = False
-		self.initdata = {}
-		self.manage_user_multitab()
-		self.dimensions = {"x" : 0, "y": 0}
-		await self.channel_layer.group_add(f"game_{self.gameID}", self.channel_name)
+class GameConsumer():
+	def __init__(self, data):
+		global game_loop_running, gameManager
+		self.id = data.id
+		self.user = data.user
+		await self.channel_layer.group_add(f"game_{self.id}", self.channel_name)
 		await self.accept()
-		await self.verify_user()
-		print("loop running? ", loop_running)
-		if loop_running == False:
-			self.game_state_task = asyncio.create_task(gameManager.broadcast_game_state())
-			loop_running = True
-
-	async def verify_user(self):
 		if self.gameID not in players:
 			players[self.gameID] = {"connected" : 0, "ready" : 0}
 		self.max_players = get_max_players(self.gameID)
 		players[self.gameID]["connected"] += 1
 		if players[self.gameID]["connected"] > self.max_players:
 			self.disconnect()
-		
-	async def manage_user_multitab(self):
-		if self.user_id in active_connections:
-			old_connection = active_connections[self.user_id]
-			if self.gameID in active_sessions:
-				self.old_game = active_sessions[self.gameID]
-				self.reconnected = True
-			await old_connection.close()
-		else:
-			active_connections[self.user_id] = self
 
 	async def disconnect(self, code):
-		print("disconnect")
-		if self.user_id in active_connections:
-			del active_connections[self.user_id]
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
 				await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected from game", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
@@ -164,3 +133,5 @@ class GameConsumer(AsyncWebsocketConsumer):
 							"type": "game update",
 							"updates": updates,
 						}))
+
+gameManager = GameManager()
