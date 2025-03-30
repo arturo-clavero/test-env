@@ -184,7 +184,7 @@ function exit(){
         }
 		else
 		{
-			console.log("should nto exit");
+			console.log("should not exit");
 			return "forbidden";
 		}
 	}

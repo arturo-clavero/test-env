@@ -91,7 +91,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			active_connections[self.user_id] = self
 
 	async def disconnect(self, code):
-		print("disconnect")
+		# print("disconnect")
 		if self.user_id in active_connections:
 			del active_connections[self.user_id]
 		if self.gameID in active_sessions:

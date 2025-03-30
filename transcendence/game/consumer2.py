@@ -7,11 +7,139 @@ from .game import Game
 
 logger = logging.getLogger(__name__)
 
-active_game_sessions = {}
-pending_game_sessions = {}
-active_connections = {}
-players = {}
-game_loop_running = False
+# player_sesions = {}
+# tournament_sesions = {}
+# loop_running = False
+# gameManager = GameManager()
+
+# def register_player(user, gameID= None, tournamentID = None):
+# 	if user not in player_sesions:
+# 		player_sesions[user] = {}
+# 	if game_id is not None:
+# 		player_sesions[user]["gameID"] = gameID
+# 	if tournament_id is not None:
+# 		player_sesions[user]["tournamentID"] = tournamentID
+
+# def remove_player(user):
+# 	player_data = player_sesions.pop(user, None)
+# 	if player_data is not None:
+#     if "gameID" in player_data:
+#         game_session = game_sessions.get(player_data["gameID"], None)
+#         if session:
+#             game_session.disconnect()
+# 	if "tournamentID" in player_data:
+#         tournament_sesion = tournament_sesions.get(player_data["gametournamentIDID"], None)
+#         if tournament_sesion:
+#             tournament_sesion.disconnect()
+
+game_sessions = {}
+game_channels = {}
+
+async def game_consumer(data, socket, user, gameID):
+	game_session = game_sessions[gameID, None]
+	if "request" in data:
+		if data["request"] == "start game":
+			if game_session is None:
+				game_session = GameSession(socket, gameID)
+			game_session.register(socket, user)
+			game_channels[user] = socket
+		elif data["request"] == "update paddles":
+			game_session.game_logic.update_paddles(data)
+	elif "boundaries" in data:
+		game_session.dimensions = data["boundaries"]
+	
+async def braodcast(message, channel)
+
+async def send(message, user)
+
+class GameSession(){
+	async def __init__(self, socket, gameID):
+		global loop_running, gameManager
+		game_sessions[gameID] = self
+		self.gameID = gameID
+		self.max_players = get_max_players(gameID)
+		self.players = []
+		self.pending_start_time = time.time()
+		self.dimensions = {"x" : 0, "y": 0}
+		if loop_running == False:
+			self.game_state_task = asyncio.create_task(gameManager.broadcast_game_state())
+			loop_running = True
+		await socket.channel_layer.group_add(f"game_{gameID}", socket.channel_name)
+		self.channel_layer = socket.channel_layer
+	
+	def register(user):
+		self.players.append(user)
+		total_players = len(self.players)
+		if total_players < self.max_players:
+			self.status = "pending"
+		elif total_players == self.max_players:
+			self.status = "active"
+			self.start_game(socket, user)
+		elif total_players > self.max_players:
+			self.disconnect(socket, user)
+
+	async def disconnect(user):
+		self.players.remove(user)
+		self.end_game(user, "player disconnected from game")
+
+	async def start_game(user):
+		self.active_start_time = time.time() 
+		self.game_logic = Game(self.gameID)
+		names = get_player_alias(self.gameID)
+		await self.channel_layer.group_send(f"game_{self.gameID}", 
+		{
+			"type": "game.updates", 
+			"updates": {
+				"state" : "player names", 
+				"name1" : names[0], 
+				"name2" : names[1]
+			}
+		})
+
+	async def update(user):
+		updates = self.game_logic.update_state()
+		if updates:
+			await self.channel_layer.group_send(f"game_{gameID}", 
+			{
+				"type": "game.updates", 
+				"updates": updates
+			})
+			if updates["state"] == "game end":
+				self.end_game()
+
+	async def end_game(error):
+		results = {
+			"score1": self.game_logic.paddles[-1].score,
+			"score2": self.game_logic.paddles[1].score,
+			"start_time": self.active_start_time,
+			"type": "game end",
+			"error": error if error else None
+		}
+		if results["score1"] > results["score2"]:
+			looser = self.game_logic.player1
+			winner= self.game_logic.player2
+		elif results["score2"] > results["score1"]:
+			looser = self.game_logic.player2
+			winner= self.game_logic.player1
+		elif error 
+			looser = user
+			self.players.remove(user)
+			winner = self.players[0]
+		results.update({
+			"looser": looser,
+			"winner": winner
+		})
+		store_game_results({results})
+		# await self.channel_layer.group_send(f"game_{self.gameID}",
+		# {
+		# 	"type": "game.updates",
+		# 	"updates" : {results}
+		# })
+		# broadcast(results)
+		del game_sessions[self.gameID]
+}
+
+
 
 class GameManager():
 	def __init__(self):
@@ -21,24 +149,12 @@ class GameManager():
 	async def broadcast_game_state(self):
 		while True:
 			try:
-				for gameID, game in active_game_sessions.items():
-					updates = game.update_state()
-					if updates:
-						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
-						if updates["state"] == "game end":
-							store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
-							del active_game_sessions[gameID]
-							if gameID in pending_game_sessions:
-								del pending_game_sessions[gameID]
-							break
-				for gameID, start_time in pending_game_sessions.items():
-					if gameID in active_game_sessions:
-						del pending_game_sessions[gameID]
-						break
-					if time.time() - start_time > self.pending_timeout:
-						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "oponent did not join the game", "score1":"", "score2":"", "start_time": start_time}})
-						del pending_game_sessions[gameID]
-						break 
+				for gameID, game_session in game_sessions:
+					if game_session.status == "active":
+						game_session.update()
+					elif game_session.status == "pending":
+						if time.time() - game_session.pending_start_time > self.pending_timeout:
+							game_session.end_game()
 
 				await asyncio.sleep(0.016)
 			except Exception as e:
@@ -47,91 +163,3 @@ class GameManager():
 
 gameManager = GameManager()
 asyncio.create_task(gameManager.broadcast_game_state())
-
-class GameConsumer():
-	def __init__(self, data):
-		global game_loop_running, gameManager
-		self.id = data.id
-		self.user = data.user
-		await self.channel_layer.group_add(f"game_{self.id}", self.channel_name)
-		await self.accept()
-		if self.gameID not in players:
-			players[self.gameID] = {"connected" : 0, "ready" : 0}
-		self.max_players = get_max_players(self.gameID)
-		players[self.gameID]["connected"] += 1
-		if players[self.gameID]["connected"] > self.max_players:
-			self.disconnect()
-
-	async def disconnect(self, code):
-		if self.gameID in active_sessions:
-			if active_sessions[self.gameID].active == True:
-				await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected from game", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
-			del active_sessions[self.gameID]
-			if self.gameID in pending_sessions:
-				del pending_sessions[self.gameID]
-		elif self.gameID in pending_sessions:
-			store_game_results({"error":"player disconnected in waiting room", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
-			del pending_sessions[self.gameID]
-		players[self.gameID]["connected"] -= 1
-		players[self.gameID]["ready"] -= 1
-		if players[self.gameID]["connected"] == 0:
-			del players[self.gameID]
-		await self.channel_layer.group_discard(f"game_{self.gameID}", self.channel_name)
-
-	async def receive(self, text_data):
-		data = json.loads(text_data)
-		print("data received: ", data)
-		if "boundaries" in data:
-			self.dimensions = data["boundaries"]
-		if "request" in data:
-			if data["request"] == "start game":
-				await self.start_game()
-			if data["request"] == "update paddles":
-				active_sessions[self.gameID].update_paddles(data)
-
-	async def start_game(self):
-		players[self.gameID]["ready"] += 1
-		if self.reconnected == True:
-			active_sessions[self.gameID] = self.old_game
-			active_connections[self.user_id] = self
-			ready_connections[self.gameID] += 1
-		if players[self.gameID]["ready"] == self.max_players:
-			active_sessions[self.gameID] = Game(self.gameID)
-			names = get_player_alias(self.gameID)
-			await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
-		else:
-			pending_sessions[self.gameID] = time.time()
-		
-	async def game_updates(self, event):
-		updates = event["updates"]
-		if (updates["state"] == "error"):
-			await self.send(text_data=json.dumps({
-							"type": "game update",
-							"updates": {"state" : updates["state"], "info" : updates["info"]}
-						}))
-			store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
-			self.disconnect
-		elif (updates["state"] == "playing" or updates["state"] == "game end"):
-			await self.send(text_data=json.dumps({
-							"type": "game update",
-							"updates": {
-								"ball" : {
-									"x" : updates["x"][0]  * self.dimensions["x"], 
-									"y" : updates["y"][0] * self.dimensions["y"],
-								},
-								"paddle_left" : updates["y"][1] * self.dimensions["y"],
-								"paddle_right" : updates["y"][2] * self.dimensions["y"],
-								"score1" : updates["score1"],
-								"score2" : updates["score2"],
-								"state" : updates["state"],
-							}
-						}))
-			if (updates["state"] == "game end"):
-				self.disconnect
-		else:
-			await self.send(text_data=json.dumps({
-							"type": "game update",
-							"updates": updates,
-						}))
-
-gameManager = GameManager()
