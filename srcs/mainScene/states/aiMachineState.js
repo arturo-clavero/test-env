@@ -2,15 +2,13 @@
 
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
-
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex  } from '../objects/machines/aiMachineObj'
-import { scene1 } from '../overlays/scenes/scene1';
-import { StartScreen } from '../overlays/divs/start';
+import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/aiMachineObj';
+import { StartScreen } from '../overlays/divs/start'
 import { Form1 } from '../overlays/divs/form1';
-import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
-import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -26,7 +24,7 @@ const restScreen = new CssSubState(
 		divStart.enterButton.element.style.visibility = "hidden";
 	},
 	null,
-	()=>{ divStart.exit();},
+	null,
 	()=>{ divStart.resize();},
 	(event)=> { return divStart.keyHandler(event);},
 	null,
@@ -41,7 +39,6 @@ const startScreen = new CssSubState(
 	0,
 	null,
 	()=>{
-		divStart.enter();
 		divStart.enterButton.element.style.visibility = "visible";
 	},
 	()=>{ divStart.exit();},
@@ -58,9 +55,9 @@ const formScreen = new CssSubState(
 	surfaceIndex,
 	divForm.div,
 	0,
-	()=>{divForm.enter()},
+	()=>{divForm.enter();},
 	null,
-	()=>{divForm.exit()},
+	()=>{divForm.exit();},
 	()=>{divForm.resize()},
 	(event)=> { return divForm.keyHandler(event);},
 	()=>{divForm.animate()},
@@ -69,16 +66,11 @@ const formScreen = new CssSubState(
 const fakeGameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
-	fakeGame,
+	pongGame,
 	1,
-	()=>{startPongGame("AI");},
-	null,
-	null,
-	null,
-	(event)=> { return divForm.keyHandler(event);},
 )
 
-const divEnd = new End();
+const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
 	object,
@@ -103,22 +95,23 @@ const aiMachineState = new State(
 	}, 
 	[
 		restScreen,
-		startScreen,
+		startScreen, 
 		formScreen,
-		fakeGameScreen, 
+		fakeGameScreen,
 		endScreen
 	],
 	(self)=>{
 		self.changeSubstate();
 	},
 	(self)=>{
-		self.currentSubstate.exit();
+		if (self.currentSubstate.exit() == "cancelled")
+			return "cancelled";
 		self.changeSubstate(0);
 	},
 	[
 		screenMaterial,
-		fakeGame.renderMaterial,
-	]
+		pongGame.renderMaterial,
+	],
 )
 
 export {aiMachineState}
