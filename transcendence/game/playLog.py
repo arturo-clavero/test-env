@@ -12,30 +12,13 @@ def	new_game(request):
 	print("hello")
 	if request.method == 'POST':
 		userID = str(uuid1())
-		gameID = request.data.get('gameID')
-		if not gameID:
-			log = create_new_log()
-			log['type'] = request.data.get('type')
-			log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
-			log['players']['1'] = create_new_player(request.data, userID, 1)				
-			if log['type'] != "remote":
-				log['players']['2'] = create_new_player(request.data, userID, 2)
-				log['full'] = True
-			else:
-				log['players']['2'] = create_new_player(request.data, userID, 0)
-			player_mode = "player1" if log["type"] in ["remote"]  else log["type"]
-
-		else:
-			if gameID not in active_game_logs:
-				print("incorrect team")
-				return Response({"error" : "incorrect team id"})
-
-			log = active_game_logs[gameID]
-			if log['full'] == True:
-				return Response({"error" : "user can not join game"}, status=504)
-			log['players']['2'] = create_new_player(request.data, userID, 2)
-			player_mode = "player2" if log["type"] in ["remote"]  else log["type"]
-			log['full'] = True
+		log = create_new_log()
+		log['type'] = request.data.get('type')
+		log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
+		log['players']['1'] = create_new_player(request.data, request.data.get('userID1'), 1)				
+		user_id2 = request.data.get('userID2') or request.data.get('userID1')
+		log['players']['2'] = create_new_player(request.data, user_id2)
+		player_mode = "player1" if log["type"] in ["remote"]  else log["type"]
 
 		active_game_logs[log['gameID']] = log
 
@@ -122,15 +105,10 @@ def create_new_player(data, userID, n):
 		"score": 0,
 		"result": ""
 	}
-	if n == 1:
 		player["id"] = userID
 		player["username"] = data.get("username")
-		player["alias"] = data.get("alias1") or player["username"]
-	elif n == 2:
-		if data.get('type') == "remote" or data.get('type') == "local":
-			player["id"] = userID
-			player["username"] = data.get("username")
-			player["alias"] = data.get("alias2") or player["username"]
+		player["alias"] = data.get("alias${n}") or player["username"]
+		#add alias from display name if no tthis then player username
 		if data.get('type') == "AI":
 			player["alias"] = "Computer"
 	
