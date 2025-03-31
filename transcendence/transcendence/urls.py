@@ -8,5 +8,5 @@ urlpatterns = [
 ]
 
 ws_urlpatterns = [
-	path("ws/<str:user_id>/", consumers.GameConsumer.as_asgi()),
+	path("ws/<str:user_id>/", consumers.MainConsumer.as_asgi()),
 ]

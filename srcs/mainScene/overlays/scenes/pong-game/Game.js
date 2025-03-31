@@ -59,6 +59,7 @@ export	function startPongGame(type = "local"){
 		console.log("connecting websokcet .... ")
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		socket.socket.send({
+			"consumer-type": "game",
 			request: "start game",
 			game_id: gameID,
 			boundaries: { x: paddles.collisionPos(ball), y: engine.boundaryY },
@@ -165,6 +166,7 @@ function	resize(e) {
 	paddles.initPositions(engine);
 	header.initPositions(engine);
 	socket.socket.send({
+		"consumer-type": "game",
 		"boundaries" : {
 			"x" : paddles.collisionPos(ball),
 			"y" : engine.boundaryY,
@@ -177,9 +179,9 @@ function exit(){
 	if (end == false){
 		console.log("tesssssssssst");
 		const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
-        if (userConfirmed) {
-            clean();
-        }
+		if (userConfirmed) {
+			clean();
+		}
 		else
 		{
 			console.log("should not exit");

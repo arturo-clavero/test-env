@@ -53,21 +53,30 @@ class GameManager():
 
 gameManager = GameManager()
 
-class GameConsumer(AsyncWebsocketConsumer):
-	async def connect(self):
-		global loop_running, gameManager
-		print("websocket connected!")
-		self.user_id = self.scope['url_route']['kwargs']['user_id']
-		await self.accept()
-
-	async def initialize(self, gameID):
+# class GameConsumer(AsyncWebsocketConsumer):
+class GameChannel():
+	async def start_game(self, consumer, gameID):
+		self.status = "on"
+		self.consumer = consumer
 		self.gameID = gameID
+		self.user_id = consumer.user_id
+		self.channel_layer = get_channel_layer()
 		self.reconnected = False
 		await self.manage_user_multitab()
-		await self.channel_layer.group_add(f"game_{self.gameID}", self.channel_name)
+		await self.join_channel(f"game_{self.gameID}")
+		# await self.channel_layer.group_add(f"game_{self.gameID}", self.socket.channel_name)
 		await self.verify_user()
-		if not gameManager.running_tasks:
-			gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
+		players[self.gameID]["ready"] += 1
+		if self.reconnected == True:
+			active_sessions[self.gameID] = self.old_game
+			active_connections[self.user_id] = self
+			ready_connections[self.gameID] += 1
+		if players[self.gameID]["ready"] == self.max_players:
+			active_sessions[self.gameID] = Game(self.gameID)
+			names = get_player_alias(self.gameID)
+			await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
+		else:
+			pending_sessions[self.gameID] = time.time()
 
 	async def verify_user(self):
 		if self.gameID not in players:
@@ -88,6 +97,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			active_connections[self.user_id] = self
 
 	async def finish(self):
+		self.status = "off"
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
@@ -102,41 +112,24 @@ class GameConsumer(AsyncWebsocketConsumer):
 			players[self.gameID]["ready"] -= 1
 			if players[self.gameID]["connected"] == 0:
 				del players[self.gameID]
-		await self.channel_layer.group_discard(f"game_{self.gameID}", self.channel_name)
+		await self.remove_channel(f"game_{self.gameID}")
+		# await self.channel_layer.group_discard(f"game_{self.gameID}", self.socket.channel_name)
 
-	async def disconnect(self, code=None):
-		print("WEBOSCKET DISCONNECTED!!!!!")
-
-	async def receive(self, text_data):
-		data = json.loads(text_data)
+	async def receive(self, consumer, data):
 		# print("data received: ", data)
 		if "boundaries" in data:
 			self.dimensions = data["boundaries"]
 		if "request" in data:
 			if data["request"] == "start game":
-				await self.start_game(data["game_id"])
+				await self.start_game(consumer, data["game_id"])
 			if data["request"] == "update paddles":
 				# print("UPDATE PADDLE")
 				active_sessions[self.gameID].update_paddles(data)
-
-	async def start_game(self, gameID):
-		await self.initialize(gameID)
-		players[self.gameID]["ready"] += 1
-		if self.reconnected == True:
-			active_sessions[self.gameID] = self.old_game
-			active_connections[self.user_id] = self
-			ready_connections[self.gameID] += 1
-		if players[self.gameID]["ready"] == self.max_players:
-			active_sessions[self.gameID] = Game(self.gameID)
-			names = get_player_alias(self.gameID)
-			await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
-		else:
-			pending_sessions[self.gameID] = time.time()
 		
 	async def game_updates(self, event):
 		updates = event["updates"]
 		if (updates["state"] == "error"):
-			await self.send(text_data=json.dumps({
+			await self.send_self(json.dumps({
 							"type": "game update",
 							"updates": {"state" : updates["state"], "info" : updates["info"]}
 						}))
@@ -146,7 +139,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			# print(updates["x"][0], updates["y"][0])
 			# print(updates["x"][0] * self.dimensions["x"], updates["y"][0] * self.dimensions["y"])
 			# print(self.dimensions["x"], self.dimensions["y"])
-			await self.send(text_data=json.dumps({
+			await self.send_self(json.dumps({
 							"type": "game update",
 							"updates": {
 								"ball" : {
@@ -163,7 +156,59 @@ class GameConsumer(AsyncWebsocketConsumer):
 			if (updates["state"] == "game end"):
 				await self.finish()
 		else:
-			await self.send(text_data=json.dumps({
+			await self.send_self(json.dumps({
 							"type": "game update",
 							"updates": updates,
 						}))
+	async def join_channel(self, room):
+		await self.consumer.join_channel(room)
+	async def remove_channel(self, room):
+		await self.consumer.remove_channel(room)
+	async def send_channel(self, room, message):
+		await self.consumer.send_channel(room, message)
+	async def send_self(self, message):
+		await self.consumer.send_self(message)
+
+class MainConsumer(AsyncWebsocketConsumer):
+	async def connect(self):
+		global gameManager
+		print("websocket connected!")
+		self.user_id = self.scope['url_route']['kwargs']['user_id']
+		await self.accept()
+		self.gameChannel = GameChannel()
+		if not gameManager.running_tasks:
+			gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
+		# self.tournamentChannel = None
+
+	
+	async def disconnect(self, code=None):
+		if self.gameChannel.status == "on":
+			await self.gameChannel.finish()
+		# if self.tournamentChannel.status == "on":
+		# 	await self.tournamentChannel.finish()
+		print("WEBOSCKET DISCONNECTED!!!!!")
+
+	async def receive(self, text_data):
+		data = json.loads(text_data)
+		if data["consumer-type"] == "game":
+			await self.gameChannel.receive(self, data)
+		# elif data["consumer-type"] == "tournament":
+		# 	await self.tournamentChannel.receive(self, data)
+	
+	async def join_channel(self, room):
+		await self.channel_layer.group_add(room, self.channel_name)
+
+	async def remove_channel(self, room):
+		await self.channel_layer.group_discard(room, self.channel_name)
+	
+	async def send_channel(self, room, message):
+		await self.channel_layer.group_send(room, message)
+	
+	async def send_self(self, message):
+		await self.send(text_data=message)
+	
+	async def game_updates(self, event):
+		await self.gameChannel.game_updates(event)
+			
+
+
