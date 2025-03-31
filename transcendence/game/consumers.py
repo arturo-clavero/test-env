@@ -57,17 +57,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		global loop_running, gameManager
 		print("websocket connected!")
-		self.gameID = self.scope['url_route']['kwargs']['game_id']
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
-		self.reconnected = False
-		# players[self.gameID] = {}
-		# pending_sessions[self.gameID] = {}
-		# active_sessions[self.gameID] = {}
-		# active_connections[self.gameID] = {}
-		self.manage_user_multitab()
-		self.dimensions = {"x" : 0, "y": 0}
-		await self.channel_layer.group_add(f"game_{self.gameID}", self.channel_name)
 		await self.accept()
+
+	async def initialize(self, gameID):
+		self.gameID = gameID
+		self.reconnected = False
+		await self.manage_user_multitab()
+		await self.channel_layer.group_add(f"game_{self.gameID}", self.channel_name)
 		await self.verify_user()
 		if not gameManager.running_tasks:
 			gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
@@ -78,7 +75,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 		self.max_players = get_max_players(self.gameID)
 		players[self.gameID]["connected"] += 1
 		if players[self.gameID]["connected"] > self.max_players:
-			await self.disconnect()
+			await self.finish()
 		
 	async def manage_user_multitab(self):
 		if self.user_id in active_connections:
@@ -90,7 +87,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 		else:
 			active_connections[self.user_id] = self
 
-	async def disconnect(self, code=None):
+	async def finish(self):
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
@@ -107,18 +104,23 @@ class GameConsumer(AsyncWebsocketConsumer):
 				del players[self.gameID]
 		await self.channel_layer.group_discard(f"game_{self.gameID}", self.channel_name)
 
+	async def disconnect(self, code=None):
+		print("WEBOSCKET DISCONNECTED!!!!!")
+
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		print("data received: ", data)
+		# print("data received: ", data)
 		if "boundaries" in data:
 			self.dimensions = data["boundaries"]
 		if "request" in data:
 			if data["request"] == "start game":
-				await self.start_game()
+				await self.start_game(data["game_id"])
 			if data["request"] == "update paddles":
+				# print("UPDATE PADDLE")
 				active_sessions[self.gameID].update_paddles(data)
 
-	async def start_game(self):
+	async def start_game(self, gameID):
+		await self.initialize(gameID)
 		players[self.gameID]["ready"] += 1
 		if self.reconnected == True:
 			active_sessions[self.gameID] = self.old_game
@@ -139,8 +141,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 							"updates": {"state" : updates["state"], "info" : updates["info"]}
 						}))
 			store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
-			await self.disconnect()
+			await self.finish()
 		elif (updates["state"] == "playing" or updates["state"] == "game end"):
+			# print(updates["x"][0], updates["y"][0])
+			# print(updates["x"][0] * self.dimensions["x"], updates["y"][0] * self.dimensions["y"])
+			# print(self.dimensions["x"], self.dimensions["y"])
 			await self.send(text_data=json.dumps({
 							"type": "game update",
 							"updates": {
@@ -156,7 +161,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 							}
 						}))
 			if (updates["state"] == "game end"):
-				await self.disconnect()
+				await self.finish()
 		else:
 			await self.send(text_data=json.dumps({
 							"type": "game update",

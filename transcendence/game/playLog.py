@@ -10,7 +10,6 @@ active_game_logs = {}
 def	new_game(request):
 	global active_game_logs
 	if request.method == 'POST':
-		userID = str(uuid1())
 		log = create_new_log()
 		log['type'] = request.data.get('type')
 		log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
@@ -22,7 +21,7 @@ def	new_game(request):
 		active_game_logs[log['gameID']] = log
 
 		return Response({
-			"userID" : userID,
+			"userID" : request.data.get('userID1'),
 			"gameID" : log['gameID'],
 			"player_mode": player_mode,
 			"name1" : log["players"]["1"]["alias"],

@@ -3,7 +3,7 @@ import { MiddleBars } from "./objects/MiddleBars";
 import { PaddleGroup } from './objects/Paddle';
 import { Ball } from './objects/Ball';
 import { Header } from './objects/Header';
-import { Socket } from './setUp/Socket';
+import { GameSocket } from './setUp/GameSocket';
 import { KeyControls } from './setUp/KeyControls';
 import { Font } from '../../../../core/objectFactory/customFont3d';
 import { dispose_object } from '../../../utils/utils';
@@ -18,7 +18,7 @@ import * as THREE from 'three';
 	let middleBars = new MiddleBars(false, engine);
 	let ball = new Ball(false, engine);
 	let paddles = new PaddleGroup(false, engine);
-	let socket = new Socket();
+	let socket = new GameSocket();
 	let key = new KeyControls(paddles, socket);
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
@@ -27,7 +27,7 @@ import * as THREE from 'three';
 	let gameID, mode, num;
 
 export	function startPongGame(type = "local"){
-		const brutdata = {type: type, username: "user", alias1: "PLAyer_one", alias2: "player_two"};
+		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
 			fetch('http://localhost:8003/new-game/', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
@@ -41,10 +41,6 @@ export	function startPongGame(type = "local"){
 					return;
 				}
 			console.log("data : ", data);
-			// if (currentGame)
-			// 	currentGame.clean();
-		//	currentGame = new Game();
-			// new_round(123, 456, type);
 			new_round(data["gameID"], data["userID"], "local");
 			})
 			.catch(error => {
@@ -61,8 +57,8 @@ export	function startPongGame(type = "local"){
 		mode = player_mode;
 		console.log("MODE:", player_mode);
 		console.log("connecting websokcet .... ")
-		socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
-		socket.send({
+		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
+		socket.socket.send({
 			request: "start game",
 			game_id: gameID,
 			boundaries: { x: paddles.collisionPos(ball), y: engine.boundaryY },
@@ -89,6 +85,7 @@ function	updatesFromBackend(event){
 	{
 		if (state != "playing")
 			playing();
+		console.log("update positions: ", data.updates.ball.x, data.updates.ball.y);
 		paddles.paddles[0].object.position.y = data.updates.paddle_left;
 		paddles.paddles[1].object.position.y = data.updates.paddle_right;
 		ball.object.position.x = data.updates.ball.x;
@@ -153,7 +150,7 @@ function	clean(){
 		middleBars.hide();
 		content_body.hide();
 		header.hide();
-		socket.socket.close();
+		// socket.socket.socket.close();
 		end = true;
 	}
 
@@ -167,7 +164,7 @@ function	resize(e) {
 	ball.initPositions(engine);
 	paddles.initPositions(engine);
 	header.initPositions(engine);
-	socket.send({
+	socket.socket.send({
 		"boundaries" : {
 			"x" : paddles.collisionPos(ball),
 			"y" : engine.boundaryY,
@@ -203,3 +200,4 @@ export	const pongGame = {
 		"resize":resize,
 		"exit": exit,
 	}
+export const gameReceive = (event)=>{updatesFromBackend(event);}

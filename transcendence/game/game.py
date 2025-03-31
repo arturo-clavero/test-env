@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 class Game:
-	duration = 5.0
+	duration = 15.0
 
 	def __init__(self, gameID):
 		self.id = gameID #needed for user validation for paddles
@@ -63,7 +63,7 @@ class Game:
 		if (time.time() - self.start_time >= self.duration):
 			self.active = False
 			update["state"] = "game end"
-
+		# print(self.ball.pos["x"], self.ball.pos["y"])
 		update["x"] = [self.ball.pos["x"]]
 		update["y"] = [self.ball.pos["y"], self.paddles[-1].pos_y, self.paddles[1].pos_y]
 		if (self.ball.pos["x"] >= 1 or self.ball.pos["x"] == 0.9):
@@ -71,8 +71,8 @@ class Game:
 			logger.info("ball y: " + str(self.ball.pos["y"]))
 		update["score1"] = self.paddles[-1].score
 		update["score2"] = self.paddles[1].score
-		logger.info("score1: " + str(update["score1"]))
-		logger.info("score2: " + str(update["score2"]))
+		# logger.info("score1: " + str(update["score1"]))
+		# logger.info("score2: " + str(update["score2"]))
 		return update
 
 	#TO DO BY MORAND:

@@ -39,7 +39,7 @@ export class KeyControls{
 				this.paddleRight.keyUp;
 			this.keyStates[oppositeKey] = false;
 		}
-		this.socket.send({
+		this.socket.socket.send({
 			request: "update paddles",
 			side: movement.side,
 			direction: isPressed ? movement.direction : 0,
