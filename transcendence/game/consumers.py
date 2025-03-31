@@ -35,11 +35,11 @@ class GameManager():
 						if updates["state"] == "game end":
 							store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
 							active_sessions.pop(gameID, None)
-                            pending_sessions.pop(gameID, None)
+							pending_sessions.pop(gameID, None)
 							break
 				for gameID, start_time in pending_sessions.items():
 					if gameID in active_sessions:
-                        pending_sessions.pop(gameID, None)
+						pending_sessions.pop(gameID, None)
 						break
 					if time.time() - start_time > self.pending_timeout:
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "oponent did not join the game", "score1":"", "score2":"", "start_time": start_time}})
@@ -60,15 +60,17 @@ class GameConsumer(AsyncWebsocketConsumer):
 		self.gameID = self.scope['url_route']['kwargs']['game_id']
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		self.reconnected = False
-		self.initdata = {}
+		# players[self.gameID] = {}
+		# pending_sessions[self.gameID] = {}
+		# active_sessions[self.gameID] = {}
+		# active_connections[self.gameID] = {}
 		self.manage_user_multitab()
 		self.dimensions = {"x" : 0, "y": 0}
 		await self.channel_layer.group_add(f"game_{self.gameID}", self.channel_name)
 		await self.accept()
 		await self.verify_user()
-		print("loop running? ", loop_running)
 		if not gameManager.running_tasks:
-            gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
+			gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
 
 	async def verify_user(self):
 		if self.gameID not in players:
@@ -89,7 +91,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 			active_connections[self.user_id] = self
 
 	async def disconnect(self, code=None):
-		# print("disconnect")
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
@@ -99,10 +100,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 		elif self.gameID in pending_sessions:
 			store_game_results({"error":"player disconnected in waiting room", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
 			del pending_sessions[self.gameID]
-		players[self.gameID]["connected"] -= 1
-		players[self.gameID]["ready"] -= 1
-		if players[self.gameID]["connected"] == 0:
-			del players[self.gameID]
+		if players.get(self.gameID):
+			players[self.gameID]["connected"] -= 1
+			players[self.gameID]["ready"] -= 1
+			if players[self.gameID]["connected"] == 0:
+				del players[self.gameID]
 		await self.channel_layer.group_discard(f"game_{self.gameID}", self.channel_name)
 
 	async def receive(self, text_data):

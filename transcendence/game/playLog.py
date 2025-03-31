@@ -9,7 +9,6 @@ active_game_logs = {}
 @api_view(['POST'])
 def	new_game(request):
 	global active_game_logs
-	print("hello")
 	if request.method == 'POST':
 		userID = str(uuid1())
 		log = create_new_log()
@@ -17,7 +16,7 @@ def	new_game(request):
 		log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
 		log['players']['1'] = create_new_player(request.data, request.data.get('userID1'), 1)				
 		user_id2 = request.data.get('userID2') or request.data.get('userID1')
-		log['players']['2'] = create_new_player(request.data, user_id2)
+		log['players']['2'] = create_new_player(request.data, user_id2, 2)
 		player_mode = "player1" if log["type"] in ["remote"]  else log["type"]
 
 		active_game_logs[log['gameID']] = log
@@ -29,8 +28,6 @@ def	new_game(request):
 			"name1" : log["players"]["1"]["alias"],
 			"name2" : log["players"]["2"]["alias"],
 			}, status=201)
-
-import pprint
 
 def	store_game_results(results):
 	global active_game_logs
@@ -67,7 +64,7 @@ def	store_game_results(results):
 		if results["score1"] and results["score2"]:
 			log["players"]["1"]["score"] = results["score1"]
 			log["players"]["2"]["score"] = results["score2"]
-	
+
 	else:	
 		log['start_time'] = results["start_time"]
 		log['players']['1']['score'] = results["score1"]
@@ -105,13 +102,12 @@ def create_new_player(data, userID, n):
 		"score": 0,
 		"result": ""
 	}
-		player["id"] = userID
-		player["username"] = data.get("username")
-		player["alias"] = data.get("alias${n}") or player["username"]
-		#add alias from display name if no tthis then player username
-		if data.get('type') == "AI":
-			player["alias"] = "Computer"
-	
+	player["id"] = userID
+	player["username"] = data.get("username")
+	player["alias"] = data.get("alias{}".format(n)) or player["username"]
+	#add alias from display name if no tthis then player username
+	if data.get('type') == "AI":
+		player["alias"] = "Computer"
 	return player
 
 def	get_max_players(gameID):

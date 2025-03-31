@@ -18,9 +18,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		self.alias = self.scope['url_route']['kwargs']['alias']
 		self.tournament = active_tournaments.get(self.tour_id, None)
-        if not self.tournament:
-            self.tournament = Tournament(self.tour_id)
-            active_tournaments[self.tour_id] = self.tournament
+		if not self.tournament:
+			self.tournament = Tournament(self.tour_id)
+			active_tournaments[self.tour_id] = self.tournament
 		if self.tournament.add_player(self.user_id, self) == "full":
 			next_tournament(self.tour_id)
 			return
@@ -32,7 +32,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			self.tournament.all_players.remove(self.user_id)
 		elif self.tournament.status == "active":
 			self.tournament.remaining_players.remove(self.user_id)
-        self.tournament.sockets.pop(self.user_id, None)
+		self.tournament.sockets.pop(self.user_id, None)
 
 class Tournament():
 	def __init__(self, tour_id):
