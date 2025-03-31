@@ -68,6 +68,7 @@ const fakeGameScreen = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
+	()=>{startPongGame("local")},
 )
 
 const divEnd = new End("white");

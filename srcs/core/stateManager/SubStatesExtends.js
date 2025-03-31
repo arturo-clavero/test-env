@@ -62,9 +62,9 @@ class CssSubState extends SubState {
 }
 
 class MeshSubState extends SubState {
-	constructor(name, surface, scene, materialIndex){
+	constructor(name, surface, scene, materialIndex, enter){
 		super(name, surface, materialIndex,
-			scene?.enter || (()=>{}), 
+			enter || (()=>{}), 
 			scene?.postCamMove || (()=>{}), 
 			null, 
 			scene?.resize || (()=>{}),

@@ -27,7 +27,7 @@ import * as THREE from 'three';
 	let gameID, mode, num;
 
 export	function startPongGame(type = "local"){
-		const brutdata = {type: "local", username: "user", alias1: "PLAyer_one", alias2: "player_two"};
+		const brutdata = {type: type, username: "user", alias1: "PLAyer_one", alias2: "player_two"};
 			fetch('http://localhost:8003/new-game/', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
@@ -59,6 +59,7 @@ export	function startPongGame(type = "local"){
 		window.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
 		mode = player_mode;
+		console.log("MODE:", player_mode);
 		console.log("connecting websokcet .... ")
 		socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		socket.send({
@@ -201,5 +202,4 @@ export	const pongGame = {
 		"camera" : engine.camera,
 		"resize":resize,
 		"exit": exit,
-		"enter": startPongGame,
 	}

@@ -54,9 +54,12 @@ class Paddle {
 	}
 	show(game_type)
 	{
+		console.log("game type in keys", game_type);
+		console.log('side: ', this.side )
 		this.object.visible = true;
 		if (game_type == "local" && this.side == LEFT)
 		{
+			console.log("enable w s");
 			this.keyUp = "w";
 			this.keyDown = "s";
 		}
@@ -66,6 +69,7 @@ class Paddle {
 			(game_type == "player2" && this.side == RIGHT) 
 		)
 		{
+			console.log("enable up down");
 			this.keyUp = "ArrowUp";
 			this.keyDown = "ArrowDown";
 		}
