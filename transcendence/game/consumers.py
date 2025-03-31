@@ -60,11 +60,9 @@ class GameChannel():
 		self.consumer = consumer
 		self.gameID = gameID
 		self.user_id = consumer.user_id
-		self.channel_layer = get_channel_layer()
 		self.reconnected = False
 		await self.manage_user_multitab()
-		await self.join_channel(f"game_{self.gameID}")
-		# await self.channel_layer.group_add(f"game_{self.gameID}", self.socket.channel_name)
+		await self.consumer.join_channel(f"game_{self.gameID}")
 		await self.verify_user()
 		players[self.gameID]["ready"] += 1
 		if self.reconnected == True:
@@ -74,7 +72,7 @@ class GameChannel():
 		if players[self.gameID]["ready"] == self.max_players:
 			active_sessions[self.gameID] = Game(self.gameID)
 			names = get_player_alias(self.gameID)
-			await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
+			await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
 		else:
 			pending_sessions[self.gameID] = time.time()
 
@@ -101,7 +99,7 @@ class GameChannel():
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
-				await self.channel_layer.group_send(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected from game", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
+				await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected from game", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
 			del active_sessions[self.gameID]
 			pending_sessions.pop(self.gameID, None)
 		elif self.gameID in pending_sessions:
@@ -112,34 +110,28 @@ class GameChannel():
 			players[self.gameID]["ready"] -= 1
 			if players[self.gameID]["connected"] == 0:
 				del players[self.gameID]
-		await self.remove_channel(f"game_{self.gameID}")
-		# await self.channel_layer.group_discard(f"game_{self.gameID}", self.socket.channel_name)
+		await self.consumer.remove_channel(f"game_{self.gameID}")
 
 	async def receive(self, consumer, data):
-		# print("data received: ", data)
 		if "boundaries" in data:
 			self.dimensions = data["boundaries"]
 		if "request" in data:
 			if data["request"] == "start game":
 				await self.start_game(consumer, data["game_id"])
 			if data["request"] == "update paddles":
-				# print("UPDATE PADDLE")
 				active_sessions[self.gameID].update_paddles(data)
 		
 	async def game_updates(self, event):
 		updates = event["updates"]
 		if (updates["state"] == "error"):
-			await self.send_self(json.dumps({
+			await self.consumer.send_self(json.dumps({
 							"type": "game update",
 							"updates": {"state" : updates["state"], "info" : updates["info"]}
 						}))
 			store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
 			await self.finish()
 		elif (updates["state"] == "playing" or updates["state"] == "game end"):
-			# print(updates["x"][0], updates["y"][0])
-			# print(updates["x"][0] * self.dimensions["x"], updates["y"][0] * self.dimensions["y"])
-			# print(self.dimensions["x"], self.dimensions["y"])
-			await self.send_self(json.dumps({
+			await self.consumer.send_self(json.dumps({
 							"type": "game update",
 							"updates": {
 								"ball" : {
@@ -156,18 +148,10 @@ class GameChannel():
 			if (updates["state"] == "game end"):
 				await self.finish()
 		else:
-			await self.send_self(json.dumps({
+			await self.consumer.send_self(json.dumps({
 							"type": "game update",
 							"updates": updates,
 						}))
-	async def join_channel(self, room):
-		await self.consumer.join_channel(room)
-	async def remove_channel(self, room):
-		await self.consumer.remove_channel(room)
-	async def send_channel(self, room, message):
-		await self.consumer.send_channel(room, message)
-	async def send_self(self, message):
-		await self.consumer.send_self(message)
 
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
