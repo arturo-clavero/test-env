@@ -40,7 +40,7 @@ export class KeyControls{
 			this.keyStates[oppositeKey] = false;
 		}
 		this.socket.socket.send({
-			"consumer-type": "game",
+			"channel": "game",
 			request: "update paddles",
 			side: movement.side,
 			direction: isPressed ? movement.direction : 0,

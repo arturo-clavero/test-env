@@ -59,7 +59,7 @@ export	function startPongGame(type = "local"){
 		console.log("connecting websokcet .... ")
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		socket.socket.send({
-			"consumer-type": "game",
+			"channel": "game",
 			request: "start game",
 			game_id: gameID,
 			boundaries: { x: paddles.collisionPos(ball), y: engine.boundaryY },
@@ -166,7 +166,7 @@ function	resize(e) {
 	paddles.initPositions(engine);
 	header.initPositions(engine);
 	socket.socket.send({
-		"consumer-type": "game",
+		"channel": "game",
 		"boundaries" : {
 			"x" : paddles.collisionPos(ball),
 			"y" : engine.boundaryY,
