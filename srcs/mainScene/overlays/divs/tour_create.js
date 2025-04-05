@@ -58,10 +58,7 @@ function hide_div(){
 	hide_buttons();
 }
 
-function change_button(new_content, status){
-	container.getElementById("button").style.content = new_content;
-	//change color based on status
-}
+
 
 const start = {
 	"div" : container.element,

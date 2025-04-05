@@ -1,11 +1,13 @@
 import { StateManager } from '../../core/stateManager/StateManager';
 import { gameReceive } from '../overlays/scenes/pong-game/Game'
+import { setTourId, updatePrizePool, change_button } from '../overlays/divs/tour_join';
 // import { showAvailableTournaments } from '../overlays/divs/tour_join'
 // TODO
 import {getUserID} from './utils'
 
 export class Socket {
 	constructor(){
+		console.log("constructr");
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];  // Ensure msgQueue is initialized
@@ -13,6 +15,7 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
+		console.log("init");
 		this.userID = await getUserID();
 		console.log("user id is ...", this.userID)
 		this.msgQueue = [];
@@ -26,15 +29,26 @@ export class Socket {
 				return ;
 			if (data.type == "game update")
 				gameReceive(data);
-			else if (data.type == "updates" && data.display == "tournament")
+			else if (data.type == "tour.updates" && data.display == "tournament")
 			{
-				if (data.button == "join")
+				if (data.action == "update display")
 				{
-					console.log("receiveing .... !");
-					let stateManager = new StateManager();
-					if (stateManager.states[3].currentSubstateIndex == 0 || stateManager.states[3].currentSubstateIndex == 1)
-						stateManager.states[3].changeSubstate(stateManager.states[3].currentSubstateIndex + 2)
-					stateManager.states[3].startIndex = 2;
+					if (data.button == "join")
+					{
+						console.log("receiveing .... !");
+						let stateManager = new StateManager();
+						if (stateManager.states[3].currentSubstateIndex == 0 || stateManager.states[3].currentSubstateIndex == 1)
+							stateManager.states[3].changeSubstate(stateManager.states[3].currentSubstateIndex + 2)
+						stateManager.states[3].startIndex = 2;
+						updatePrizePool(100);
+						setTourId(data["tourId"]);
+					}
+					else if (data.button = "subscribed")
+						change_button("subscribed");
+				}
+				if (data.action == "update info"){
+					if (data["prizePool"])
+						updatePrizePool(data["prizePool"])
 				}
 			}
 		}

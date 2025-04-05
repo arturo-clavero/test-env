@@ -28,9 +28,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if not tournamentManager.running_tasks:
 			tournamentManager.running_tasks.add(asyncio.create_task(tournamentManager.monitor_tournaments()))
 		# active_users.append(self.user_id)
-		self.join_channel("all")
-
-
+		await self.join_channel("all")
 	
 	async def disconnect(self, code=None):
 		if self.gameChannel and self.gameChannel.status == "on":
@@ -42,38 +40,48 @@ class MainConsumer(AsyncWebsocketConsumer):
 		print("WEBOSCKET DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
+		# global pending_tournament
+
 		data = json.loads(text_data)
 		if data["channel"] == "game":
 			await self.gameChannel.receive(self, data)
 		elif data["channel"] == "tournament":
-			if data["action"] == "join":
-				await ongoing_tournaments[data["tour_id"]].join()
+			from .tournamentChannel import pending_tournament
+			if data["action"] == "join" and self.tournament == None:
+				await pending_tournament.join(self)
+			elif data["action"] == "succesfull payment" and self.tournament == None:
+				await pending_tournament.confirm_payment(self, "alias...")
 			elif data["action"] == "create" and pending_tournament == None:
-				print("create called")
-				TournamentChannel(self)
-				await self.send_self({
-							"type" : "updates",
+				print("hello .... ")
+				newTour = TournamentChannel(self)
+				await self.send_channel("all", {
+							"type" : "tour.updates",
 							"display" : "tournament",
+							"action" : "update display",
 							"button" : "join",
+							"tourId" :  newTour.tour_id,
 						})
-					
+
 	async def join_channel(self, room):
+		print(f"Joining group {room} with channel name: {self.channel_name}")
 		await self.channel_layer.group_add(room, self.channel_name)
 
 	async def remove_channel(self, room):
 		await self.channel_layer.group_discard(room, self.channel_name)
-	
+
 	async def send_channel(self, room, message):
+		print('send channel, message: ', message)
 		await self.channel_layer.group_send(room, message)
-	
+
 	async def send_self(self, message):
 		await self.send(text_data=json.dumps(message))
 	
 	async def game_updates(self, event):
 		await self.gameChannel.game_updates(event)
 
-	async def updates(self, event):
-	    await self.send(text_data=json.dumps(event))
+	async def tour_updates(self, event):
+		print("updates!")
+		await self.send(text_data=json.dumps(event))
 	
 	def live_tournament(self, event):
 		self.tournament = event.current

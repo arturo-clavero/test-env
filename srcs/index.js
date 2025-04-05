@@ -12,6 +12,7 @@ import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer
 import { screenSurface } from './mainScene/objects/machines/aiMachineObj';
 
 import { arcadeMachine } from './mainScene/objects/arcadeMachine';
+import { Socket } from './mainScene/utils/Socket';
 
 document.addEventListener('keydown', (event) => {
 	if (event.key == "i")
@@ -34,7 +35,7 @@ engine.add(aiMachineObj, true);
 engine.add(tourMachineObj, true);
 
 engine.stateManager = stateManager;
-
+new Socket()
 //shakeCamera(engine.camera);
 function animate() {
 	requestAnimationFrame(animate);

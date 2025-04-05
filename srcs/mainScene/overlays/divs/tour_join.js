@@ -1,14 +1,17 @@
+import { update } from "three/examples/jsm/libs/tween.module.js";
 import { StateManager } from "../../../core/stateManager/StateManager";
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
+import { Socket } from '../../utils/Socket'
 
-let prize_pool = 100
+let entryPrice = 100
 
 const container = new Overlay([
 	new FlexBox({
 		dir: "column",
 		children: [
 			new FlexBox({
+				dir: "column",
 				padding: '10%',
 				children: [
 					new Text({
@@ -16,7 +19,8 @@ const container = new Overlay([
 						fontsize: 0.85
 					}),
 					new Text({
-						content: `${prize_pool} ETC !`,
+						id: "prize-context",
+						content: `heuy`,
 						fontsize: 1
 					}),
 				],
@@ -30,19 +34,32 @@ const container = new Overlay([
 				fontSize: 1
 			}),
 			new Text({
-				content: "entry 100 ETC",
+				content:  `entry ${entryPrice} ETC`,
 				fontSize: 0.45
 			}),
 			new Button({
 				id: "button",
 				content: "JOIN",
 				fontSize: 0.45,
-				onClick: ()=>{new StateManager().currentState.swapSubstate("create")}
+				onClick: ()=>{
+					console.log(tourId);
+					new Socket().send({
+						"channel":"tournament",
+						"action":"join",
+						"tour_id" : tourId,
+					})
+					new Socket().send({
+						"channel":"tournament",
+						"action":"succesfull payment",
+						"tour_id" : tourId,
+					})
+				}
 			})
 		]
 	})	
 ])
-
+let tourId;
+function setTourId(newTourId){ tourId = newTourId}
 
 function show_buttons(){
 	console.log(container.getElementById("button").element);
@@ -64,11 +81,18 @@ function hide_div(){
 	hide_buttons();
 }
 
-function change_button(new_content, status){
-	container.getElementById("button").style.content = new_content;
+function change_button(new_content){
+	container.getElementById("button").element.textContent = new_content;
 	//change color based on status
 }
 
+function updatePrizePool(value){
+	// prizePool = value;
+	console.log("updating1");
+	console.log("content prev: ", container.getElementById("prize-context").element)
+	container.getElementById("prize-context").element.textContent = `${value} ETC !`;
+
+}
 const join = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,
@@ -78,4 +102,4 @@ const join = {
 	"resize": ()=>{container.resize()},
 }
 
-export {join}
+export {join, updatePrizePool, setTourId, change_button}

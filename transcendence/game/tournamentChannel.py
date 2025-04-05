@@ -40,7 +40,7 @@ class TournamentChannel():
 
 		self.tour_id = str(uuid4())
 		self.room = f"tour_{self.tour_id}"
-		self.state = "open"
+		self.status = "open"
 
 		self.all_players = {}
 		self.total_players = 0
@@ -50,6 +50,7 @@ class TournamentChannel():
 		print("created torunament ", self.tour_id)
 
 	async def join(self, consumer):
+		print("joined...")
 		if self.total_players < self.max_players:
 			self.total_players += 1
 			#start timer for calling free spot
@@ -63,32 +64,35 @@ class TournamentChannel():
 
 	
 	async def confirm_payment(self, consumer, alias):
-		all_players[consumer.user_id] = {
+		self.all_players[consumer.user_id] = {
 			"alias" : alias,
 			"consumer" : consumer
 		}
 		self.prize_pool += self.entry_price
+		consumer.tournament = self
 		print("joined tournament ", self.tour_id)
 		print("players: ", len(self.all_players))
 		await consumer.join_channel(self.room)
-		await consumer.self_send({
-			"type" : "display-tournament",
+		await consumer.send_self({
+			"type" : "tour.updates",
 			"display" : "tournament",
+			"action" : "update display",
 			"button" : "subscribed",
-		})
-		await consumer.self_send({
-			"type" : "display-tournament",
-			"display" : "tournament",
-			"update" : "prize-pool",
-			"value" : self.prize_pool * .9,
 		})
 		if self.status == "full" and len(all_players) == self.max_players:
 			self.status = "locked"
 			pending_tournament = None
-			await consumer.channel_send("all", {
+			await consumer.send_channel("all", {
 				"type" : "display-tournament",
 				"display" : "create",
 			})
+		else :
+			await consumer.send_channel(self.room, {
+			"type" : "tour.updates",
+			"display" : "tournament",
+			"action" : "update info",
+			"prizePool": self.prize_pool * .9,
+		})
 		#cancel timer for free spot?
 	
 	async def free_spot(self, consumer):
@@ -169,13 +173,16 @@ class TournamentChannel():
 			"prize pool" : self.prize_pool
 		}
 		# store_tournament_results(results)
-		if self.state == "active":
+		if self.status == "active":
 			remaining_players.remove(self.consumer.user_id)
 		self.state == "end"
 		del ongoing_tournaments[self.tour_id]
 		await self.consumer.remove_channel(self.room)
 
-
+	async def disconnect(self):
+		if self.status == "active":
+			remaining_players.remove(self.consumer.user_id)
+			await self.consumer.remove_channel(self.room)
 
 
 
