@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from uuid import uuid4, uuid1
 import pprint
+from .tournamentChannel import ongoing_tournaments
 
 active_game_logs = {}
 
@@ -14,9 +15,8 @@ def	new_game(request):
 		log['type'] = request.data.get('type')
 		log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
 		log['players']['1'] = create_new_player(request.data, request.data.get('userID1'), 1)				
-		user_id2 = request.data.get('userID2') or request.data.get('userID1')
-		log['players']['2'] = create_new_player(request.data, user_id2, 2)
-		player_mode = "player1" if log["type"] in ["remote"]  else log["type"]
+		log['players']['2'] = create_new_player(request.data,request.data.get('userID2', 'userID1'), 2)
+		player_mode = log["type"]
 
 		active_game_logs[log['gameID']] = log
 
@@ -27,6 +27,7 @@ def	new_game(request):
 			"name1" : log["players"]["1"]["alias"],
 			"name2" : log["players"]["2"]["alias"],
 			}, status=201)
+
 
 def	store_game_results(results):
 	global active_game_logs
@@ -74,10 +75,11 @@ def	store_game_results(results):
 		elif (results["score1"] < results["score2"]):
 			log['players']['1']["result"] = "loose"
 			log['players']['2']["result"] = "win"
+	if log["type"] == "remote":
+		ongoing_tournaments[tour_id].end_tournment_game()
 	# store log in data base ... 
 	pprint.pprint(log)	# end storage
 	del active_game_logs[results["gameID"]]
-
 
 def create_new_log():
 	return {

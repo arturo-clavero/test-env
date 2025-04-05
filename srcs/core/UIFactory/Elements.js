@@ -22,7 +22,7 @@ class Input extends BaseNonDivElement{
 }
 
 class Button extends BaseNonDivElement{
-	constructor({id = "button", content, color, onClick, flex = 0, fontSize = 1, w, h, activate, deactivate})
+	constructor({id = "button", content, color, onClick, flex = 0, fontSize = 1, w, h, activate = ()=>{}, deactivate = ()=>{}})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.isSelected = false;

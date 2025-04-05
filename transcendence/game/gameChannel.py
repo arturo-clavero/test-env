@@ -1,11 +1,9 @@
 import json
-from .game import Game
 import asyncio
 import time
 from channels.layers import get_channel_layer
-from .playLog import get_max_players
-from .playLog import get_player_alias
-from .playLog import store_game_results
+from .game import Game
+from .playLog import get_max_players, get_player_alias, store_game_results
 
 active_sessions = {}
 pending_sessions = {}

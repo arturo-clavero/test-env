@@ -71,10 +71,7 @@ export	function startPongGame(type = "local"){
 			waiting();
 	}
 	
-function	updatesFromBackend(event){
-	const data = JSON.parse(event.data);
-	if (!data || data.type != "game update")
-		return {};
+function	updatesFromBackend(data){
 	if (data.updates.state == "countdown")
 	{
 		if (state != "countdown")

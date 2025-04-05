@@ -101,6 +101,7 @@ const localMachineState = new State(
 		fakeGameScreen,
 		endScreen
 	],
+	[],
 	(self)=>{
 		self.changeSubstate();
 	},

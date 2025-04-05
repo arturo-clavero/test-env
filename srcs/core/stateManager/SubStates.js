@@ -13,7 +13,7 @@ class SubState {
         this.keyHandler = keyHandler || (() => {});
 		this.active = false;
     }
-    enter() { this.setup(); }
+    enter() { this.setup(); this.postCamMoveSetUp();}
 	postCamEnter() {this.postCamMoveSetUp();}
 	update() { this.postCamMoveSetUp(); }
     exit() { this.cleanup(); }

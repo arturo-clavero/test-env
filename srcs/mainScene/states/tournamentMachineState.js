@@ -5,64 +5,99 @@ import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExte
 import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/tournamentMachineObj';
 import { scene1 } from '../overlays/scenes/scene1';
-import { StartScreen } from '../overlays/divs/start'
-import { Form1 } from '../overlays/divs/form1';
 import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
-import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+import {start} from '../overlays/divs/tour_create';
+import {join} from '../overlays/divs/tour_join';
 
-const divStart = new StartScreen('white', "TOURNAMENT", 1);
-
-const restScreen = new CssSubState(
-	"rest",
+const divStart = start;
+const restScreenCreate = new CssSubState(
+	"rest create",
 	object,
 	partIndex,
 	surfaceIndex,
-	divStart.div,
+	divStart["div"],
 	0,
 	()=>{
-		divStart.enter();
-		divStart.enterButton.element.style.visibility = "hidden";
+		console.log("pre enter create")
+		divStart['show-div']();
+		divStart['hide-buttons']();
 	},
 	null,
-	()=>{ divStart.exit();},
-	()=>{ divStart.resize();},
-	(event)=> { return divStart.keyHandler(event);},
+	()=>{console.log("exit");},
+	()=>{divStart["resize"]()},
+	null,
 	null,
 )
 
-const startScreen = new CssSubState(
-	"start",
+const startScreenCreate = new CssSubState(
+	"start create",
 	object,
 	partIndex,
 	surfaceIndex,
-	divStart.div,
+	divStart['div'],
 	0,
 	null,
 	()=>{
-		divStart.enter();
-		divStart.enterButton.element.style.visibility = "visible";
+		divStart['show-div']();
+		divStart['show-buttons']();
+		console.log("enter create p2");
 	},
-	()=>{ divStart.exit();},
-	()=>{ divStart.resize();},
-	(event)=> { return divStart.keyHandler(event);},
-	()=>{divStart.animate()},
+	()=>{
+		divStart['hide-div']();
+		divStart['hide-buttons']();
+		console.log("exit create p2");
+	},
+	()=>{divStart["resize"]()},
+	null,
+	null,
 )
-const divForm = new Form1("white");
-const formScreen = new CssSubState(
-	"form",
+
+const divJoin = join;
+const restScreenJoin = new CssSubState(
+	"rest join",
 	object,
 	partIndex,
 	surfaceIndex,
-	divForm.div,
+	divJoin["div"],
 	0,
-	()=>{divForm.enter()},
+	()=>{
+		console.log("pre enter join");
+		divJoin['show-div']();
+		divJoin['hide-buttons']();
+	},
 	null,
-	()=>{divForm.exit()},
-	()=>{divForm.resize()},
-	(event)=> { return divForm.keyHandler(event);},
-	()=>{divForm.animate()},
+	()=>{
+		console.log("exit join");
+	},
+	()=>{divJoin["resize"]()},
+	null,
+	null,
 )
+
+const startScreenJoin = new CssSubState(
+	"start join",
+	object,
+	partIndex,
+	surfaceIndex,
+	divJoin['div'],
+	0,
+	null,
+	()=>{
+		console.log("enter join p2");
+		divJoin['show-div']();
+		divJoin['show-buttons']();
+	},
+	()=>{
+		divJoin['hide-div']();
+		divJoin['hide-buttons']();
+		console.log("exit join p2");
+	},
+	()=>{divJoin["resize"]()},
+	null,
+	null,
+)
+
 
 const fakeGameScreen = new MeshSubState(
 	"rest", 
@@ -100,11 +135,18 @@ const tourMachineState = new State(
 		ease: "power2.inOut"
 	}, 
 	[
-		restScreen,
-		startScreen, 
-		formScreen, 
-		fakeGameScreen,
-		endScreen,
+		restScreenCreate,
+		startScreenCreate,
+		restScreenJoin,
+		startScreenJoin, 
+		// matchesScreen,
+		// gameScreen,
+		// endScreen,
+		// endScreen,
+	],
+	[
+		// {"substate" : restScreen, "index" : 0},
+		// {"substate" : startScreen, "index" : 1},
 	],
 	(self)=>{
 		if (self.currentSubstateIndex == 0)
