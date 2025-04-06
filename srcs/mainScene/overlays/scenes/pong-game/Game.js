@@ -40,7 +40,6 @@ export	function startPongGame(type = "local"){
 					alert(data["error"]);
 					return;
 				}
-			console.log("data : ", data);
 			new_round(data["gameID"], data["userID"], "local");
 			})
 			.catch(error => {
@@ -50,13 +49,10 @@ export	function startPongGame(type = "local"){
 	function	new_round(gameID_input, userID, player_mode)
 	{
 		round++;
-		console.log("called new: ", gameID_input, userID, player_mode);
 		window.addEventListener("keydown", key.handleKeyDown);
 		window.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
 		mode = player_mode;
-		console.log("MODE:", player_mode);
-		console.log("connecting websokcet .... ")
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		socket.socket.send({
 			"channel": "game",
@@ -83,7 +79,6 @@ function	updatesFromBackend(data){
 	{
 		if (state != "playing")
 			playing();
-		console.log("update positions: ", data.updates.ball.x, data.updates.ball.y);
 		paddles.paddles[0].object.position.y = data.updates.paddle_left;
 		paddles.paddles[1].object.position.y = data.updates.paddle_right;
 		ball.object.position.x = data.updates.ball.x;
@@ -92,8 +87,6 @@ function	updatesFromBackend(data){
 	}
 	if (data.updates.state == "game end")
 	{
-		console.log("game end received in front end")
-		console.log(" state :", state);
 		if (state != "completed")
 			completed();
 	}
@@ -123,7 +116,6 @@ function	playing(){
 }
 
 function completed(msg){
-	console.log("completed...");
 	state = "completed";
 	if (msg)
 	{
@@ -154,7 +146,6 @@ function	clean(){
 
 
 function	resize(e) {
-	console.log("resize game");
 	content_body.initPositions(engine);
 	engine.camera.aspect = window.innerWidth / window.innerHeight;
 	engine.camera.updateProjectionMatrix();
@@ -174,18 +165,12 @@ function	resize(e) {
 
 function exit(){
 	if (end == false){
-		console.log("tesssssssssst");
 		const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
-		if (userConfirmed) {
+		if (userConfirmed)
 			clean();
-		}
 		else
-		{
-			console.log("should not exit");
 			return "forbidden";
-		}
 	}
-	console.log("not running....");
 }
 
 const renderTarget = createRenderTarget();

@@ -81,7 +81,6 @@ class MeshSubState extends SubState {
 		this.animate();
 	}
 	animate(){
-		// console.log("animate!");
 		if (this.animateScene() == "stop") return; 
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);
 		this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);

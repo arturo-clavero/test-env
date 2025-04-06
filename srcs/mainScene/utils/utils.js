@@ -124,7 +124,6 @@ function mapToCenter(pointsLeft, pointsRight)
 }
 
 async function getUserID() {
-	console.log("Getting user ID...");
 	try {
 		let response = await fetch('http://localhost:8003/get-userID/', {
 			method: 'POST',
@@ -135,7 +134,6 @@ async function getUserID() {
 			alert(data["error"]);
 			return null;
 		}
-		console.log("Data:", data);
 		return data["result"];
 	} catch (error) {
 		console.error('Error getting user ID:', error);

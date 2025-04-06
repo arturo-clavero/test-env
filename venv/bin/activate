@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV=/home/arturo/Desktop/test-env/venv
+VIRTUAL_ENV=/home/artclave/transcendncetest/venv
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

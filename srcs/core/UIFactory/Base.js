@@ -18,17 +18,18 @@ class BaseDivElement{
 	}
 	getElementById(id){
 		for (let child of this.childElements) {
-			if (child instanceof BaseDivElement)
+			if (child.element.id == id)
+				return child;
+			else if (child instanceof BaseDivElement)
 			{
 				let child_found = child.getElementById(id);
 				if (child_found != undefined)
 					return child_found;
 			}
-			else 
-			{
-				if (child.element.id == id)
-					return child;
-			}
+			// else 
+			// {
+				
+			// }
 		};
 		return undefined;
 	}

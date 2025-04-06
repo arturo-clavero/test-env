@@ -13,9 +13,9 @@ class SubState {
         this.keyHandler = keyHandler || (() => {});
 		this.active = false;
     }
-    enter() { this.setup(); this.postCamMoveSetUp();}
+    enter() { this.setup();}
 	postCamEnter() {this.postCamMoveSetUp();}
-	update() { this.postCamMoveSetUp(); }
+	// update() { this.postCamMoveSetUp(); }
     exit() { this.cleanup(); }
     resize() { this.updateSize(); }
 	animate() { this.animation(); }

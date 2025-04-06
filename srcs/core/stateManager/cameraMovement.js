@@ -28,6 +28,10 @@ window.addEventListener("wheel", (event) => {
 
 
 function moveCamera(data, onComplete) {
+	console.log("move cmaera cllaaed!!1");
+	gsap.killTweensOf(engine.camera);
+	gsap.killTweensOf(engine.camera.position);
+	gsap.killTweensOf(engine.camera.rotation);
 	isAnimating = true;
 	const tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
@@ -64,16 +68,14 @@ function moveCamera(data, onComplete) {
 			onUpdate: () => engine.camera.lookAt(data.lookAt)
 		}, 0);
 	}
-	tl.then(()=>{
+	tl.eventCallback("onComplete", () => {
 		isAnimating = false;
 		new StateManager().resize();
+		console.log("on complete... ? ");
 		onComplete();
 		engine.camera.position.x = data.pos[0];
 		engine.camera.position.y = data.pos[1];
 		engine.camera.position.z = data.pos[2];
-		// fitCameraToObject(objectGroup, engine.camera);
-
-		// fitCameraToObject(localMachineObj.self, engine.camera);
 	});
 }
 function shakeCamera(camera, intensity = 0, duration = 2000) {
@@ -126,7 +128,6 @@ function fitCameraToObject(object, camera) {
 
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-	console.log("size: ", size);
     const aspect = window.innerWidth / window.innerHeight;
     
     let fov = THREE.MathUtils.degToRad(camera.fov); 
@@ -137,7 +138,6 @@ function fitCameraToObject(object, camera) {
     } else {
         distance = (size.y / 2) / Math.tan(fov / 2);
     }
-	console.log("distnace + maxDm", distance + maxDim);
     camera.position.set(0, 0, distance + maxDim);
     camera.lookAt(box.getCenter(new THREE.Vector3()));
 }

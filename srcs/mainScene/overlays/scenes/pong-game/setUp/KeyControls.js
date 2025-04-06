@@ -9,14 +9,12 @@ export class KeyControls{
 
 	}
 	handleKeyDown(event) {
-		console.log("on key down");
 		if (!this.keyStates[event.key]) {
 			this.keyStates[event.key] = true;
 			this.userPaddleInput(event.key, true);
 		}
 	}
 	handleKeyUp(event) {
-		console.log("on key up")
 		if (this.keyStates[event.key]) {
 			this.keyStates[event.key] = false;
 			this.userPaddleInput(event.key, false);

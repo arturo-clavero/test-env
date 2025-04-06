@@ -17,7 +17,6 @@ localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
 const partIndex = 0;
 const surfaceIndex = 0;
-// console.log("obj: ", object.self.children[partIndex].children[surfaceIndex]);
 const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
 screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();

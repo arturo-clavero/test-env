@@ -36,7 +36,7 @@ class TournamentChannel():
 		self.create_time = time.time()
 
 		self.entry_price = 100
-		self.prize_pool = entry_price
+		self.prize_pool = 0
 
 		self.tour_id = str(uuid4())
 		self.room = f"tour_{self.tour_id}"
@@ -56,14 +56,14 @@ class TournamentChannel():
 			#start timer for calling free spot
 		else:
 			await consumer.send_channel("all", {
-				"type" : "display-tournament",
-				"display" : "tournament",
+				"type" : "tour.updates",
 				"button" : "full",
 			})
 			self.status = "full"
 
 	
 	async def confirm_payment(self, consumer, alias):
+		print("payment confirmed")
 		self.all_players[consumer.user_id] = {
 			"alias" : alias,
 			"consumer" : consumer
@@ -75,8 +75,6 @@ class TournamentChannel():
 		await consumer.join_channel(self.room)
 		await consumer.send_self({
 			"type" : "tour.updates",
-			"display" : "tournament",
-			"action" : "update display",
 			"button" : "subscribed",
 		})
 		if self.status == "full" and len(all_players) == self.max_players:
@@ -91,7 +89,7 @@ class TournamentChannel():
 			"type" : "tour.updates",
 			"display" : "tournament",
 			"action" : "update info",
-			"prizePool": self.prize_pool * .9,
+			"prize_pool": self.prize_pool * .9,
 		})
 		#cancel timer for free spot?
 	

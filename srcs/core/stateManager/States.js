@@ -1,6 +1,6 @@
 import { moveCamera } from './cameraMovement';
 class State {
-    constructor(name, cameraMovement, substates = [], substatesOptions = [], enterState = ()=>{}, exitState=()=>{}, materials) {
+    constructor(name, cameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
@@ -23,25 +23,20 @@ class State {
 			this.changeSubstate(0);
 	}
 	changeSubstate(index = this.currentSubstateIndex + 1) {
-		console.log("curent index: ", this.currentSubstateIndex, "changing to ", index)
         if (this.currentSubstate && this.currentSubstate.exit() == "cancelled")
 			return "cancelled";
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
-		console.log("before", this.currentSubstate);
         this.currentSubstate = this.substates[this.currentSubstateIndex];
-		console.log(this.currentSubstate);
 		if (this.materialIndex != this.currentSubstate.materialIndex)
 		{
 			this.materialIndex = this.currentSubstate.materialIndex;
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];
 		}
-		console.log("after", this.currentSubstate);
-		console.log("enter: ", this.currentSubstate.enter());
 		this.currentSubstate.enter();
     }
 	enter() {
-		this.enterState(this);
+		this.changeSubstate();
 		if (this.cameraMovement)
 			moveCamera(this.cameraMovement, () =>{
 				this.currentSubstate.postCamEnter();
@@ -61,6 +56,18 @@ class State {
     resize() { this.currentSubstate?.resize(); }
 	animate() { this.currentSubstate?.animate(); }
 	isActive() { return this.currentSubstate?.active; }
+	update_start_index(index){
+		if (this.start_index == index)
+			return ; 
+		if (this.currentSubstateIndex < index)
+		{
+			if (this.currentSubstateIndex % 2 == 0)
+				this.changeSubstate(index)
+			else
+				this.changeSubstate(index + 1)
+		}
+		this.startIndex = index;
+	}
 }
 
 export { State }

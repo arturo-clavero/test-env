@@ -42,7 +42,6 @@ function keyDown(event){
 }
 
 function end_game(){
-	console.log("end game");
 	new StateManager().currentState.changeSubstate();
 }
 

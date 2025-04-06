@@ -10,31 +10,20 @@ const container = new Overlay([
 				flex: 1,
 				children: [
 					new FlexBox({
-						// padding: '10%',
 						children: [
 							new Text({
-								content: "EPIC ONINE BATTLE",
+								content: "ONLINE TOURNAMENT",
 								fontsize: 4
 							}),
 						],
 					}),
-					new Text({
-						content: "PLAY TO EARN ETH!",
-						fontSize: 1
-					}),
-					new Button({
-						id: "button",
-						content: "CREATE NEW TOURNAMENT",
-						fontSize: 0.85,
-						onClick: ()=>{
-							new Socket().send({
-								"channel":"tournament",
-								"action":"create",
-							})
-						}
-					})
-			 ]
-		})	
+					],
+				}),
+			 new Button({
+				id: "button",
+				content: "loading . . .",
+				fontSize: 0.85,
+			})
 		])
 
 
@@ -49,6 +38,7 @@ function hide_buttons(){
 
 function show_div(){
 	container.element.style.visibility = "visible";
+	show_buttons();
 }
 
 function hide_div(){
@@ -58,7 +48,7 @@ function hide_div(){
 
 
 
-const create = {
+const start = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,
 	"hide-buttons" : hide_buttons,
@@ -67,4 +57,4 @@ const create = {
 	"resize": ()=>{container.resize()},
 }
 
-export {create}
+export {start}

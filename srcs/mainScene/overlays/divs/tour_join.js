@@ -9,18 +9,16 @@ let entryPrice = 100
 const container = new Overlay([
 	new FlexBox({
 		dir: "column",
+		id: "inner-div",
 		children: [
 			new FlexBox({
 				dir: "column",
 				padding: '10%',
+				id : "prize-container",
 				children: [
 					new Text({
-						content: "WIN UP TO ",
-						fontsize: 0.85
-					}),
-					new Text({
 						id: "prize-context",
-						content: `heuy`,
+						content: `WIN UP TO `,
 						fontsize: 1
 					}),
 				],
@@ -39,21 +37,7 @@ const container = new Overlay([
 			}),
 			new Button({
 				id: "button",
-				content: "JOIN",
 				fontSize: 0.45,
-				onClick: ()=>{
-					console.log(tourId);
-					new Socket().send({
-						"channel":"tournament",
-						"action":"join",
-						"tour_id" : tourId,
-					})
-					new Socket().send({
-						"channel":"tournament",
-						"action":"succesfull payment",
-						"tour_id" : tourId,
-					})
-				}
 			})
 		]
 	})	
@@ -61,19 +45,60 @@ const container = new Overlay([
 let tourId;
 function setTourId(newTourId){ tourId = newTourId}
 
+let joinButton = new Button({
+	id: "button",
+	content: "JOIN",
+	fontSize: 0.45,
+	onClick : ()=>{
+			new Socket().send({
+				"channel":"tournament",
+				"action":"join",
+				"tour_id" : tourId,
+			})
+			new Socket().send({
+				"channel":"tournament",
+				"action":"succesfull payment",
+				"tour_id" : tourId,
+			})
+			}
+})
+
+let subscribedButton = new Button({
+	id: "button",
+	content: "Subscribed",
+	fontSize: 0.45,
+})
+
+let fullButton = new Button({
+	id: "button",
+	content: "FULL",
+	fontSize: 0.45,
+})
+function change_button(new_content){
+	let button = container.getElementById("button").element;
+	if (new_content == "join") button.replaceWith(joinButton.element);
+	else if (new_content == "subscribed") button.replaceWith(subscribedButton.element);
+	else if (new_content == "full" && button.textContent != "Subscribed") button.replaceWith(fullButton.element);
+}
+
 function show_buttons(){
-	console.log(container.getElementById("button").element);
 	container.getElementById("button").element.style.visibility = "visible";
+	joinButton.element.style.visibility = "visible";
+	subscribedButton.element.style.visibility = "visible";
+	fullButton.element.style.visibility = "visible";
+
 }
 
 function hide_buttons(){
 	container.getElementById("button").element.style.visibility = "hidden";
+	joinButton.element.style.visibility = "hidden";
+	subscribedButton.element.style.visibility = "hidden";
+	fullButton.element.style.visibility = "hidden";
 }
 
 function show_div(){
 	container.element.style.visibility = "visible";
 	show_buttons();
-	console.log("show div");
 }
 
 function hide_div(){
@@ -81,18 +106,15 @@ function hide_div(){
 	hide_buttons();
 }
 
-function change_button(new_content){
-	container.getElementById("button").element.textContent = new_content;
-	//change color based on status
-}
+
 
 function updatePrizePool(value){
-	// prizePool = value;
-	console.log("updating1");
-	console.log("content prev: ", container.getElementById("prize-context").element)
-	container.getElementById("prize-context").element.textContent = `${value} ETC !`;
-
+	if (value == 0)
+		container.getElementById("prize-context").element.textContent = `TOURNAMENT !`;
+	else
+		container.getElementById("prize-context").element.textContent = `WIN UP TO ${value} ETC !`;
 }
+
 const join = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,

@@ -101,7 +101,6 @@ const aiMachineState = new State(
 		fakeGameScreen,
 		endScreen
 	],
-	[],
 	(self)=>{
 		self.changeSubstate();
 	},

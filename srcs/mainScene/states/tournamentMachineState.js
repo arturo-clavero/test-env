@@ -7,11 +7,14 @@ import { screenSurface, center, object, partIndex, surfaceIndex } from '../objec
 import { scene1 } from '../overlays/scenes/scene1';
 import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
-import {start} from '../overlays/divs/tour_create';
+import {start} from '../overlays/divs/tour_start';
+
+import {create} from '../overlays/divs/tour_create';
 import {join} from '../overlays/divs/tour_join';
 
+
 const divStart = start;
-const restScreenCreate = new CssSubState(
+const restScreen = new CssSubState(
 	"rest create",
 	object,
 	partIndex,
@@ -19,13 +22,59 @@ const restScreenCreate = new CssSubState(
 	divStart["div"],
 	0,
 	()=>{
-		console.log("pre enter create")
 		divStart['show-div']();
 		divStart['hide-buttons']();
 	},
 	null,
-	()=>{console.log("exit");},
+	()=>{
+		divStart['hide-div']();
+	},
 	()=>{divStart["resize"]()},
+	null,
+	null,
+)
+
+const startScreen = new CssSubState(
+	"start create",
+	object,
+	partIndex,
+	surfaceIndex,
+	divStart['div'],
+	0,
+	()=>{
+		divStart['show-div']();
+		divStart['hide-buttons']();
+	},
+	()=>{
+		divStart['show-buttons']();
+	},
+	()=>{
+		divStart['hide-div']();
+		divStart['hide-buttons']();
+	},
+	()=>{divStart["resize"]()},
+	null,
+	null,
+)
+
+
+const divCreate = create;
+const restScreenCreate = new CssSubState(
+	"rest create",
+	object,
+	partIndex,
+	surfaceIndex,
+	divCreate["div"],
+	0,
+	()=>{
+		divCreate['show-div']();
+		divCreate['hide-buttons']();
+	},
+	null,
+	()=>{
+		divCreate['hide-div']();
+	},
+	()=>{divCreate["resize"]()},
 	null,
 	null,
 )
@@ -35,20 +84,20 @@ const startScreenCreate = new CssSubState(
 	object,
 	partIndex,
 	surfaceIndex,
-	divStart['div'],
+	divCreate['div'],
 	0,
-	null,
 	()=>{
-		divStart['show-div']();
-		divStart['show-buttons']();
-		console.log("enter create p2");
+		divCreate['show-div']();
+		divCreate['hide-buttons']();
 	},
 	()=>{
-		divStart['hide-div']();
-		divStart['hide-buttons']();
-		console.log("exit create p2");
+		divCreate['show-buttons']();
 	},
-	()=>{divStart["resize"]()},
+	()=>{
+		divCreate['hide-div']();
+		divCreate['hide-buttons']();
+	},
+	()=>{divCreate["resize"]()},
 	null,
 	null,
 )
@@ -62,13 +111,13 @@ const restScreenJoin = new CssSubState(
 	divJoin["div"],
 	0,
 	()=>{
-		console.log("pre enter join");
 		divJoin['show-div']();
 		divJoin['hide-buttons']();
 	},
 	null,
 	()=>{
-		console.log("exit join");
+		divJoin['hide-div']();
+		divJoin['hide-buttons']();
 	},
 	()=>{divJoin["resize"]()},
 	null,
@@ -82,49 +131,21 @@ const startScreenJoin = new CssSubState(
 	surfaceIndex,
 	divJoin['div'],
 	0,
-	null,
 	()=>{
-		console.log("enter join p2");
 		divJoin['show-div']();
+		divJoin['hide-buttons']();
+	},
+	()=>{
+		console.log("specific");
 		divJoin['show-buttons']();
 	},
 	()=>{
 		divJoin['hide-div']();
 		divJoin['hide-buttons']();
-		console.log("exit join p2");
 	},
 	()=>{divJoin["resize"]()},
 	null,
 	null,
-)
-
-
-const fakeGameScreen = new MeshSubState(
-	"rest", 
-	screenSurface,
-	fakeGame,
-	2,
-	null,
-	null,
-	null,
-	null,
-	(event)=> { return divForm.keyHandler(event);},
-)
-
-const divEnd = new End();
-const endScreen = new CssSubState(
-	"end", 
-	object,
-	partIndex,
-	surfaceIndex,
-	divEnd.div,
-	0,
-	()=>{divEnd.enter()},
-	null,
-	()=>{divEnd.exit()},
-	()=>{divEnd.resize()},
-	(event)=> { return divEnd.keyHandler(event);},
-	()=>{divEnd.animate()},
 )
 
 const tourMachineState = new State(
@@ -135,22 +156,15 @@ const tourMachineState = new State(
 		ease: "power2.inOut"
 	}, 
 	[
+		restScreen, 
+		startScreen,
 		restScreenCreate,
 		startScreenCreate,
 		restScreenJoin,
-		startScreenJoin, 
-		// matchesScreen,
-		// gameScreen,
-		// endScreen,
-		// endScreen,
-	],
-	[
-		// {"substate" : restScreen, "index" : 0},
-		// {"substate" : startScreen, "index" : 1},
+		startScreenJoin,
 	],
 	(self)=>{
-		if (self.currentSubstateIndex == 0)
-			self.changeSubstate();
+		self.changeSubstate();
 	},
 	(self)=>{
 		if (self.currentSubstateIndex != 2)
@@ -161,8 +175,6 @@ const tourMachineState = new State(
 	},
 	[
 		screenMaterial,
-		scene1.renderMaterial,
-		fakeGame.renderMaterial,
 	],
 
 )

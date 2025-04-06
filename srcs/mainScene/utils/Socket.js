@@ -7,7 +7,6 @@ import {getUserID} from './utils'
 
 export class Socket {
 	constructor(){
-		console.log("constructr");
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];  // Ensure msgQueue is initialized
@@ -15,46 +14,37 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
-		console.log("init");
 		this.userID = await getUserID();
-		console.log("user id is ...", this.userID)
 		this.msgQueue = [];
 		this.socket = new WebSocket(`ws://localhost:8003/ws/${this.userID}/`);
 		this.socket.onopen = this.myOpen.bind(this);
 		this.socket.onclose = this.myClose.bind(this);
 		this.socket.onmessage = (event)=>{
 			const data = JSON.parse(event.data);
-			console.log("Data: ", data);
 			if (!data)
 				return ;
 			if (data.type == "game update")
 				gameReceive(data);
-			else if (data.type == "tour.updates" && data.display == "tournament")
+			else if (data.type == "tour.updates")
 			{
-				if (data.action == "update display")
+				if ("button" in data)
 				{
-					if (data.button == "join")
+					if (data.button == "join" || data.button == "full" || data.button == "subscribed")
 					{
-						console.log("receiveing .... !");
-						let stateManager = new StateManager();
-						if (stateManager.states[3].currentSubstateIndex == 0 || stateManager.states[3].currentSubstateIndex == 1)
-							stateManager.states[3].changeSubstate(stateManager.states[3].currentSubstateIndex + 2)
-						stateManager.states[3].startIndex = 2;
-						updatePrizePool(100);
-						setTourId(data["tourId"]);
+						new StateManager().states[3].update_start_index(4);
+						if (data.button == "join")
+							setTourId(data["tourId"]);
+						change_button(data.button);
 					}
-					else if (data.button = "subscribed")
-						change_button("subscribed");
+					else if (data.button == "create")
+						new StateManager().states[3].update_start_index(2);
 				}
-				if (data.action == "update info"){
-					if (data["prizePool"])
-						updatePrizePool(data["prizePool"])
-				}
+				if ("prize_pool" in data)
+					updatePrizePool(data["prize_pool"])
 			}
 		}
 	}
 	myOpen(){
-		console.log("websocket opening");
 		this.msgQueue.forEach(msg => {
 			this.send(msg)});
 		this.msgQueue = [];
