@@ -42,8 +42,7 @@ const container = new Overlay([
 		]
 	})	
 ])
-let tourId;
-function setTourId(newTourId){ tourId = newTourId}
+
 
 let joinButton = new Button({
 	id: "button",
@@ -53,14 +52,9 @@ let joinButton = new Button({
 			new Socket().send({
 				"channel":"tournament",
 				"action":"join",
-				"tour_id" : tourId,
 			})
-			new Socket().send({
-				"channel":"tournament",
-				"action":"succesfull payment",
-				"tour_id" : tourId,
-			})
-			}
+			// new StateManager().currentState.changeSubstate();
+		}
 })
 
 let subscribedButton = new Button({
@@ -75,6 +69,7 @@ let fullButton = new Button({
 	fontSize: 0.45,
 })
 function change_button(new_content){
+	console.log("button to ", new_content);
 	let button = container.getElementById("button").element;
 	if (new_content == "join") button.replaceWith(joinButton.element);
 	else if (new_content == "subscribed") button.replaceWith(subscribedButton.element);
@@ -98,7 +93,6 @@ function hide_buttons(){
 
 function show_div(){
 	container.element.style.visibility = "visible";
-	show_buttons();
 }
 
 function hide_div(){
@@ -124,4 +118,4 @@ const join = {
 	"resize": ()=>{container.resize()},
 }
 
-export {join, updatePrizePool, setTourId, change_button}
+export {join, updatePrizePool, change_button}

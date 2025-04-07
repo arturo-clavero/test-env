@@ -22,7 +22,7 @@ class State {
 		if (! this.currentSubstate)
 			this.changeSubstate(0);
 	}
-	changeSubstate(index = this.currentSubstateIndex + 1) {
+	changeSubstate(index = this.currentSubstateIndex + 1, postCam = true) {
         if (this.currentSubstate && this.currentSubstate.exit() == "cancelled")
 			return "cancelled";
 		if (index >= this.substates.length) index = 0;
@@ -34,9 +34,11 @@ class State {
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];
 		}
 		this.currentSubstate.enter();
+		if (postCam)
+			this.currentSubstate.postCamEnter();
     }
 	enter() {
-		this.changeSubstate();
+		this.changeSubstate(this.currentSubstateIndex + 1, false);
 		if (this.cameraMovement)
 			moveCamera(this.cameraMovement, () =>{
 				this.currentSubstate.postCamEnter();

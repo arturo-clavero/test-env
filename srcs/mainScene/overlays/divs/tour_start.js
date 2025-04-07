@@ -38,7 +38,6 @@ function hide_buttons(){
 
 function show_div(){
 	container.element.style.visibility = "visible";
-	show_buttons();
 }
 
 function hide_div(){

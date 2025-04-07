@@ -8,10 +8,9 @@ import { scene1 } from '../overlays/scenes/scene1';
 import { fakeGame } from '../overlays/scenes/fakeGame';
 import { End } from '../overlays/divs/end';
 import {start} from '../overlays/divs/tour_start';
-
 import {create} from '../overlays/divs/tour_create';
 import {join} from '../overlays/divs/tour_join';
-
+import { payment } from '../overlays/divs/tour_payment';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -50,7 +49,6 @@ const startScreen = new CssSubState(
 	},
 	()=>{
 		divStart['hide-div']();
-		divStart['hide-buttons']();
 	},
 	()=>{divStart["resize"]()},
 	null,
@@ -95,7 +93,6 @@ const startScreenCreate = new CssSubState(
 	},
 	()=>{
 		divCreate['hide-div']();
-		divCreate['hide-buttons']();
 	},
 	()=>{divCreate["resize"]()},
 	null,
@@ -117,7 +114,6 @@ const restScreenJoin = new CssSubState(
 	null,
 	()=>{
 		divJoin['hide-div']();
-		divJoin['hide-buttons']();
 	},
 	()=>{divJoin["resize"]()},
 	null,
@@ -141,9 +137,30 @@ const startScreenJoin = new CssSubState(
 	},
 	()=>{
 		divJoin['hide-div']();
-		divJoin['hide-buttons']();
 	},
 	()=>{divJoin["resize"]()},
+	null,
+	null,
+)
+
+const divPay = payment;
+const screenPay = new CssSubState(
+	"start join",
+	object,
+	partIndex,
+	surfaceIndex,
+	divPay['div'],
+	0,
+	()=>{
+		divPay['show-div']();
+		divPay['show-buttons']();
+		divPay['payment']();
+	},
+	null,
+	()=>{
+		divPay['hide-div']();
+	},
+	()=>{divPay["resize"]()},
 	null,
 	null,
 )
@@ -162,6 +179,8 @@ const tourMachineState = new State(
 		startScreenCreate,
 		restScreenJoin,
 		startScreenJoin,
+		screenPay,
+
 	],
 	(self)=>{
 		self.changeSubstate();

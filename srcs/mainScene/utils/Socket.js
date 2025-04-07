@@ -1,6 +1,6 @@
 import { StateManager } from '../../core/stateManager/StateManager';
 import { gameReceive } from '../overlays/scenes/pong-game/Game'
-import { setTourId, updatePrizePool, change_button } from '../overlays/divs/tour_join';
+import { updatePrizePool, change_button } from '../overlays/divs/tour_join';
 // import { showAvailableTournaments } from '../overlays/divs/tour_join'
 // TODO
 import {getUserID} from './utils'
@@ -32,12 +32,12 @@ export class Socket {
 					if (data.button == "join" || data.button == "full" || data.button == "subscribed")
 					{
 						new StateManager().states[3].update_start_index(4);
-						if (data.button == "join")
-							setTourId(data["tourId"]);
 						change_button(data.button);
 					}
 					else if (data.button == "create")
 						new StateManager().states[3].update_start_index(2);
+					else if (data.button == "pay")
+						new StateManager().currentState.changeSubstate();
 				}
 				if ("prize_pool" in data)
 					updatePrizePool(data["prize_pool"])

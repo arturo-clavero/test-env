@@ -22,28 +22,12 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "EXIT",
-						activate: (self)=>{
-							self.element.style.transition = "transform 0.1s ease-in-out";
-							self.element.style.transform = "scale(1.4)";
-						},
-						deactivate:(self)=>{
-							self.element.style.transition = "transform 0.1s ease-in-out";
-							self.element.style.transform = "scale(1)";
-						},
 						onClick : ()=> {new StateManager().changeState(0);}
 					}),
 					new Button({
 						color: color,
 						fontSize: 0.55,
 						content: "RESTART",
-						activate: (self)=>{
-							self.element.style.transition = "transform 0.1s ease-in-out";
-							self.element.style.transform = "scale(1.4)";
-						},
-						deactivate:(self)=>{
-							self.element.style.transition = "transform 0.1s ease-in-out";
-							self.element.style.transform = "scale(1)";
-						},
 						onClick : ()=> {new StateManager().currentState.changeSubstate(2);}
 					})
 				]

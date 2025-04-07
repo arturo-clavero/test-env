@@ -22,14 +22,6 @@ class StartScreen{
 								color: color,
 								content: "ENTER",
 								id: "enter-button",
-								activate: (self)=>{
-									self.element.style.transition = "transform 0.1s ease-in-out";
-    								self.element.style.transform = "scale(1.2)";
-								},
-								deactivate:(self)=>{
-									self.element.style.transition = "transform 0.2s ease-in-out";
-									self.element.style.transform = "scale(1)";
-								},
 								onClick: ()=>{new StateManager().currentState.changeSubstate();},
 							})
 						]

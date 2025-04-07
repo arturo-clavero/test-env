@@ -22,23 +22,23 @@ class Input extends BaseNonDivElement{
 }
 
 class Button extends BaseNonDivElement{
-	constructor({id = "button", content, color, onClick =()=>{}, flex = 0, fontSize = 1, w, h, activate = ()=>{}, deactivate = ()=>{}})
+	constructor({id = "button", content, color, onClick =()=>{}, flex = 0, fontSize = 1, w, h})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.isSelected = false;
 		this.activate = ()=>{
-			if (this.isSelected == false)
-			{
-				activate(this);
-				this.isSelected = true;
-			}
+			if (this.isSelected == true)
+				return ;
+			this.element.style.transition = "transform 0.1s ease-in-out";
+			this.element.style.transform = "scale(1.2)";
+			this.isSelected = true;
 		}
 		this.deactivate = ()=>{
-			if (this.isSelected == true)
-			{
-				deactivate(this);
-				this.isSelected = false;
-			}
+			if (this.isSelected == false)
+				return ;
+			this.element.style.transition = "transform 0.2s ease-in-out";
+			this.element.style.transform = "scale(1)";
+			this.isSelected = false;
 		}
 		this.element.textContent = content;
 		this.onClick = onClick;

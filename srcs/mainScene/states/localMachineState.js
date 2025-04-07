@@ -5,7 +5,6 @@ import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExte
 import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
-import { Form2 } from '../overlays/divs/form2';
 import { End } from '../overlays/divs/end';
 	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
 
@@ -47,22 +46,6 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
-const divForm = new Form2("white");
-const formScreen = new CssSubState(
-	"form",
-	object,
-	partIndex,
-	surfaceIndex,
-	divForm.div,
-	0,
-	()=>{divForm.enter();},
-	null,
-	()=>{divForm.exit();},
-	()=>{divForm.resize()},
-	(event)=> { return divForm.keyHandler(event);},
-	()=>{divForm.animate()},
-)
-
 const fakeGameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
@@ -97,7 +80,6 @@ const localMachineState = new State(
 	[
 		restScreen,
 		startScreen, 
-		formScreen,
 		fakeGameScreen,
 		endScreen
 	],

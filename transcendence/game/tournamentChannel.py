@@ -53,6 +53,11 @@ class TournamentChannel():
 		print("joined...")
 		if self.total_players < self.max_players:
 			self.total_players += 1
+			await consumer.send_self({
+				"type" : "tour.updates",
+				"button" : "pay",
+
+			})
 			#start timer for calling free spot
 		else:
 			await consumer.send_channel("all", {
@@ -68,7 +73,7 @@ class TournamentChannel():
 			"alias" : alias,
 			"consumer" : consumer
 		}
-		self.prize_pool += self.entry_price
+		self.prize_pool += self.entry_price * 0.95
 		consumer.tournament = self
 		print("joined tournament ", self.tour_id)
 		print("players: ", len(self.all_players))
@@ -81,14 +86,12 @@ class TournamentChannel():
 			self.status = "locked"
 			pending_tournament = None
 			await consumer.send_channel("all", {
-				"type" : "display-tournament",
+				"type" : "tour.updates",
 				"display" : "create",
 			})
 		else :
 			await consumer.send_channel(self.room, {
 			"type" : "tour.updates",
-			"display" : "tournament",
-			"action" : "update info",
 			"prize_pool": self.prize_pool * .9,
 		})
 		#cancel timer for free spot?
@@ -98,8 +101,7 @@ class TournamentChannel():
 			total_players -= 1
 			if self.status == "full":
 				await consumer.send_channel("all", {
-					"type" : "display-tournament",
-					"display" : "tournament",
+					"type" : "tour.updates",
 					"button" : "join",
 				})
 				self.status = "open"
