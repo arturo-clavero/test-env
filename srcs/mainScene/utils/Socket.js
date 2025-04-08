@@ -23,6 +23,10 @@ export class Socket {
 			const data = JSON.parse(event.data);
 			if (!data)
 				return ;
+			console.log(data);
+			console.log(data["type"]);
+			console.log(data.type)
+			
 			if (data.type == "game update")
 				gameReceive(data);
 			else if (data.type == "tour.updates")

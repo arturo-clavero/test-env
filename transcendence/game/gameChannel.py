@@ -122,7 +122,7 @@ class GameChannel():
 			store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
 			await self.finish()
 		elif (updates["state"] == "playing" or updates["state"] == "game end"):
-			await self.consumer.send_self(json.dumps({
+			await self.consumer.send_self({
 							"type": "game update",
 							"updates": {
 								"ball" : {
@@ -135,11 +135,11 @@ class GameChannel():
 								"score2" : updates["score2"],
 								"state" : updates["state"],
 							}
-						}))
+						})
 			if (updates["state"] == "game end"):
 				await self.finish()
 		else:
-			await self.consumer.send_self(json.dumps({
+			await self.consumer.send_self({
 							"type": "game update",
 							"updates": updates,
-						}))
+						})
