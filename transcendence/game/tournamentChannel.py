@@ -3,30 +3,11 @@ from channels.layers import get_channel_layer
 from rest_framework.test import APIRequestFactory
 from uuid import uuid4, uuid1
 from .channels import send_message
+from .tasks import start, notify_start
 
 ongoing_tournaments = {}
 pending_tournament = None
-class TournamentManager():
-	def __init__(self):
-		self.channel_layer = get_channel_layer()
-		self.running_tasks = set()
 
-	async def monitor_tournaments(self):
-		while True:
-			try:
-				for tournamentID, tour in ongoing_tournaments.items():
-					if tour.state == "pending":
-						if time.time() - tour.create_time >= tour.start_time:
-							tour.start()
-							await self.channel_layer.group_send(f"tour_{tour.tour_ID}", {"type": "live.tournament", "current": tour})
-					# elif tour.state == "active":
-					# 	tour.matchmake()
-				await asyncio.sleep(0.032)
-			except Exception as e:
-				print(f"error in tour loopL {e}")
-				break
-
-tournamentManager = TournamentManager()
 player_alias = {}
 entry_price = 100
 #self statuses:
@@ -36,7 +17,7 @@ entry_price = 100
 
 class TournamentChannel():
 	def __init__(self, consumer):
-		global pending_tournament
+		global pending_tournament, ongoing_tournaments
 
 		self.start_time = 15 * 60
 		self.create_time = time.time()
@@ -51,6 +32,10 @@ class TournamentChannel():
 		self.total_players = 0
 		self.max_players = 1024
 		pending_tournament = self
+		ongoing_tournaments[self.tour_id] = self
+		notify_start.apply_async(args=[self.tour_id], countdown=13.5*60)
+		start.apply_async(args=[self.tour_id], countdown=15*60)
+
 
 	async def close_registration(self):
 		global pending_tournament
@@ -92,6 +77,7 @@ class TournamentChannel():
 		await consumer.join_channel(self.room)
 	
 	async def notify_start(self):
+		print("SEND NOTIFICATION!")
 		await self.close_registration()
 		await self.registered_user.send_channel(self.room, {
 			"type" : "tour.updates",
@@ -103,17 +89,20 @@ class TournamentChannel():
 		await consumer.join_channel(self.activeRoom)
 	
 	async def start(self):
+		print("START!")
+		global ongoing_tournaments
 		from .consumers import active_users
 		if len(self.confirmed_players) == 0:
+			del ongoing_tournaments[self.tour_id]
 			return
 		if len(self.confirmed_players) == 1:
 			confirmed_players[0].send_message({
-				"type" : "tour.updates"
-				"update_display" : "refund"
-				"reason" : "insufficient players"
+				"type" : "tour.updates",
+				"update_display" : "refund",
+				"reason" : "insufficient players",
 			})
+			del ongoing_tournaments[self.tour_id]
 			return
-		ongoing_tournaments[self.tour_id] = self
 		self.state = "active"
 		self.remaining_players = self.confirmed_players.copy()
 		random.shuffle(self.remaining_players)
@@ -125,7 +114,7 @@ class TournamentChannel():
 		self.current_round += 1
 		self.total_matches = len(self.remaining_players) / 2 #+ len(self.remaining_players % 2)
 		await self.consumer.group_send(self.activeRoom, 	{
-			"type" : "tour.updates"
+			"type" : "tour.updates",
 			"update_display" : "matchmaking rounds",
 			"total matches" : self.total_matches,
 			"current round" : self.current_round,
@@ -148,14 +137,14 @@ class TournamentChannel():
 			"alias2": player_alias[player2]
 			}, format='json'))
 		self.confirmed_players[player1].consumer.self_send({
-			"type" : "tour.updates"
+			"type" : "tour.updates",
 			"update_display" : "start game",
 			"gameID" : response["gameID"],
 			"userID" : response["userID1"],
 			"game-type" : "player1",
 			})
 		self.confirmed_players[player2].consumer.self_send({
-			"type" : "tour.updates"
+			"type" : "tour.updates",
 			"update_display" : "start game",
 			"gameID" : response["gameID"],
 			"userID" : response["userID2"],
@@ -169,8 +158,8 @@ class TournamentChannel():
 		confirmed_players[data["looser"]].consumer.send_self({
 					"type":"tour.updates",
 					"update_display":"end game",
-					"title":f"You have lost round {self.current_round}"
-					"button":"exit"
+					"title":f"You have lost round {self.current_round}",
+					"button":"exit",
 				})
 		if self.total_matches == 0 and len(self.remaining_players) == 1:
 				self.state = "end"
@@ -180,16 +169,16 @@ class TournamentChannel():
 					"update_display":"end game",
 					"title":"You have won the tournament",
 					"prize":self.prize_pool,
-					"button":"exit"
+					"button":"exit",
 				})
 				#blockhain send him payment! of self.prize_pool
 				return
-		else
+		else :
 			confirmed_players[data["winner"]].consumer.send_self({
 					"type":"tour.updates",
 					"update_display":"end game",
-					"title":f"You have won round {self.current_round}"
-					"button":"wait"
+					"title":f"You have won round {self.current_round}",
+					"button":"wait",
 				})
 		if self.total_matches == 0  :
 				await self.matchmake()
@@ -198,7 +187,7 @@ class TournamentChannel():
 		results = {
 			"winner" : winner,
 			"participants" : self.all_players_alias,
-			"prize pool" : self.prize_pool
+			"prize pool" : self.prize_pool,
 		}
 		# store_tournament_results(results)
 		if self.status == "active":

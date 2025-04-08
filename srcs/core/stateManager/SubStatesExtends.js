@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { SubState } from "./SubStates";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
+import { StateManager } from './StateManager';
 
 class CssSubState extends SubState {
 	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate){
@@ -25,7 +26,8 @@ class CssSubState extends SubState {
 
     exit() 
 	{
-		super.exit();
+		if (super.exit() == "cancelled" && new StateManager().forcedRedirect == "false")
+			return "cancelled";
 		//this.div.style.visibility = "hidden";
 		//TO BE CHANGED set this as functin coming in cleanup isntead the hiddden bit because osemtimes you ไรสส ืนะ ้รกำ!	
 	}
@@ -77,7 +79,7 @@ class MeshSubState extends SubState {
 		this.engine = new MainEngine();
 	}
 	exit(){
-		if (this.exitScene() == "cancelled") return "cancelled";
+		if (this.exitScene() == "cancelled" && new StateManager().forcedRedirect == false) return "cancelled";
 		this.animate();
 	}
 	animate(){

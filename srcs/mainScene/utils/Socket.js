@@ -1,17 +1,15 @@
 import { StateManager } from '../../core/stateManager/StateManager';
 import { gameReceive } from '../overlays/scenes/pong-game/Game'
-import { updatePrizePool, change_button } from '../overlays/divs/tour_join';
-// import { showAvailableTournaments } from '../overlays/divs/tour_join'
-// TODO
 import {getUserID} from './utils'
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
+import { create_join_alert } from '../overlays/alerts/join_tour_alert';
 
 export class Socket {
 	constructor(){
 		if (Socket.instance)
 			return Socket.instance
-		this.msgQueue = [];  // Ensure msgQueue is initialized
+		this.msgQueue = [];
 		this.init();
 		Socket.instance = this;
 	}
@@ -36,7 +34,7 @@ export class Socket {
 		}
 	}
 	notification(data){
-		alert(data["message"]);
+		create_join_alert();
 	}
 	updateTourSubState(data){
 		if (data.update_display== "pay")

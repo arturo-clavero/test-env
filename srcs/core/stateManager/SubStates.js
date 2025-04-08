@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { StateManager } from './StateManager';
 
 class SubState {
     constructor(name, surface = null, materialIndex, setup, postCamMoveSetUp, cleanup, updateSize, keyHandler, animation) {
@@ -17,7 +18,7 @@ class SubState {
     enter() { this.setup();}
 	postCamEnter() {this.postCamMoveSetUp();}
 	// update() { this.postCamMoveSetUp(); }
-    exit() { this.cleanup(); }
+    exit() { if (this.cleanup() == "cancelled" && new StateManager().forcedRedirect == false) return "cancelled"; }
     resize() { this.updateSize(); }
 	animate() { this.animation(); }
     handleKeyPress(event) { return this.keyHandler(event); }

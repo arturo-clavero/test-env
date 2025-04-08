@@ -4,15 +4,14 @@ import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExte
 
 import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/tournamentMachineObj';
-import { scene1 } from '../overlays/scenes/scene1';
-import { fakeGame } from '../overlays/scenes/fakeGame';
-import { End } from '../overlays/divs/end';
-import {start} from '../overlays/divs/tour_start';
-import {create} from '../overlays/divs/tour_create';
-import {join} from '../overlays/divs/tour_join';
+
+import { start } from '../overlays/divs/tour_start';
+import { create } from '../overlays/divs/tour_create';
+import { join } from '../overlays/divs/tour_join';
 import { payment } from '../overlays/divs/tour_payment';
 import { refund } from '../overlays/divs/tour_refund';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
+import { end } from '../overlays/divs/tour_end';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -200,28 +199,28 @@ const screenGame = new MeshSubState(
 	null,
 )
 
-// const divEnd = end;
-// const screenEnd = new CssSubState(
-// 	"end",
-// 	object,
-// 	partIndex,
-// 	surfaceIndex,
-// 	divEnd['div'],
-// 	0,
-// 	()=>{
-// 		divEnd['show-div']();
-// 		divEnd['show-buttons']();
-// 	},
-// 	null,
-// 	()=>{
-// 		divEnd['hide-div']();
-// 	},
-// 	()=>{
-// 		divEnd["resize"]();
-// 	},
-// 	null,
-// 	null,
-// )
+const divEnd = end;
+const screenEnd = new CssSubState(
+	"end",
+	object,
+	partIndex,
+	surfaceIndex,
+	divEnd['div'],
+	0,
+	()=>{
+		divEnd['show-div']();
+		divEnd['show-buttons']();
+	},
+	null,
+	()=>{
+		divEnd['hide-div']();
+	},
+	()=>{
+		divEnd["resize"]();
+	},
+	null,
+	null,
+)
 
 const tourMachineState = new State(
 	"tour game screen", 

@@ -6,6 +6,7 @@ class StateManager {
 			return StateManager.instance;
         this.states = states;
 		if (this.states.length > 0) this.changeState(0);
+		this.forcedRedirect = false;
         document.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		window.addEventListener('popstate', (event) => {
 			if (event.state)
@@ -16,7 +17,7 @@ class StateManager {
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
         if (this.currentStateIndex == index || index < 0)
 			return;
-		if (this.currentState && this.currentState.exit() == "cancelled")
+		if (this.currentState && this.currentState.exit() == "cancelled" && !this.forcedRedirect)
 			return "cancelled";
 		if (index >= this.states.length)
 			index = 0;

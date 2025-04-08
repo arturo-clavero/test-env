@@ -1,4 +1,5 @@
 import { moveCamera } from './cameraMovement';
+import { StateManager } from './StateManager';
 class State {
     constructor(name, cameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
         this.name = name;
@@ -24,7 +25,7 @@ class State {
 			this.changeSubstate(0);
 	}
 	changeSubstate(index = this.currentSubstateIndex + 1, postCam = true) {
-        if (this.currentSubstate && this.currentSubstate.exit() == "cancelled")
+        if (this.currentSubstate && this.currentSubstate.exit() == "cancelled" && new StateManager().forcedRedirect == false)
 			return "cancelled";
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
