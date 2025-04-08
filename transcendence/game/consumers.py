@@ -47,20 +47,21 @@ class MainConsumer(AsyncWebsocketConsumer):
 		elif data["channel"] == "tournament":
 			from .tournamentChannel import pending_tournament
 			if data["action"] == "create" and pending_tournament == None:
-							print("CHECK 2.1")
 							newTour = TournamentChannel(self)
-							print("CHECK 2.2")
 							await self.send_channel("all", {
 										"type" : "tour.updates",
+										"update_tour_registration" : "join",
 										"button" : "join",
 										"prize_pool" : newTour.prize_pool,
-										"tourId" :  newTour.tour_id,
 									})
 
 			elif data["action"] == "join" and self.tournament == None and pending_tournament != None:
 					await pending_tournament.join(self)
-			elif data["action"] == "succesfull payment" and self.tournament == None and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
-				await pending_tournament.confirm_payment(self, "alias...")
+			elif data["action"] == "succesfull payment" and self.tournament == None and pending_tournament != None:
+				print(data)
+				print(data["tour_id"])
+				if data["tour_id"] == pending_tournament.tour_id:
+					await pending_tournament.confirm_payment(self)
 			elif data["action"] == "confirm participation" and self.tournament != None:
 				await self.tournament.confirm_participation(self)
 
@@ -72,31 +73,26 @@ class MainConsumer(AsyncWebsocketConsumer):
 			print('create')
 			await self.send_self({
 				"type" : "tour.updates",
+				"update_tour_registration" : "create",
 				"button" : "create",
 			})
 		#paying
-		elif self.user_id in pending_tournament.all_players:
+		elif self.user_id in pending_tournament.confirmed_players:
 			print('subscribe')
 			await self.send_self({
 				"type" : "tour.updates",
+				"update_tour_registration" : "join",
 				"button" : "subscribed",
 				"prize_pool" : pending_tournament.prize_pool,
 
-			})
-		elif pending_tournament.total_players >= pending_tournament.max_players:
-			print('full')
-			await self.send_self({
-				"type" : "tour.updates",
-				"button" : "full",
-				"prize_pool" : pending_tournament.prize_pool,
 			})
 		else :
 			print('join')
 			await self.send_self({
 				"type" : "tour.updates",
+				"update_tour_registration" : "join",
 				"button" : "join",
 				"prize_pool" : pending_tournament.prize_pool,
-				"tourId" :  pending_tournament.tour_id,
 			})
 
 

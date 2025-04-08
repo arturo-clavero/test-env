@@ -94,6 +94,8 @@ function hide_div(){
 }
 
 function dynamic_content(data){
+	console.log("join div dynmic conetn");
+	console.log("dynamic content", data);
 	if ("prize_pool" in data)
 	{
 		let value = data["prize_pool"];
@@ -107,8 +109,9 @@ function dynamic_content(data){
 		let button = container.getElementById("button").element;
 		if (new_content == "join") button.replaceWith(joinButton.element);
 		else if (new_content == "subscribed") button.replaceWith(subscribedButton.element);
-		else if (new_content == "full" && button.textContent != "Subscribed") button.replaceWith(fullButton.element);
-
+		console.log("new content: ", new_content);
+		console.log("prev button: ", button);
+		console.log("new button: ", subscribedButton.element)
 	}
 
 }

@@ -29,7 +29,7 @@ export class Socket {
 			else if (data.type == "tour.updates")
 			{
 				console.log("1");
-				if ("button" in data) this.updateTourRegistration(data);
+				if ("update_tour_registration" in data) this.updateTourRegistration(data);
 				else if ("update_display" in data) this.updateTourSubState(data);
 				else if ("notification" in data) this.notification(data);
 			}
@@ -69,20 +69,10 @@ export class Socket {
 		}
 	}
 	updateTourRegistration(data){
-		console.log("1.1")
+		console.log("update tour registration")
 		console.log(data);
-		if (data.button == "join" || data.button == "full" || data.button == "subscribed")
+		if (data.update_tour_registration == "create")
 		{
-			console.log("1.1.1");
-			new StateManager().states[3].update_start_index(4);
-			join["dynamic_content"](data);
-			if (data.button == "subscribe")
-				new StateManager().states[3].data["subscribed"] = true;
-		}
-		else if (data.button == "create")
-		{
-			console.log("1.1.2");
-			console.log(new StateManager().states[3]);
 			new StateManager().states[3].update_start_index(2, ()=>{
 				if ("subscribed" in new StateManager().states[3].data)
 					return false;
@@ -90,9 +80,17 @@ export class Socket {
 					return false;
 				return true;
 			});
-			// new StateManager().states[3].update_start_index(2);
-			console.log(new StateManager().states[3]);
-
+		}
+		else if (data.update_tour_registration == "join")
+		{
+			join["dynamic-content"](data);
+			if ("button" in data)
+			{
+				new StateManager().states[3].update_start_index(4);
+				//is it necessary?
+				if (data.button == "subscribe")
+					new StateManager().states[3].data["subscribed"] = true;
+			}
 		}
 	}
 	myOpen(){

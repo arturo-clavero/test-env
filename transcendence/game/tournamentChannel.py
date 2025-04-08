@@ -36,7 +36,6 @@ class TournamentChannel():
 		notify_start.apply_async(args=[self.tour_id], countdown=13.5*60)
 		start.apply_async(args=[self.tour_id], countdown=15*60)
 
-
 	async def close_registration(self):
 		global pending_tournament
 		if self.status == "closed":
@@ -45,6 +44,7 @@ class TournamentChannel():
 		pending_tournament = None
 		await consumer.send_channel("all", {
 			"type" : "tour.updates",
+			"update_tour_registration" : "create",
 			"button" : "create",
 		})
 
@@ -53,6 +53,7 @@ class TournamentChannel():
 			await consumer.send_self({
 				"type" : "tour.updates",
 				"update_display" : "pay",
+				"tour_id" : self.tour_id,
 			})
 		else:
 			await self.close_registration()
@@ -63,11 +64,13 @@ class TournamentChannel():
 		consumer.tournament = self
 		await consumer.send_self({
 			"type" : "tour.updates",
+			"update_tour_registration" : "join",
 			"button" : "subscribed",
 		})
 		if self.total_players < self.max_players:
 			await consumer.send_channel("all", {
 				"type" : "tour.updates",
+				"update_tour_registration" : "join",
 				"prize_pool": self.prize_pool,
 			})
 		else:
@@ -124,7 +127,7 @@ class TournamentChannel():
 		print("before sleep...")
 		await asyncio.sleep(5)
 		print('after sleep...')
-		while len(remaining_players) > 1:
+		while len(self.remaining_players) > 1:
 			await self.start_remote_game(self.remaining_players.pop(), self.remaining_players.pop())
 
 	async def start_remote_game(self, player1, player2):

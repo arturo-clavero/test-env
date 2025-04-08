@@ -76,9 +76,11 @@ function fadeOut(){
 }
 
 function payment_successful(){
+	console.log("hey - ", new StateManager().currentState.currentSubstate)
 	new Socket().send({
 		"channel" : "tournament",
 		"action": "succesfull payment",
+		"tour_id": 	new StateManager().currentState.currentSubstate.data["tour_id"],
 	})
 	container.getElementById("pay-message").element.textContent = "Payment Successful";
 	let stateManager = new StateManager();
