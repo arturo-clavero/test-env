@@ -47,15 +47,18 @@ class MainConsumer(AsyncWebsocketConsumer):
 		elif data["channel"] == "tournament":
 			from .tournamentChannel import pending_tournament
 			if data["action"] == "create" and pending_tournament == None:
+							print("CHECK 2.1")
 							newTour = TournamentChannel(self)
+							print("CHECK 2.2")
 							await self.send_channel("all", {
 										"type" : "tour.updates",
 										"button" : "join",
 										"prize_pool" : newTour.prize_pool,
 										"tourId" :  newTour.tour_id,
 									})
+
 			elif data["action"] == "join" and self.tournament == None and pending_tournament != None:
-				await pending_tournament.join(self)
+					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and self.tournament == None and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
 				await pending_tournament.confirm_payment(self, "alias...")
 			elif data["action"] == "confirm participation" and self.tournament != None:
