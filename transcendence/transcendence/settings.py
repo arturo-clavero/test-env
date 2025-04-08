@@ -42,6 +42,8 @@ REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 ROOT_URLCONF = 'transcendence.urls'
 CELERY_BROKER_URL = 'redis://localhost:6379/0'  # or RabbitMQ: 'amqp://guest:guest@localhost//'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
 INSTALLED_APPS = [
 	"corsheaders",

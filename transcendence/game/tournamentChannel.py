@@ -3,7 +3,6 @@ from channels.layers import get_channel_layer
 from rest_framework.test import APIRequestFactory
 from uuid import uuid4, uuid1
 from .channels import send_message
-from .tasks import start, notify_start
 
 ongoing_tournaments = {}
 pending_tournament = None
@@ -14,9 +13,10 @@ entry_price = 100
 	#open -> can register, has not started
 	#full -> can not register, has not started
 	#active -> has started
-
+waitTime = 60 * 2
 class TournamentChannel():
 	def __init__(self, consumer):
+		from .tasks import start, notify_start
 		global pending_tournament, ongoing_tournaments
 
 		self.start_time = 15 * 60
@@ -33,8 +33,8 @@ class TournamentChannel():
 		self.max_players = 1024
 		pending_tournament = self
 		ongoing_tournaments[self.tour_id] = self
-		notify_start.apply_async(args=[self.tour_id], countdown=13.5*60)
-		start.apply_async(args=[self.tour_id], countdown=15*60)
+		notify_start.apply_async(args=[self.tour_id], countdown=5)
+		start.apply_async(args=[self.tour_id], countdown=30)
 
 	async def close_registration(self):
 		global pending_tournament

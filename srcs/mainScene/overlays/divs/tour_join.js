@@ -37,51 +37,26 @@ const container = new Overlay([
 			}),
 			new Button({
 				id: "button",
+				content: "JOIN",
 				fontSize: 0.45,
+				onClick : ()=>{
+						new Socket().send({
+							"channel":"tournament",
+							"action":"join",
+						})
+					}
 			})
 		]
 	})	
 ])
 
-
-let joinButton = new Button({
-	id: "button",
-	content: "JOIN",
-	fontSize: 0.45,
-	onClick : ()=>{
-			new Socket().send({
-				"channel":"tournament",
-				"action":"join",
-			})
-			// new StateManager().currentState.changeSubstate();
-		}
-})
-
-let subscribedButton = new Button({
-	id: "button",
-	content: "Subscribed",
-	fontSize: 0.45,
-})
-
-let fullButton = new Button({
-	id: "button",
-	content: "FULL",
-	fontSize: 0.45,
-})
-
 function show_buttons(){
 	container.getElementById("button").element.style.visibility = "visible";
-	joinButton.element.style.visibility = "visible";
-	subscribedButton.element.style.visibility = "visible";
-	fullButton.element.style.visibility = "visible";
 
 }
 
 function hide_buttons(){
 	container.getElementById("button").element.style.visibility = "hidden";
-	joinButton.element.style.visibility = "hidden";
-	subscribedButton.element.style.visibility = "hidden";
-	fullButton.element.style.visibility = "hidden";
 }
 
 function show_div(){
@@ -107,11 +82,8 @@ function dynamic_content(data){
 	if ("button" in data){
 		let new_content = data["button"];
 		let button = container.getElementById("button").element;
-		if (new_content == "join") button.replaceWith(joinButton.element);
-		else if (new_content == "subscribed") button.replaceWith(subscribedButton.element);
-		console.log("new content: ", new_content);
-		console.log("prev button: ", button);
-		console.log("new button: ", subscribedButton.element)
+		if (new_content == "join") button.textContent = "JOIN";
+		else if (new_content == "subscribed")  button.textContent = "Subscribed";
 	}
 
 }
