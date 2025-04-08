@@ -71,13 +71,21 @@ export class Socket {
 	updateTourRegistration(data){
 		console.log("update tour registration")
 		console.log(data);
+		if("action" in data)
+		{
+			if (data.action == "unsuscribe" && "subscribed" in new StateManager().states[3].data)
+				delete new StateManager().states[3].data["subscribed"];
+		}
 		if (data.update_tour_registration == "create")
 		{
+			console.log('create...');
 			new StateManager().states[3].update_start_index(2, ()=>{
 				if ("subscribed" in new StateManager().states[3].data)
+				{
+					console.log("subscribed can not go to create...");
 					return false;
-				if (new StateManager().states[3].currentState > 5)
-					return false;
+				}
+				console.log("create returns true");
 				return true;
 			});
 		}
@@ -87,7 +95,6 @@ export class Socket {
 			if ("button" in data)
 			{
 				new StateManager().states[3].update_start_index(4);
-				//is it necessary?
 				if (data.button == "subscribe")
 					new StateManager().states[3].data["subscribed"] = true;
 			}

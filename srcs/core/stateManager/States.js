@@ -12,6 +12,7 @@ class State {
 		this.changeSubstate(0);
 		this.startIndex = 0;
 		this.data = {}
+		this.blockedIndex = this.substates.length;
     }
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
@@ -62,15 +63,22 @@ class State {
 	isActive() { return this.currentSubstate?.active; }
 	update_start_index(index, should_update = ()=>{return true}){
 		if (this.startIndex == index)
-			return ; 
-		if (this.currentSubstateIndex < index && should_update())
+		{
+			console.log("current start index: ", this.startIndex);
+			console.log("same start index: ", index);
+			return ;
+		} 
+		if (this.currentSubstateIndex < this.blockedIndex && should_update())
 		{
 			if (this.currentSubstateIndex % 2 == 0)
 				this.changeSubstate(index)
 			else
 				this.changeSubstate(index + 1)
 		}
+		console.log("current start index: ", this.startIndex);
 		this.startIndex = index;
+		console.log("new start index: ", index);
+		console.log("updated start index: ", this.startIndex);
 	}
 }
 

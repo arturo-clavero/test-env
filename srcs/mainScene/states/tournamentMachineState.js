@@ -231,14 +231,14 @@ const tourMachineState = new State(
 	}, 
 	[
 		restScreen, 
-		startScreen,
+		startScreen,//1
 		restScreenCreate,
-		startScreenCreate,
+		startScreenCreate,//3
 		restScreenJoin,
-		startScreenJoin,
-		screenPay,
+		startScreenJoin,//5
+		screenPay,//6
 		screenRefund,
-		screenGame,
+		screenGame,//8
 		screenEnd,
 	],
 	(self)=>{
@@ -254,7 +254,7 @@ const tourMachineState = new State(
 	[
 		screenMaterial,
 	],
-
 )
 
+tourMachineState.blockedIndex = 6
 export { tourMachineState}

@@ -44,7 +44,8 @@ const container = new Overlay([
 				content: "GO BACK",
 				fontSize: 0.85,
 				onClick: ()=>{
-					new StateManager().currentState.changeSubstate(5)
+					let stateManager = new StateManager();
+					stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1)
 				}
 			}),
 		])

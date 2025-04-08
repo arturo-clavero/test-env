@@ -9,7 +9,7 @@ class AlertManager{
 	}
 	add_alert(alert){
 		if (!this.currentAlert && this.queue.length == 0)
-			display_latest_alert(alert);
+			this.display_latest_alert(alert);
 		else if (alert.priority > this.currentAlert.priority)
 		{
 			this.queue.push = this.currentAlert;

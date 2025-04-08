@@ -54,12 +54,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 										"button" : "join",
 										"prize_pool" : newTour.prize_pool,
 									})
+							asyncio.create_task(newTour.notify_start())
+							asyncio.create_task(newTour.start())
 
 			elif data["action"] == "join" and self.tournament == None and pending_tournament != None:
 					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and self.tournament == None and pending_tournament != None:
-				print(data)
-				print(data["tour_id"])
 				if data["tour_id"] == pending_tournament.tour_id:
 					await pending_tournament.confirm_payment(self)
 			elif data["action"] == "confirm participation" and self.tournament != None:
