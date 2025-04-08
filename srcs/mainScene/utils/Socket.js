@@ -4,6 +4,7 @@ import {getUserID} from './utils'
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
 import { create_join_alert } from '../overlays/alerts/join_tour_alert';
+import { join } from '../overlays/divs/tour_join';
 
 export class Socket {
 	constructor(){
@@ -23,14 +24,11 @@ export class Socket {
 			const data = JSON.parse(event.data);
 			if (!data)
 				return ;
-			console.log(data);
-			console.log(data["type"]);
-			console.log(data.type)
-			
 			if (data.type == "game update")
 				gameReceive(data);
 			else if (data.type == "tour.updates")
 			{
+				console.log("1");
 				if ("button" in data) this.updateTourRegistration(data);
 				else if ("update_display" in data) this.updateTourSubState(data);
 				else if ("notification" in data) this.notification(data);
@@ -38,9 +36,11 @@ export class Socket {
 		}
 	}
 	notification(data){
+		console.log("1.3");
 		create_join_alert();
 	}
 	updateTourSubState(data){
+		console.log("1.2");
 		if (data.update_display== "pay")
 		{
 			new StateManager().currentState.changeSubstate();
@@ -69,8 +69,11 @@ export class Socket {
 		}
 	}
 	updateTourRegistration(data){
+		console.log("1.1")
+		console.log(data);
 		if (data.button == "join" || data.button == "full" || data.button == "subscribed")
 		{
+			console.log("1.1.1");
 			new StateManager().states[3].update_start_index(4);
 			join["dynamic_content"](data);
 			if (data.button == "subscribe")
@@ -78,12 +81,18 @@ export class Socket {
 		}
 		else if (data.button == "create")
 		{
+			console.log("1.1.2");
+			console.log(new StateManager().states[3]);
 			new StateManager().states[3].update_start_index(2, ()=>{
 				if ("subscribed" in new StateManager().states[3].data)
 					return false;
 				if (new StateManager().states[3].currentState > 5)
 					return false;
+				return true;
 			});
+			// new StateManager().states[3].update_start_index(2);
+			console.log(new StateManager().states[3]);
+
 		}
 	}
 	myOpen(){

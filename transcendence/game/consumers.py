@@ -41,7 +41,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		print("data: ", data)
 		if data["channel"] == "game":
 			await self.gameChannel.receive(self, data)
 

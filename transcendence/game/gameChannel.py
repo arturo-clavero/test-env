@@ -46,6 +46,9 @@ gameManager = GameManager()
 
 # class GameConsumer(AsyncWebsocketConsumer):
 class GameChannel():
+	def __init__(self):
+		self.status = "uninitialized"
+
 	async def start_game(self, consumer, gameID):
 		self.status = "on"
 		self.consumer = consumer
