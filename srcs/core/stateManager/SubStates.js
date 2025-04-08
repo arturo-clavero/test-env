@@ -12,6 +12,7 @@ class SubState {
 		this.animation = animation || (() => {});
         this.keyHandler = keyHandler || (() => {});
 		this.active = false;
+		this.data = {}
     }
     enter() { this.setup();}
 	postCamEnter() {this.postCamMoveSetUp();}

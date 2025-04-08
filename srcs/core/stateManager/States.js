@@ -10,6 +10,7 @@ class State {
 		this.materialIndex = -1;
 		this.changeSubstate(0);
 		this.startIndex = 0;
+		this.data = {}
     }
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
@@ -58,10 +59,10 @@ class State {
     resize() { this.currentSubstate?.resize(); }
 	animate() { this.currentSubstate?.animate(); }
 	isActive() { return this.currentSubstate?.active; }
-	update_start_index(index){
-		if (this.start_index == index)
+	update_start_index(index, should_update = ()=>{return true}){
+		if (this.startIndex == index)
 			return ; 
-		if (this.currentSubstateIndex < index)
+		if (this.currentSubstateIndex < index && should_update())
 		{
 			if (this.currentSubstateIndex % 2 == 0)
 				this.changeSubstate(index)

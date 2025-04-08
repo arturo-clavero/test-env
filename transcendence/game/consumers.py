@@ -8,16 +8,16 @@ import asyncio
 # from .playLog import get_player_alias
 # from .playLog import store_game_results
 from .gameChannel import GameChannel, gameManager
-from .tournamentChannel import TournamentChannel, tournamentManager, ongoing_tournaments, pending_tournament
+from .tournamentChannel import TournamentChannel, tournamentManager, ongoing_tournaments, pending_tournament, available_tournaments
 
 # from .tournamentChannel import TournamentChannel
 import numpy as np
 
-# active_users = []
+active_users = []
 
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		global gameManager
+		global gameManager, active_users
 		print("websocket connected!")
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		await self.accept()
@@ -29,13 +29,16 @@ class MainConsumer(AsyncWebsocketConsumer):
 			tournamentManager.running_tasks.add(asyncio.create_task(tournamentManager.monitor_tournaments()))
 		await self.join_channel("all")
 		await self.update_tournament_display()
+		active_users.append(self.user_id)
 
 	async def disconnect(self, code=None):
+		global active_users
 		if self.gameChannel and self.gameChannel.status == "on":
 			await self.gameChannel.finish()
 		if self.tournament and self.tournament.status != "end":
 			await self.tournament.disconnect()
 		await self.remove_channel("all")
+		active_users.remove(self.user_id)
 		print("WEBOSCKET DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
@@ -46,10 +49,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 		elif data["channel"] == "tournament":
 			from .tournamentChannel import pending_tournament
 
-			if data["action"] == "join" and self.tournament == None:
+			if data["action"] == "join" and self.tournament == None and pending_tournament != None:
 				await pending_tournament.join(self)
 
-			elif data["action"] == "succesfull payment" and self.tournament == None:
+			elif data["action"] == "succesfull payment" and self.tournament == None and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
 				await pending_tournament.confirm_payment(self, "alias...")
 
 			elif data["action"] == "create" and pending_tournament == None:
@@ -57,7 +60,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				await self.send_channel("all", {
 							"type" : "tour.updates",
 							"button" : "join",
-							"prize_pool" : newTour.prize_pool * .9,
+							"prize_pool" : newTour.prize_pool,
 							"tourId" :  newTour.tour_id,
 						})
 
@@ -76,7 +79,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.send_self({
 				"type" : "tour.updates",
 				"button" : "subscribed",
-				"prize_pool" : pending_tournament.prize_pool * .9,
+				"prize_pool" : pending_tournament.prize_pool,
 
 			})
 		elif pending_tournament.total_players >= pending_tournament.max_players:
@@ -84,14 +87,14 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.send_self({
 				"type" : "tour.updates",
 				"button" : "full",
-				"prize_pool" : pending_tournament.prize_pool * .9,
+				"prize_pool" : pending_tournament.prize_pool,
 			})
 		else :
 			print('join')
 			await self.send_self({
 				"type" : "tour.updates",
 				"button" : "join",
-				"prize_pool" : pending_tournament.prize_pool * .9,
+				"prize_pool" : pending_tournament.prize_pool,
 				"tourId" :  pending_tournament.tour_id,
 			})
 
@@ -104,7 +107,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_discard(room, self.channel_name)
 
 	async def send_channel(self, room, message):
-		print('send channel, message: ', message)
 		await self.channel_layer.group_send(room, message)
 
 	async def send_self(self, message):

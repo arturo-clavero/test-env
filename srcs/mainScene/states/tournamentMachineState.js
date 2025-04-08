@@ -11,6 +11,8 @@ import {start} from '../overlays/divs/tour_start';
 import {create} from '../overlays/divs/tour_create';
 import {join} from '../overlays/divs/tour_join';
 import { payment } from '../overlays/divs/tour_payment';
+import { refund } from '../overlays/divs/tour_refund';
+import { pongGame } from '../overlays/scenes/pong-game/Game';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -145,7 +147,7 @@ const startScreenJoin = new CssSubState(
 
 const divPay = payment;
 const screenPay = new CssSubState(
-	"start join",
+	"pay",
 	object,
 	partIndex,
 	surfaceIndex,
@@ -165,6 +167,62 @@ const screenPay = new CssSubState(
 	null,
 )
 
+const divRefund = refund;
+const screenRefund = new CssSubState(
+	"refund",
+	object,
+	partIndex,
+	surfaceIndex,
+	divRefund['div'],
+	0,
+	()=>{
+		divRefund['show-div']();
+		divRefund['show-buttons']();
+		divRefund["enter"]();
+	},
+	null,
+	()=>{
+		divRefund['hide-div']();
+		return divRefund["exit_return"]();
+	},
+	()=>{
+		divRefund["resize"]();
+	},
+	null,
+	null,
+)
+
+const screenGame = new MeshSubState(
+	"game", 
+	screenSurface,
+	pongGame,
+	1,
+	null,
+)
+
+// const divEnd = end;
+// const screenEnd = new CssSubState(
+// 	"end",
+// 	object,
+// 	partIndex,
+// 	surfaceIndex,
+// 	divEnd['div'],
+// 	0,
+// 	()=>{
+// 		divEnd['show-div']();
+// 		divEnd['show-buttons']();
+// 	},
+// 	null,
+// 	()=>{
+// 		divEnd['hide-div']();
+// 	},
+// 	()=>{
+// 		divEnd["resize"]();
+// 	},
+// 	null,
+// 	null,
+// )
+
 const tourMachineState = new State(
 	"tour game screen", 
 	{
@@ -180,7 +238,9 @@ const tourMachineState = new State(
 		restScreenJoin,
 		startScreenJoin,
 		screenPay,
-
+		screenRefund,
+		screenGame,
+		screenEnd,
 	],
 	(self)=>{
 		self.changeSubstate();

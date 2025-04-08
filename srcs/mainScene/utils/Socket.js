@@ -4,6 +4,8 @@ import { updatePrizePool, change_button } from '../overlays/divs/tour_join';
 // import { showAvailableTournaments } from '../overlays/divs/tour_join'
 // TODO
 import {getUserID} from './utils'
+import { end } from '../overlays/divs/tour_end';
+import { matchmake } from '../overlays/divs/tour_matchamake';
 
 export class Socket {
 	constructor(){
@@ -27,21 +29,59 @@ export class Socket {
 				gameReceive(data);
 			else if (data.type == "tour.updates")
 			{
-				if ("button" in data)
-				{
-					if (data.button == "join" || data.button == "full" || data.button == "subscribed")
-					{
-						new StateManager().states[3].update_start_index(4);
-						change_button(data.button);
-					}
-					else if (data.button == "create")
-						new StateManager().states[3].update_start_index(2);
-					else if (data.button == "pay")
-						new StateManager().currentState.changeSubstate();
-				}
-				if ("prize_pool" in data)
-					updatePrizePool(data["prize_pool"])
+				if ("button" in data) this.updateTourRegistration(data);
+				else if ("update_display" in data) this.updateTourSubState(data);
+				else if ("notification" in data) this.notification(data);
 			}
+		}
+	}
+	notification(data){
+		alert(data["message"]);
+	}
+	updateTourSubState(data){
+		if (data.update_display== "pay")
+		{
+			new StateManager().currentState.changeSubstate();
+			new StateManager().currentState.currentSubstate.data["tour_id"] = data["tour_id"];
+		}
+		else if (data.update_display == "refund")
+		{
+			new StateManager().currentState.changeSubstate(7);
+		}
+		else if (data.update_display == "matchmaking rounds")
+		{
+			matchmake["dynamic-content"](data);
+			new StateManager().currentState.changeSubstate(8);
+		}
+		else if (data.update_display == "start game")
+		{
+			new_round(data["gameID"], data["userID"], data["game-type"]);
+			new StateManager().currentState.changeSubstate(9);
+		}
+		else if (data.update_display == "end game")
+		{
+			end["dynamic-content"](data);
+			setTimeout(() => {
+				new StateManager().currentState.changeSubstate(10);
+			}, 3000);
+		}
+	}
+	updateTourRegistration(data){
+		if (data.button == "join" || data.button == "full" || data.button == "subscribed")
+		{
+			new StateManager().states[3].update_start_index(4);
+			join["dynamic_content"](data);
+			if (data.button == "subscribe")
+				new StateManager().states[3].data["subscribed"] = true;
+		}
+		else if (data.button == "create")
+		{
+			new StateManager().states[3].update_start_index(2, ()=>{
+				if ("subscribed" in new StateManager().states[3].data)
+					return false;
+				if (new StateManager().states[3].currentState > 5)
+					return false;
+			});
 		}
 	}
 	myOpen(){

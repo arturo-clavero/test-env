@@ -31,7 +31,7 @@ class FlexBox extends BaseDivElement {
 			children = [],
 			width, height,
 			dir, mainAxis = "center", crossAxis = "center", flex = 0,
-			marginTop = '0.5%', marginLeft= '0%', marginRight='0%', marginBottom= '0.5%', padding, 
+			marginTop = '0.5%', marginLeft= '0%', marginRight='0%', marginBottom= '0.5%',scrollable = false, padding,
 		})
 		{
 			super(id, children);
@@ -47,6 +47,7 @@ class FlexBox extends BaseDivElement {
 			this.element.style.boxSizing = 'border-box';
 			if (padding) this.element.style.padding = padding;
 			if (flex > 0) this.element.style.flex = flex;
+			if (scrollable) this.element.style.overflowY = "auto";
 		}
 }
 

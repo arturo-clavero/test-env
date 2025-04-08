@@ -49,21 +49,16 @@ const container = new Overlay([
 			}),
 		])
 
-
-
 function show_buttons(){
 	container.getElementById("back-button").element.style.visibility = "visible";
 	container.getElementById("button-test-1").element.style.visibility = "visible";
 	container.getElementById("button-test-2").element.style.visibility = "visible";
-
-
 }
 
 function hide_buttons(){
 	container.getElementById("back-button").element.style.visibility = "hidden";
 	container.getElementById("button-test-1").element.style.visibility = "hidden";
 	container.getElementById("button-test-2").element.style.visibility = "hidden";
-
 }
 
 function show_div(){
@@ -114,6 +109,14 @@ function payment_logic(){
 	//TODO
 }
 
+function pay_winner(){
+	//TODO
+}
+
+function refund(){
+	//TODO
+}
+
 const payment = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,
@@ -121,6 +124,8 @@ const payment = {
 	"show-div" : show_div,
 	"hide-div" : hide_div,
 	"payment" : payment_logic,
+	"pay-winner": pay_winner,
+	"refund": refund,
 	"resize": ()=>{container.resize()},
 }
 

@@ -68,13 +68,6 @@ let fullButton = new Button({
 	content: "FULL",
 	fontSize: 0.45,
 })
-function change_button(new_content){
-	console.log("button to ", new_content);
-	let button = container.getElementById("button").element;
-	if (new_content == "join") button.replaceWith(joinButton.element);
-	else if (new_content == "subscribed") button.replaceWith(subscribedButton.element);
-	else if (new_content == "full" && button.textContent != "Subscribed") button.replaceWith(fullButton.element);
-}
 
 function show_buttons(){
 	container.getElementById("button").element.style.visibility = "visible";
@@ -100,15 +93,25 @@ function hide_div(){
 	hide_buttons();
 }
 
+function dynamic_content(data){
+	if ("prize_pool" in data)
+	{
+		let value = data["prize_pool"];
+		if (value == 0)
+			container.getElementById("prize-context").element.textContent = `TOURNAMENT !`;
+		else
+			container.getElementById("prize-context").element.textContent = `WIN UP TO ${value} ETC !`;
+	}
+	if ("button" in data){
+		let new_content = data["button"];
+		let button = container.getElementById("button").element;
+		if (new_content == "join") button.replaceWith(joinButton.element);
+		else if (new_content == "subscribed") button.replaceWith(subscribedButton.element);
+		else if (new_content == "full" && button.textContent != "Subscribed") button.replaceWith(fullButton.element);
 
+	}
 
-function updatePrizePool(value){
-	if (value == 0)
-		container.getElementById("prize-context").element.textContent = `TOURNAMENT !`;
-	else
-		container.getElementById("prize-context").element.textContent = `WIN UP TO ${value} ETC !`;
 }
-
 const join = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,
@@ -116,6 +119,7 @@ const join = {
 	"show-div" : show_div,
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
+	"dynamic-content" : dynamic_content,
 }
 
-export {join, updatePrizePool, change_button}
+export {join}
