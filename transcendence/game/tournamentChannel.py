@@ -4,126 +4,89 @@ from rest_framework.test import APIRequestFactory
 from uuid import uuid4, uuid1
 from .channels import send_message
 
+#short term storage
 ongoing_tournaments = {}
 pending_tournament = None
 
-player_alias = {}
-entry_price = 100
-#self statuses:
-	#open -> can register, has not started
-	#full -> can not register, has not started
-	#active -> has started
+#constants
 waitTime = 60
+entry_price = 100
+max_players = 1024
+min_players = 2
+
 class TournamentChannel():
 	def __init__(self, consumer):
 		global pending_tournament, ongoing_tournaments
 
-		self.start_time = 15 * 60
-		self.create_time = time.time()
-		self.entry_price = 100
 		self.prize_pool = 0
 		self.tour_id = str(uuid4())
-		self.room = f"registered_{self.tour_id}"
-		self.activeRoom = f"tournament_{self.tour_id}"
+		self.registeredRoom = f"registered_tour_{self.tour_id}"
+		self.remainingRoom = f"remaining_tour_{self.tour_id}"
 		self.status = "open"
-		self.consumer = consumer
-		self.registered_user = None
-		self.confirmed_players = []
-		self.total_players = 0
-		self.max_players = 1024
+		self.registered_players = []
+		self.remaining_players = []
 		pending_tournament = self
 		ongoing_tournaments[self.tour_id] = self
-
-
-	async def close_registration(self, consumer):
-		global pending_tournament
-		if self.status == "closed":
-			return
-		print("closing registration")
-		self.status = "closed"
-		pending_tournament = None
-		await self.consumer.send_channel("all", {
-			"type" : "tour.updates",
-			"update_tour_registration" : "create",
-			"button" : "create",
-		})
+		self.consumer = consumer
+		# self.registered_user = None
 
 	async def join(self, consumer):
-		if self.total_players < self.max_players:
-			await consumer.send_self({
-				"type" : "tour.updates",
-				"update_display" : "pay",
-				"tour_id" : self.tour_id,
-			})
+		if len(self.registered_players) < max_players:
+			await consumer.send_self({"type" : "tour.updates",
+			"update_display" : "pay", "tour_id" : self.tour_id,})
 		else:
-			await self.close_registration(consumer)
+			await consumer.send_channel("all", {"type" : "tour.updates",
+			"update_tour_registration" : "join", "button" : "full"})
 	
 	async def confirm_payment(self, consumer):
-		self.total_players += 1
-		self.prize_pool += self.entry_price * 0.95
-		consumer.tournament = self
-		await consumer.send_self({
-			"type" : "tour.updates",
-			"update_tour_registration" : "join",
-			"button" : "subscribed",
-		})
-		if self.total_players < self.max_players:
-			await consumer.send_channel("all", {
-				"type" : "tour.updates",
-				"update_tour_registration" : "join",
-				"prize_pool": self.prize_pool,
-			})
+		# self.registered_players.append(consumer.user_id)
+		self.registered_players.append(consumer)
+		self.prize_pool += entry_price * 0.95
+		await consumer.send_self({ "type" : "tour.updates",
+			"update_tour_registration" : "join", "button" : "subscribed"})
+		if len(self.registered_players) < self.max_players:
+			await consumer.send_channel("all", {"type" : "tour.updates",
+			"update_tour_registration" : "join", "prize_pool": self.prize_pool})
 		else:
-			await self.close_registration(consumer)
-		if self.registered_user == None:
-			self.registered_user = consumer
-		await consumer.join_channel(self.room)
+			await consumer.send_channel("all", {"type" : "tour.updates",
+			"update_tour_registration" : "join",  "button" : "full", "prize_pool": self.prize_pool})
+		await consumer.join_channel(self.registeredRoom)
 	
 	async def notify_start(self):
+		global waitTime
+
 		await asyncio.sleep(waitTime)
-		print("SEND NOTIFICATION!")
-		print('hey: ', self.tour_id)
-		print(self.registered_user)
-		await self.close_registration(self.registered_user)
 		if self.registered_user != None:
-			await self.registered_user.send_channel(self.room, {
-				"type" : "tour.updates",
-				"notification" : "start",
-				"tour_id" : self.tour_id
-			})
-	
-	async def confirm_participation(self, consumer):
-		self.confirmed_players.append(consumer)
-		await consumer.join_channel(self.activeRoom)
+			await self.registered_user.send_channel(self.registeredRoom, {"type" : "tour.updates",
+				"notification" : "start", "tour_id" : self.tour_id})
+		await self.consumer.send_channel("all", {"type" : "tour.updates",
+			"update_tour_registration" : "join", "button" : "locked"})
 	
 	async def start(self):
-		await asyncio.sleep(waitTime + 30)
-		print("START!")
-		global ongoing_tournaments
-		self.close_registration(self.registered_user)
-		print("total players registered: ", self.total_players)
+		global ongoing_tournaments, waitTime, min_players
+
+		await asyncio.sleep(waitTime + 60)
+		#restart new tournament - create option
+		pending_tournament = None
+		await self.consumer.send_channel("all", {"type" : "tour.updates",
+			"update_tour_registration" : "create", "button" : "create"})
+		#get all confirmed registered players
+		import active_users from .consumer
+		self.confirmed_players = [user for user in self.registered_players if user in active_users]
+		print("total players registered: ", len(self.registered_players))
 		print("total players confirmed: ", len(self.confirmed_players))
-		if self.total_players > 0:
-			await self.registered_user.send_channel(self.room, {
-				"type" : "tour.updates",
-				"action" : "unsuscribe",
-			})
-		if len(self.confirmed_players) >= 2:
-			self.state = "active"
-			self.remaining_players = self.confirmed_players.copy()
-			random.shuffle(self.remaining_players)
+		#edge case cancel refund
+		if len(confirmed_players) == 1:
+			await self.confirmed_players[0].send_self({"type" : "tour.updates",
+				"update_display" : "refund", "reason" : "insufficient players"})
+		#edge case cancel empty
+		if len(confirmed_players) < min_players:
+			del ongoing_tournaments[self.tour_id]
+		else :
+			self.remaining_players = random.shuffle(self.confirmed_players)
 			self.current_round = 0
 			self.max_rounds = math.log2(len(self.remaining_players))
-		else:
-			if len(self.confirmed_players) == 1:
-				await self.confirmed_players[0].send_self({
-					"type" : "tour.updates",
-					"update_display" : "refund",
-					"reason" : "insufficient players",
-				})
-			del ongoing_tournaments[self.tour_id]
-			return
-		await self.matchmake()
+			self.matchmake()
 
 	async def matchmake(self):
 		print("matchamke")
@@ -221,3 +184,18 @@ class TournamentChannel():
 
 		
 
+	# async def close_registration(self, consumer):
+	# 	global pending_tournament
+	# 	if self.status == "closed":
+	# 		return
+	# 	print("closing registration")
+	# 	self.status = "closed"
+	# 	pending_tournament = None
+	# 	await self.consumer.send_channel("all", {
+	# 		"type" : "tour.updates",
+	# 		"update_tour_registration" : "create",
+	# 		"button" : "create",
+	# 	})
+	# async def confirm_participation(self, consumer):
+	# 	self.confirmed_players.append(consumer)
+	# 	await consumer.join_channel(self.activeRoom)
