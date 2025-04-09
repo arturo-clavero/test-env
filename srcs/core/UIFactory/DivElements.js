@@ -45,7 +45,13 @@ class FlexBox extends BaseDivElement {
 			this.element.style.marginTop = marginTop;
 			this.element.style.marginBottom = marginBottom;
 			this.element.style.boxSizing = 'border-box';
-			if (padding) this.element.style.padding = padding;
+			if (padding) 
+			{
+				this.element.style.paddingTop = padding;
+				this.element.style.paddingBottom = padding;
+				this.element.style.paddingLeft = padding;
+				this.element.style.paddingRight = padding;
+			}
 			if (flex > 0) this.element.style.flex = flex;
 			if (scrollable) this.element.style.overflowY = "auto";
 		}

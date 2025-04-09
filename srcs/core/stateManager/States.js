@@ -62,12 +62,12 @@ class State {
 	animate() { this.currentSubstate?.animate(); }
 	isActive() { return this.currentSubstate?.active; }
 	update_start_index(index, should_update = ()=>{return true}){
-		if (this.startIndex == index)
-		{
-			console.log("current start index: ", this.startIndex);
-			console.log("same start index: ", index);
-			return ;
-		} 
+		// if (this.startIndex == index)
+		// {
+		// 	console.log("current start index: ", this.startIndex);
+		// 	console.log("same start index: ", index);
+		// 	return ;
+		// } 
 		if (this.currentSubstateIndex < this.blockedIndex && should_update())
 		{
 			if (this.currentSubstateIndex % 2 == 0)

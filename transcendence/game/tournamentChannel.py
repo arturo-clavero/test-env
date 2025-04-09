@@ -80,7 +80,7 @@ class TournamentChannel():
 		await consumer.join_channel(self.room)
 	
 	async def notify_start(self):
-		await asyncio.sleep(5)
+		await asyncio.sleep(10)
 		print("SEND NOTIFICATION!")
 		print('hey: ', self.tour_id)
 		print(self.registered_user)
@@ -96,7 +96,7 @@ class TournamentChannel():
 		await consumer.join_channel(self.activeRoom)
 	
 	async def start(self):
-		await asyncio.sleep(10)
+		await asyncio.sleep(30)
 		print("START!")
 		global ongoing_tournaments
 		self.close_registration(self.registered_user)
@@ -116,7 +116,7 @@ class TournamentChannel():
 			self.max_rounds = math.log2(len(self.remaining_players))
 		else:
 			if len(self.confirmed_players) == 1:
-				await confirmed_players[0].send_self({
+				await self.confirmed_players[0].send_self({
 					"type" : "tour.updates",
 					"update_display" : "refund",
 					"reason" : "insufficient players",

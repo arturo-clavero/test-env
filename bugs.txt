@@ -1,3 +1,4 @@
 
 1. after alert of exiting mid game new games dont load
 2. websocket doesnt start if i start the backend after laoding the page
+3. timer display not done for tournament ... 

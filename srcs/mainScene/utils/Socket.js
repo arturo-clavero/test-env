@@ -74,8 +74,9 @@ export class Socket {
 		if("action" in data)
 		{
 			if (data.action == "unsuscribe" && "subscribed" in new StateManager().states[3].data)
+			{	console.log("UNSUCRIBE");
 				delete new StateManager().states[3].data["subscribed"];
-		}
+		}}
 		if (data.update_tour_registration == "create")
 		{
 			console.log('create...');
@@ -95,9 +96,11 @@ export class Socket {
 			if ("button" in data)
 			{
 				new StateManager().states[3].update_start_index(4);
-				if (data.button == "subscribe")
+				if (data.button == "subscribed")
+				{
+					console.log("SUCRIBE!")
 					new StateManager().states[3].data["subscribed"] = true;
-			}
+			}}
 		}
 	}
 	myOpen(){

@@ -9,31 +9,26 @@ const container = new Overlay([
 				mainAxis: "space-around",
 				flex: 1,
 				children: [
-					new FlexBox({
-						children: [
-							new Text({
-								content: "Tournament was cancelled",
-								fontsize: 0.85
-							}),
-							new Text({
-								content: "You will be refunded",
-								fontsize: 1
-							}),
-							new Text({
-								content: "Please bear in mind that refunds may take some time (up to 30 minutes) to go through to your account...",
-								fontsize: 0.35
-							}),
-						],
+					new Text({
+						content: "Tournament was cancelled",
+						fontSize: 0.75
 					}),
-					],
-				}),
+					new Text({
+						content: "You will be refunded",
+						fontSize: 0.85
+					}),
+					new Text({
+						content: "Please bear in mind that refunds may take some time (up to 30 minutes) to go through to your account...",
+						fontSize: 0.55
+					}),
 			 new Button({
 				id: "button",
 				content: "GO BACK",
 				fontSize: 0.35,
 				onClick: ()=>{ go_back();}
 			})
-		])
+		]})
+	])
 
 let allowed_to_exit;
 
@@ -48,7 +43,7 @@ function enter(){
 	setTimeout(() => {
 		if (allowed_to_exit == false)
 			go_back();
-	}, 10000);
+	}, 60000);
 }
 
 function exit_return(){

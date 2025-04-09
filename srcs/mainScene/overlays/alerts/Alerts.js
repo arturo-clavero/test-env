@@ -1,13 +1,16 @@
 
 class AlertManager{
 	constructor(){
+		console.log("alert manager.construcotr,,");
 		if (AlertManager.instance)
 			return AlertManager.instance;
+		console.log("new instance");
 		this.queue = [];
-		AlertManager.instance = this;
 		this.currentAlert = null;
+		AlertManager.instance = this;
 	}
 	add_alert(alert){
+		console.log("add alert")
 		if (!this.currentAlert && this.queue.length == 0)
 			this.display_latest_alert(alert);
 		else if (alert.priority > this.currentAlert.priority)
@@ -33,11 +36,13 @@ class AlertManager{
 		}
 	}
 	display_latest_alert(alert){
+		console.log("display alert")
 		this.currentAlert = alert;
 		this.currentAlert.show();
 	}
-	remove_latest_alert(alert){
-		if (this.currentAlert != alert)
+	remove_latest_alert(alert_id){
+		console.log("remove alert")
+		if (this.currentAlert.id != alert_id)
 			return;
 		this.currentAlert.hide();
 		this.currentAlert = null;
@@ -48,7 +53,8 @@ class AlertManager{
 
 
 class Alert{
-	constructor(children, type, priority, enter = ()=>{}, exit = ()=>{}, canQueue = true){
+	constructor(id, children, type, priority, enter = ()=>{}, exit = ()=>{}, canQueue = true){
+		this.id = id;
 		this.style_div();
 		this.append_children(children);
 		this.type = type;//ALERT | WARNING | INFO
@@ -66,14 +72,16 @@ class Alert{
 		popup.style.transform = "translateX(-50%)";
 		popup.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
 		popup.style.color = "white";
-		popup.style.padding = "8px 15px";
+		popup.style.padding = "2% 2%";
 		popup.style.borderRadius = "5px";
 		popup.style.boxShadow = "0px 2px 10px rgba(0, 0, 0, 0.8)";
 		popup.style.fontSize = "16px";
 		popup.style.whiteSpace = "nowrap";
 		popup.style.zIndex = "1000";
 		popup.style.textAlign = "center";
+		// popup.style.margin= "8px 15px";
 		popup.id = "popup-message";
+		popup.className = "position-fixed top-0 start-50 translate-middle-x bg-dark text-white text-center p-3 rounded shadow-lg";
 		this.div = popup;
 	}
 	append_children(children){
@@ -83,12 +91,16 @@ class Alert{
 		document.body.appendChild(this.div);
 	}
 	show(){
-		this.div.style.display = "absolute";
+		console.log("show alert")
+		// this.div.style.display = "absolute";
+		this.div.style.visibility = "visible";
 		this.enter()
 
 	}
 	hide(later = "false"){
-		this.div.style.display = "none";
+		console.log("hide alert")
+		this.div.style.visibility = "hidden";
+		// this.div.style.display = "none";
 		if (!later)
 			this.exit()
 	}

@@ -1,15 +1,17 @@
 import { BaseNonDivElement } from "./Base";
 class Text extends BaseNonDivElement{
-	constructor({id = "text", content, flex = 0, fontSize = 1, w, h})
+	constructor({id = "text", content, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.element.textContent = content;
 		this.element.style.textAlign = "center";
+		this.element.style.marginTop = margin;
+		this.element.style.marginBottom = margin + marginBot;
 	}
 }
 
 class Input extends BaseNonDivElement{
-	constructor({id = "input", autofocus = "false", flex = 0, fontSize = 1, w = 0.9, h = 0.1})
+	constructor({id = "input", autofocus = "false", flex = 0, fontSize = 1, w = 0.9, h = 0.1, margin = 0, marginBot = 0})
 	{
 		super('input', id, flex, fontSize, w, h);
 		this.element.type = 'text';
@@ -18,11 +20,13 @@ class Input extends BaseNonDivElement{
 		this.element.style.backgroundColor = 'transparent';
 		this.element.style.border = 'none';
 		this.element.style.outline = 'none';
+		this.element.style.marginTop = margin;
+		this.element.style.marginBottom = margin + marginBot;
 	}
 }
 
 class Button extends BaseNonDivElement{
-	constructor({id = "button", content, color, onClick =()=>{}, flex = 0, fontSize = 1, w, h})
+	constructor({id = "button", content, color, onClick =()=>{}, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.isSelected = false;
@@ -44,6 +48,8 @@ class Button extends BaseNonDivElement{
 		this.onClick = onClick;
 		this.element.style.color = color;
 		this.color = color;
+		this.element.style.marginTop = margin;
+		this.element.style.marginBottom = margin + marginBot;
 		this.element.addEventListener('mouseover', ()=>{this.activate()});
 		this.element.addEventListener('mouseout', ()=> { this.deactivate()});
 		this.element.addEventListener('click', ()=>{ this.onClick();});

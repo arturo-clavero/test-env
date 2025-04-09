@@ -7,53 +7,85 @@ import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
 const children = [
-	new Text({
-		content: "ALERT!",
-		fontSize: 1,
-	}),
-	new Text({
-		content: "Join tournament within one minute, or loose your place!",
-	}),
-	new Button({
-		content: "JOIN",
-		onClick: ()=>{
-			new StateManager().forcedRedirect = true;
-			new StateManager().changeState(3);
-			new StateManager().currentState.changeSubState(8);
-			new StateManager().forcedRedirect = false;
-			new Socket().send({
-				"channel" : "tournament",
-				"action" : "confirm participation",
+	new FlexBox({
+		dir: "column",
+		mainAxis: "spaced-out",
+		children:
+		[
+			new Text({
+				content: "ALERT!",
+				fontSize: 1,
+				marginBot: "4%",
+			}),
+			new Text({
+				content: "Join tournament within one minute,",
+				fontSize: 0.75,
+				marginBot: "2%",
+
+			}),
+			new Text({
+				content: "or loose your place!",
+				fontSize: 0.75,
+				marginBot: "4%",
+			}),
+			new Button({
+				fontSize: 0.85,
+				content: "JOIN",
+				onClick: ()=>{
+					console.log("clicked join")
+					new StateManager().forcedRedirect = true;
+					console.log("clicked join check? ")
+
+					new StateManager().changeState(3);
+					console.log("clicked join check? ")
+
+					//new StateManager().currentState.changeSubState(8);//failing
+
+					new StateManager().forcedRedirect = false;
+					console.log("clicked join check? ")
+
+					new AlertManager().remove_latest_alert("join_alert");
+					new Socket().send({
+						"channel" : "tournament",
+						"action" : "confirm participation",
+					})
+				},
 			})
-			new AlertManager().remove_latest_alert(join_alert);
-		}
+			
+		]
+
 	})
+	
 ]
 
 function create_join_alert(){
-	let stateManager = new StateManager();
-	if (stateManager.currentStateIndex == 3 
-		&& stateManager.currentState.currentSubstateIndex == 8)
-		{
-			new Socket().send({
-				"channel" : "tournament",
-				"action" : "confirm participation",
-			})
-		}
-	else{
+	// let stateManager = new StateManager();
+	// if (stateManager.currentStateIndex == 3 
+	// 	&& stateManager.currentState.currentSubstateIndex == 5)
+	// 	{
+	// 		console.log("confirm participation ...")
+	// 		new Socket().send({
+	// 			"channel" : "tournament",
+	// 			"action" : "confirm participation",
+	// 		})
+	// 	}
+	// else{
+		console.log("sending not")
+		console.log("current state: ", new StateManager().currentStateIndex);
+		console.log("curren substate, ", new StateManager().currentState.currentSubstateIndex)
 		new AlertManager().add_alert(join_alert);
-	}
+	// }
 }
 
 function enter(){
 	setTimeout(() => {
 			new AlertManager().remove_latest_alert(join_alert);
-		}, 60000);
+		}, 60000);//60s
 }
 function exit(){
 
 }
 
-const join_alert = new Alert(children, "urgent", 100, enter, exit, false);
+const join_alert = new Alert("join_alert", children, "urgent", 100, enter, exit, false);
 
 export {create_join_alert}
