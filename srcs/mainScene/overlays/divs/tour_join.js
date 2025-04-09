@@ -40,10 +40,15 @@ const container = new Overlay([
 				content: "JOIN",
 				fontSize: 0.45,
 				onClick : ()=>{
-						new Socket().send({
-							"channel":"tournament",
-							"action":"join",
-						})
+						if (container.getElementById("button").element.textContent == "JOIN")
+						{
+							new Socket().send({
+								"channel":"tournament",
+								"action":"join",
+							})
+
+						}
+						
 					}
 			})
 		]

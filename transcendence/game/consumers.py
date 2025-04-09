@@ -36,7 +36,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if self.tournament and self.tournament.status != "end":
 			await self.tournament.disconnect()
 		await self.remove_channel("all")
-		active_users.remove(self.user_id)
+		# active_users.remove(self.user_id)
 		print("WEBOSCKET DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
@@ -46,24 +46,31 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 		elif data["channel"] == "tournament":
 			from .tournamentChannel import pending_tournament
-			if data["action"] == "create" and pending_tournament == None:
-							newTour = TournamentChannel(self)
-							await self.send_channel("all", {
-										"type" : "tour.updates",
-										"update_tour_registration" : "join",
-										"button" : "join",
-										"prize_pool" : newTour.prize_pool,
-									})
-							asyncio.create_task(newTour.notify_start())
-							asyncio.create_task(newTour.start())
+			if data["action"] == "create":
+				if pending_tournament == None:
+					newTour = TournamentChannel(self)
+					await self.send_channel("all", {
+								"type" : "tour.updates",
+								"update_tour_registration" : "join",
+								"button" : "join",
+								"prize_pool" : newTour.prize_pool,
+							})
+					asyncio.create_task(newTour.notify_start())
+					asyncio.create_task(newTour.start())
+				else : 
+					await self.send_self({
+								"type" : "tour.updates",
+								"update_tour_registration" : "join",
+								"button" : "join",
+								"prize_pool" : newTour.prize_pool,
+							})
 
-			elif data["action"] == "join" and self.tournament == None and pending_tournament != None:
+			elif data["action"] == "join" and pending_tournament != None:
 					await pending_tournament.join(self)
-			elif data["action"] == "succesfull payment" and self.tournament == None and pending_tournament != None:
-				if data["tour_id"] == pending_tournament.tour_id:
+			elif data["action"] == "succesfull payment" and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
 					await pending_tournament.confirm_payment(self)
-			elif data["action"] == "confirm participation" and self.tournament != None:
-				await self.tournament.confirm_participation(self)
+			elif data["action"] == "confirm participation" and "tour_id" in data:
+				await ongoing_tournaments[data["tour_id"]].confirm_participation(self)
 
 
 	async def update_tournament_display(self):

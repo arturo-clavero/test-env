@@ -13,7 +13,7 @@ entry_price = 100
 	#open -> can register, has not started
 	#full -> can not register, has not started
 	#active -> has started
-waitTime = 60 * 2
+waitTime = 60
 class TournamentChannel():
 	def __init__(self, consumer):
 		global pending_tournament, ongoing_tournaments
@@ -80,7 +80,7 @@ class TournamentChannel():
 		await consumer.join_channel(self.room)
 	
 	async def notify_start(self):
-		await asyncio.sleep(10)
+		await asyncio.sleep(waitTime)
 		print("SEND NOTIFICATION!")
 		print('hey: ', self.tour_id)
 		print(self.registered_user)
@@ -89,6 +89,7 @@ class TournamentChannel():
 			await self.registered_user.send_channel(self.room, {
 				"type" : "tour.updates",
 				"notification" : "start",
+				"tour_id" : self.tour_id
 			})
 	
 	async def confirm_participation(self, consumer):
@@ -96,7 +97,7 @@ class TournamentChannel():
 		await consumer.join_channel(self.activeRoom)
 	
 	async def start(self):
-		await asyncio.sleep(30)
+		await asyncio.sleep(waitTime + 30)
 		print("START!")
 		global ongoing_tournaments
 		self.close_registration(self.registered_user)
@@ -106,7 +107,6 @@ class TournamentChannel():
 			await self.registered_user.send_channel(self.room, {
 				"type" : "tour.updates",
 				"action" : "unsuscribe",
-				"update_tour_registration" : "create",
 			})
 		if len(self.confirmed_players) >= 2:
 			self.state = "active"

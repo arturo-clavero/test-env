@@ -6,6 +6,7 @@ import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
+
 const children = [
 	new FlexBox({
 		dir: "column",
@@ -48,6 +49,7 @@ const children = [
 					new Socket().send({
 						"channel" : "tournament",
 						"action" : "confirm participation",
+						"tour_id" : get_tour_id()
 					})
 				},
 			})
@@ -57,8 +59,12 @@ const children = [
 	})
 	
 ]
+let tour_id = 0
 
-function create_join_alert(){
+function get_tour_id(){
+	return tour_id;
+}
+function create_join_alert(input_tour_id){
 	// let stateManager = new StateManager();
 	// if (stateManager.currentStateIndex == 3 
 	// 	&& stateManager.currentState.currentSubstateIndex == 5)
@@ -70,6 +76,7 @@ function create_join_alert(){
 	// 		})
 	// 	}
 	// else{
+		tour_id = input_tour_id
 		console.log("sending not")
 		console.log("current state: ", new StateManager().currentStateIndex);
 		console.log("curren substate, ", new StateManager().currentState.currentSubstateIndex)
@@ -79,8 +86,8 @@ function create_join_alert(){
 
 function enter(){
 	setTimeout(() => {
-			new AlertManager().remove_latest_alert(join_alert);
-		}, 60000);//60s
+			new AlertManager().remove_latest_alert("join_alert");
+		}, 10000);//60s
 }
 function exit(){
 

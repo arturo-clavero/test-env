@@ -28,7 +28,7 @@ export class Socket {
 				gameReceive(data);
 			else if (data.type == "tour.updates")
 			{
-				console.log("1");
+				console.log("received: ", data);
 				if ("update_tour_registration" in data) this.updateTourRegistration(data);
 				else if ("update_display" in data) this.updateTourSubState(data);
 				else if ("notification" in data) this.notification(data);
@@ -37,7 +37,8 @@ export class Socket {
 	}
 	notification(data){
 		console.log("1.3");
-		create_join_alert();
+		if (data["notification"] == "start")
+			create_join_alert(data["tour_id"]);
 	}
 	updateTourSubState(data){
 		console.log("1.2");
@@ -95,7 +96,15 @@ export class Socket {
 			join["dynamic-content"](data);
 			if ("button" in data)
 			{
-				new StateManager().states[3].update_start_index(4);
+				new StateManager().states[3].update_start_index(4, ()=>{
+					if ("subscribed" in new StateManager().states[3].data)
+					{
+						console.log("subscribed can not go to join...");
+						return false;
+					}
+					console.log("join returns true");
+					return true;
+				});
 				if (data.button == "subscribed")
 				{
 					console.log("SUCRIBE!")
