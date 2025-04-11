@@ -278,6 +278,7 @@ const tourMachineState = new State(
 	},
 	[
 		screenMaterial,
+		pongGame.renderMaterial,
 	],
 )
 

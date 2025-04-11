@@ -69,7 +69,7 @@ export	function startPongGame(type = "local"){
 	}
 	
 function	updatesFromBackend(data){
-	console.log("updates from backend")
+	console.log("updates from backend");
 	if (data.updates.state == "countdown")
 	{
 		if (state != "countdown")

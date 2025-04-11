@@ -17,6 +17,8 @@ def	new_game(request):
 		log['players']['1'] = create_new_player(request.data, request.data.get('userID1'), 1)				
 		log['players']['2'] = create_new_player(request.data,request.data.get('userID2', 'userID1'), 2)
 		player_mode = log["type"]
+		if log["type"] == 'remote':
+			log["tour_id"] = request.data.get('tour_id')
 
 		active_game_logs[log['gameID']] = log
 		print("in playlog got this... ", request.data)
@@ -80,7 +82,7 @@ def	store_game_results(results):
 	print("results: ", results)
 	print("log: ", log)
 	if log["type"] == "remote":
-		ongoing_tournaments[tour_id].end_remote_game({
+		ongoing_tournaments[log["tour_id"]].end_remote_game({
 			"winner" : results["winner"],
 			"looser" : results["looser"]
 		})

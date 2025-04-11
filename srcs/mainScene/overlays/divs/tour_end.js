@@ -62,12 +62,15 @@ const container = new Overlay([
 		])
 
 let exitButton = new Button({
-	id: "exitButton",
+	id: "button",
 	fontSize: 0.75,
 	content: "EXIT",
 	onClick: ()=>{
-		let stateManager = new StateManager();
-		stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
+		if (container.getElementById("button").element.textContent == "EXIT")
+		{
+			let stateManager = new StateManager();
+			stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
+		}	
 	}
 })
 
@@ -78,8 +81,8 @@ let waitButton = new Button({
 })
 
 function dynamic_content(data){
-	if (data.button == "exit") container.getElementById("button").element.replaceWith(exitButton.element);
-	else if (data.button == "wait") container.getElementById("button").element.replaceWith(waitButton.element);
+	if (data.button == "exit") container.getElementById("button").element.textContent == "EXIT";
+	else if (data.button == "wait") container.getElementById("button").element.textContent == "loading next round...";
 	container.getElementById("title").element.textContent = data["title"];
 	if ("prize" in data)
 	{
@@ -115,16 +118,12 @@ function dynamic_content(data){
 }
 
 function show_buttons(){
-	container.getElementById("exitButton").element.style.visibility = "visible";
-	container.getElementById("waitButton").element.style.visibility = "visible";
+	container.getElementById("button").element.style.visibility = "visible";
 
 }
 
 function hide_buttons(){
 	container.getElementById("button").element.style.visibility = "hidden";
-	container.getElementById("exitButton").element.style.visibility = "visible";
-	container.getElementById("waitButton").element.style.visibility = "visible";
-
 }
 
 function show_div(){

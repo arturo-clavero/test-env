@@ -18,7 +18,7 @@ class GameManager():
 
 	async def broadcast_game_state(self):
 		while True:
-			try:
+			# try:
 				for gameID, game in active_sessions.items():
 					updates = game.update_state()
 					if updates:
@@ -38,9 +38,9 @@ class GameManager():
 						break 
 
 				await asyncio.sleep(0.016)  # ~60 updates per second
-			except Exception as e:
-				print(f"Error in game loop: {e}")
-				break
+			# except Exception as e:
+			# 	print(f"Error in game loop: {e}")
+			# 	break
 
 gameManager = GameManager()
 
@@ -74,6 +74,7 @@ class GameChannel():
 		if self.gameID not in players:
 			players[self.gameID] = {"connected" : 0, "ready" : 0}
 		self.max_players = get_max_players(self.gameID)
+		print("max players: ", self.max_players)
 		players[self.gameID]["connected"] += 1
 		if players[self.gameID]["connected"] > self.max_players:
 			await self.finish()

@@ -131,6 +131,7 @@ class TournamentChannel():
 			"userID2": player2.user_id,
 			"alias1": player1.alias,
 			"alias2": player2.alias,
+			"tour_id":self.tour_id,
 			}, format='json'))
 		print("the response: ", response)
 		print("the data: ", response.data)
