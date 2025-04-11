@@ -75,9 +75,15 @@ def	store_game_results(results):
 		elif (results["score1"] < results["score2"]):
 			log['players']['1']["result"] = "loose"
 			log['players']['2']["result"] = "win"
+	print("results: ", results)
+	print("log: ", log)
 	if log["type"] == "remote":
-		ongoing_tournaments[tour_id].end_tournment_game()
+		ongoing_tournaments[tour_id].end_remote_game({
+			"winner" : results["winner"],
+			"looser" : results["looser"]
+		})
 	# store log in data base ... 
+
 	pprint.pprint(log)	# end storage
 	del active_game_logs[results["gameID"]]
 

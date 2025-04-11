@@ -12,6 +12,7 @@ import { payment } from '../overlays/divs/tour_payment';
 import { refund } from '../overlays/divs/tour_refund';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
 import { end } from '../overlays/divs/tour_end';
+import { matchmake } from '../overlays/divs/tour_matchamake';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -191,6 +192,29 @@ const screenRefund = new CssSubState(
 	null,
 )
 
+const divMatchmake = matchmake;
+const screenMatchmake = new CssSubState(
+	"end",
+	object,
+	partIndex,
+	surfaceIndex,
+	divMatchmake['div'],
+	0,
+	()=>{
+		console.log("enter matchmake ... ")
+		divMatchmake['show-div']();
+	},
+	null,
+	()=>{
+		divMatchmake['hide-div']();
+	},
+	()=>{
+		divMatchmake["resize"]();
+	},
+	null,
+	null,
+)
+
 const screenGame = new MeshSubState(
 	"game", 
 	screenSurface,
@@ -238,7 +262,8 @@ const tourMachineState = new State(
 		startScreenJoin,//5
 		screenPay,//6
 		screenRefund,
-		screenGame,//8
+		screenMatchmake,//8
+		screenGame,
 		screenEnd,
 	],
 	(self)=>{

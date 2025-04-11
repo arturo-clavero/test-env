@@ -9,7 +9,7 @@ ongoing_tournaments = {}
 pending_tournament = None
 
 #constants
-waitTime = 60
+waitTime = 30
 entry_price = 100
 max_players = 1024
 min_players = 2
@@ -44,7 +44,7 @@ class TournamentChannel():
 		self.prize_pool += entry_price * 0.95
 		await consumer.send_self({ "type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "subscribed"})
-		if len(self.registered_players) < self.max_players:
+		if len(self.registered_players) < max_players:
 			await consumer.send_channel("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "prize_pool": self.prize_pool})
 		else:
@@ -56,49 +56,65 @@ class TournamentChannel():
 		global waitTime
 
 		await asyncio.sleep(waitTime)
-		if self.registered_user != None:
-			await self.registered_user.send_channel(self.registeredRoom, {"type" : "tour.updates",
+		self.status = "locked"
+		if len(self.registered_players) > 0:
+			await self.registered_players[0].send_channel(self.registeredRoom, {"type" : "tour.updates",
 				"notification" : "start", "tour_id" : self.tour_id})
 		await self.consumer.send_channel("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "locked"})
 	
 	async def start(self):
-		global ongoing_tournaments, waitTime, min_players
+		from .consumers import active_users 
+		global ongoing_tournaments, pending_tournament, waitTime, min_players
 
-		await asyncio.sleep(waitTime + 60)
+		await asyncio.sleep(waitTime + 5)
+		print("START")
 		#restart new tournament - create option
 		pending_tournament = None
 		await self.consumer.send_channel("all", {"type" : "tour.updates",
 			"update_tour_registration" : "create", "button" : "create"})
 		#get all confirmed registered players
-		import active_users from .consumer
-		self.confirmed_players = [user for user in self.registered_players if user in active_users]
+		for user in self.registered_players:
+			if user in active_users:
+				print(user)
+				print(user.alias)
+				user.alias = "alias0"
+				self.remaining_players.append(user)
+				await user.join_channel(self.remainingRoom)
+		# 	else:
+		# 		remove_channel(user, self.remainingRoom)
+		#self.remaining_players = [user for user in self.registered_players if user in active_users]
 		print("total players registered: ", len(self.registered_players))
-		print("total players confirmed: ", len(self.confirmed_players))
+		print("total players confirmed: ", len(self.remaining_players))
 		#edge case cancel refund
-		if len(confirmed_players) == 1:
-			await self.confirmed_players[0].send_self({"type" : "tour.updates",
+		if len(self.remaining_players) == 1:
+			print("refund")
+			await self.remaining_players[0].send_self({"type" : "tour.updates",
 				"update_display" : "refund", "reason" : "insufficient players"})
 		#edge case cancel empty
-		if len(confirmed_players) < min_players:
+		if len(self.remaining_players) < min_players:
+			print("tournament cancelled")
 			del ongoing_tournaments[self.tour_id]
 		else :
-			self.remaining_players = random.shuffle(self.confirmed_players)
+			print("tournant ongoing...")
+			print("CONF players: ", self.remaining_players)
+			random.shuffle(self.remaining_players)
+			print("remiainng players: ", self.remaining_players)
 			self.current_round = 0
-			self.max_rounds = math.log2(len(self.remaining_players))
-			self.matchmake()
+			self.max_rounds = math.ceil(math.log2(len(self.remaining_players)))
+			await self.matchmake()
 
 	async def matchmake(self):
 		print("matchamke")
 		self.current_round += 1
 		self.total_matches = len(self.remaining_players) / 2 #+ len(self.remaining_players % 2)
-		await self.consumer.group_send(self.activeRoom, 	{
+		await self.remaining_players[0].send_channel(self.remainingRoom, {
 			"type" : "tour.updates",
 			"update_display" : "matchmaking rounds",
 			"total matches" : self.total_matches,
 			"current round" : self.current_round,
 			"max rounds" : self.max_rounds,
-			"players" : [self.confirmed_players[key]["alias"] for key in self.remaining_players if key in self.confirmed_players]
+			"players" : [user.alias for user in self.remaining_players]
 		})
 		print("before sleep...")
 		await asyncio.sleep(5)
@@ -108,21 +124,22 @@ class TournamentChannel():
 
 	async def start_remote_game(self, player1, player2):
 		from .playLog import new_game
+		print("START TORUNAMENT MATCH")
 		response = new_game(APIRequestFactory().post("/api/new_game/", {
 			"type": "remote", 
-			"userID1": player1,
-			"userID2": player2,
-			"alias1": player_alias[player1],
-			"alias2": player_alias[player2]
+			"userID1": player1.user_id,
+			"userID2": player2.user_id,
+			"alias1": player1.alias,
+			"alias2": player2.alias,
 			}, format='json'))
-		self.confirmed_players[player1].consumer.self_send({
+		self.remaining_players[player1].consumer.send_self({
 			"type" : "tour.updates",
 			"update_display" : "start game",
 			"gameID" : response["gameID"],
 			"userID" : response["userID1"],
 			"game-type" : "player1",
 			})
-		self.confirmed_players[player2].consumer.self_send({
+		self.remaining_players[player2].consumer.send_self({
 			"type" : "tour.updates",
 			"update_display" : "start game",
 			"gameID" : response["gameID"],
@@ -131,8 +148,10 @@ class TournamentChannel():
 			})
 
 	async def end_remote_game(self, data):
+		print("END TORUNAMENT MATCH")
+		print("received: ", data)
 		self.remaining_players.append(data["winner"])
-		confirmed_players[data["looser"]].consumer.remove_channel(self.activeRoom)
+		confirmed_players[data["looser"]].consumer.remove_channel(self.remainingRoom)
 		self.total_matches -= 1
 		confirmed_players[data["looser"]].consumer.send_self({
 					"type":"tour.updates",
@@ -198,4 +217,4 @@ class TournamentChannel():
 	# 	})
 	# async def confirm_participation(self, consumer):
 	# 	self.confirmed_players.append(consumer)
-	# 	await consumer.join_channel(self.activeRoom)
+	# 	await consumer.join_channel(self.remainingRoom)

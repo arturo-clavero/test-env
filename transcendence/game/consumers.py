@@ -27,7 +27,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 		self.tournament = None
 		await self.join_channel("all")
 		await self.update_tournament_display()
-		active_users.append(self.user_id)
+		active_users.append(self)
+		self.alias = "0"
 
 	async def disconnect(self, code=None):
 		global active_users
@@ -55,14 +56,14 @@ class MainConsumer(AsyncWebsocketConsumer):
 								"button" : "join",
 								"prize_pool" : newTour.prize_pool,
 							})
-					asyncio.create_task(newTour.notify_start())
+					# asyncio.create_task(newTour.notify_start())
 					asyncio.create_task(newTour.start())
 				else : 
 					await self.send_self({
 								"type" : "tour.updates",
 								"update_tour_registration" : "join",
 								"button" : "join",
-								"prize_pool" : newTour.prize_pool,
+								"prize_pool" : pending_tournament.prize_pool,
 							})
 
 			elif data["action"] == "join" and pending_tournament != None:
@@ -84,7 +85,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"button" : "create",
 			})
 		#paying
-		elif self.user_id in pending_tournament.confirmed_players:
+		elif self in pending_tournament.registered_players:
 			print('subscribe')
 			await self.send_self({
 				"type" : "tour.updates",
@@ -93,7 +94,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"prize_pool" : pending_tournament.prize_pool,
 
 			})
-		else :
+		elif pending_tournament.status == "locked":
+			print('locke')
+			await self.send_self({
+				"type" : "tour.updates",
+				"update_tour_registration" : "join",
+				"button" : "locked",
+				"prize_pool" : pending_tournament.prize_pool,
+			})
+		else:
 			print('join')
 			await self.send_self({
 				"type" : "tour.updates",
@@ -120,7 +129,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.gameChannel.game_updates(event)
 
 	async def tour_updates(self, event):
-		print("updates!")
+		print("updates from channel!")
 		await self.send(text_data=json.dumps(event))
 	
 	def live_tournament(self, event):

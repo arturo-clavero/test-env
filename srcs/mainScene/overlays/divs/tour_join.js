@@ -40,7 +40,7 @@ const container = new Overlay([
 				content: "JOIN",
 				fontSize: 0.45,
 				onClick : ()=>{
-						if (container.getElementById("button").element.textContent == "JOIN")
+						if (get_button_type() == "JOIN")
 						{
 							new Socket().send({
 								"channel":"tournament",
@@ -57,7 +57,10 @@ const container = new Overlay([
 
 function show_buttons(){
 	container.getElementById("button").element.style.visibility = "visible";
+}
 
+function get_button_type(){
+	return container.getElementById("button").element.textContent;
 }
 
 function hide_buttons(){
@@ -89,6 +92,8 @@ function dynamic_content(data){
 		let button = container.getElementById("button").element;
 		if (new_content == "join") button.textContent = "JOIN";
 		else if (new_content == "subscribed")  button.textContent = "Subscribed";
+		else if (new_content == "locked" && button.textContent != "Subscribed")  button.textContent = "LOCKED";
+
 	}
 
 }
@@ -100,6 +105,7 @@ const join = {
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
+	"get-button-type" : get_button_type,
 }
 
 export {join}
