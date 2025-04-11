@@ -132,18 +132,21 @@ class TournamentChannel():
 			"alias1": player1.alias,
 			"alias2": player2.alias,
 			}, format='json'))
-		self.remaining_players[player1].consumer.send_self({
+		print("the response: ", response)
+		print("the data: ", response.data)
+		data = response.data
+		await player1.send_self({
 			"type" : "tour.updates",
 			"update_display" : "start game",
-			"gameID" : response["gameID"],
-			"userID" : response["userID1"],
+			"gameID" : data["gameID"],
+			"userID" : data["userID"],
 			"game-type" : "player1",
 			})
-		self.remaining_players[player2].consumer.send_self({
+		await player2.send_self({
 			"type" : "tour.updates",
 			"update_display" : "start game",
-			"gameID" : response["gameID"],
-			"userID" : response["userID2"],
+			"gameID" : data["gameID"],
+			"userID" : data["userID2"],
 			"game-type" : "player2",
 			})
 

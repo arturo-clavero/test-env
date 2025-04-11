@@ -63,8 +63,8 @@ export	function startPongGame(type = "local"){
 			right_paddle_type: mode === "player1" ? "X" : mode,
 			paddle_half_len: paddles.paddles[0].halfLen,
 		});
-		if (mode == "player1" || mode == "player2")
-			waiting();
+		// if (mode == "player1" || mode == "player2")
+			// waiting();
 	}
 	
 function	updatesFromBackend(data){
@@ -183,5 +183,6 @@ export	const pongGame = {
 		"camera" : engine.camera,
 		"resize":resize,
 		"exit": exit,
+		"receive" : (event)=>{updatesFromBackend(event);},
+		"new-round" : new_round 
 	}
-export const gameReceive = (event)=>{updatesFromBackend(event);}

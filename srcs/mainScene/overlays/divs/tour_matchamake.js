@@ -20,6 +20,8 @@ const container = new Overlay([
 	}),
 	new FlexBox({
 		id : "matches",
+		fex: 1,
+		width: "100%",
 	})
 	
 ])
@@ -50,29 +52,52 @@ function getStringMatch(i, players){
 	let player1 = players[i];
 	let player2 = players[i + 1];
 	let color = player2 == "" ? "green" : "white";
-	if (player2 == "") player2 = "skip round";
-	let string = new Text({
-		content: `${player1} vs ${player2}`,
-		fontSize: 0.65,
-		color: color,
-	})
-	return string;
+	if (player2 == "") 
+		return [
+			new Text({
+				content: `${player1} skips round `,
+				fontSize: 0.65,
+				color: "green",
+				flex: 1,
+				width: "100%",
+			}),
+	]
+	return [
+		new Text({
+			content: `${player1}  `,
+			fontSize: 0.65,
+			color: color,
+			flex: 1,
+			marginLR: "2%",
+		}),
+		new Text({
+			content: "  vs  ",
+			fontSize: 0.65,
+			color: color,
+			marginLR: "2%",
+		}),
+		new Text({
+			content: `  ${player2}`,
+			fontSize: 0.65,
+			color: color,
+			flex: 1,
+			marginLR: "2%",
+		})
+	]
 }
 function createTextGrid(players) {
 	const rows = [];
 	let count = players.length;
 		for (let i = 0; i < count; i += 2) {
 				rows.push(new FlexBox({
-					mainAxis: "center",
-					children: [
-						getStringMatch(i, players),
-					]
+					mainAxis: "space-evenly",
+					children: getStringMatch(i, players),
 				}));
 		}
 		return new FlexBox({
 			dir: "column",
 			flex: 1,
-			mainAxis: "center",
+			mainAxis: "space-evenly",
 			scrollable: "true",
 			children: rows
 		});

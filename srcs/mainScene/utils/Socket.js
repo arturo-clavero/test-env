@@ -1,5 +1,5 @@
 import { StateManager } from '../../core/stateManager/StateManager';
-import { gameReceive } from '../overlays/scenes/pong-game/Game'
+import { pongGame} from '../overlays/scenes/pong-game/Game'
 import {getUserID} from './utils'
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
@@ -26,7 +26,7 @@ export class Socket {
 				return ;
 			console.log("received: ", data);
 			if (data.type == "game update")
-				gameReceive(data);
+				pongGame["receive"](data);
 			else if (data.type == "tour.updates")
 			{
 				console.log("received: ", data);
@@ -60,7 +60,7 @@ export class Socket {
 		}
 		else if (data.update_display == "start game")
 		{
-			new_round(data["gameID"], data["userID"], data["game-type"]);
+			pongGame["new-round"](data["gameID"], data["userID"], data["game-type"]);
 			new StateManager().currentState.changeSubstate(9);
 		}
 		else if (data.update_display == "end game")

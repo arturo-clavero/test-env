@@ -19,9 +19,11 @@ def	new_game(request):
 		player_mode = log["type"]
 
 		active_game_logs[log['gameID']] = log
-
+		print("in playlog got this... ", request.data)
+		print("the log ... ", log)
 		return Response({
-			"userID" : request.data.get('userID1'),
+			"userID" : log["players"]["1"]["id"],
+			"userID2" : log["players"]["2"]["id"],
 			"gameID" : log['gameID'],
 			"player_mode": player_mode,
 			"name1" : log["players"]["1"]["alias"],

@@ -1,12 +1,17 @@
 import { BaseNonDivElement } from "./Base";
 class Text extends BaseNonDivElement{
-	constructor({id = "text", content, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
+	constructor({id = "text", content, flex = 0, fontSize = 1, w, h, marginLR = 0, margin = 0, marginBot = 0, paddingLR = 0})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.element.textContent = content;
 		this.element.style.textAlign = "center";
 		this.element.style.marginTop = margin;
 		this.element.style.marginBottom = margin + marginBot;
+		this.element.style.marginLeft = marginLR;
+		this.element.style.mariginRight = marginLR;
+		this.element.style.paddingRight = paddingLR;
+		this.element.style.paddingLeft = paddingLR;
+
 	}
 }
 
