@@ -17,7 +17,7 @@ export class Socket {
 	async init(){
 		this.userID = await getUserID();
 		this.msgQueue = [];
-		this.socket = new WebSocket(`ws://localhost:8003/ws/${this.userID}/`);
+		this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
 		this.socket.onopen = this.myOpen.bind(this);
 		this.socket.onclose = this.myClose.bind(this);
 		this.socket.onmessage = (event)=>{
@@ -26,7 +26,10 @@ export class Socket {
 				return ;
 			console.log("received: ", data);
 			if (data.type == "game update")
+			{
+				console.log("game update...");
 				pongGame["receive"](data);
+			}
 			else if (data.type == "tour.updates")
 			{
 				console.log("received: ", data);

@@ -23,12 +23,12 @@ import * as THREE from 'three';
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
 	let end = false;
-	let round = 0;
 	let gameID, mode, num;
 
 export	function startPongGame(type = "local"){
+		console.log('start local game');
 		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
-			fetch('http://localhost:8003/new-game/', {
+			fetch('http://localhost:8004/new-game/', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(brutdata)
@@ -40,6 +40,7 @@ export	function startPongGame(type = "local"){
 					alert(data["error"]);
 					return;
 				}
+			console.log("data: ", data);
 			new_round(data["gameID"], data["userID"], "local");
 			})
 			.catch(error => {
@@ -48,7 +49,7 @@ export	function startPongGame(type = "local"){
 		}
 	function	new_round(gameID_input, userID, player_mode)
 	{
-		round++;
+		console.log("new round");
 		window.addEventListener("keydown", key.handleKeyDown);
 		window.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
@@ -68,6 +69,7 @@ export	function startPongGame(type = "local"){
 	}
 	
 function	updatesFromBackend(data){
+	console.log("updates from backend")
 	if (data.updates.state == "countdown")
 	{
 		if (state != "countdown")

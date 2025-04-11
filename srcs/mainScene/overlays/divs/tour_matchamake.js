@@ -68,20 +68,20 @@ function getStringMatch(i, players){
 			fontSize: 0.65,
 			color: color,
 			flex: 1,
-			marginLR: "2%",
+			paddingLR: "2%",
 		}),
 		new Text({
 			content: "  vs  ",
 			fontSize: 0.65,
 			color: color,
-			marginLR: "2%",
+			paddingLR: "2%",
 		}),
 		new Text({
 			content: `  ${player2}`,
 			fontSize: 0.65,
 			color: color,
 			flex: 1,
-			marginLR: "2%",
+			paddingLR: "2%",
 		})
 	]
 }
