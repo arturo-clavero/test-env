@@ -20,7 +20,6 @@ class GameManager():
 		while True:
 			try:
 				for gameID, game in active_sessions.items():
-					print(gameID)
 					updates = game.update_state()
 					if updates:
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
@@ -125,6 +124,9 @@ class GameChannel():
 				await self.start_game(consumer, data["game_id"])
 			if data["request"] == "update paddles":
 				active_sessions[self.gameID].update_paddles(data)
+			if data["request"] == "end game" and self.gameID in active_sessions :
+				await self.finish()
+
 		
 	async def game_updates(self, event):
 		updates = event["updates"]

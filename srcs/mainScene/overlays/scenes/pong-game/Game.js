@@ -10,6 +10,7 @@ import { dispose_object } from '../../../utils/utils';
 import { StateManager } from '../../../../core/stateManager/StateManager';
 import { createRenderTarget, createScreenMaterial } from '../utils';
 import * as THREE from 'three';
+import { Socket } from '../../../utils/Socket';
 
 //STATES: waiting, playing, error, completed
 
@@ -167,13 +168,18 @@ function	resize(e) {
 
 
 function exit(){
-	if (end == false){
+	//if (end == false){
 		//const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
 		// if (userConfirmed)
-			clean();
+		console.log("exit")
+		clean();
+		new Socket().send({
+			"channel": "game",
+			"request": "end game",
+		})
 		// else
 		// 	return "forbidden";
-	}
+	//}
 }
 
 const renderTarget = createRenderTarget();
