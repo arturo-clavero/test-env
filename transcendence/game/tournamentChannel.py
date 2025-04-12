@@ -11,7 +11,7 @@ ongoing_tournaments = {}
 pending_tournament = None
 
 #constants
-waitTime = 30
+waitTime = 15
 entry_price = 100
 max_players = 1024
 min_players = 2

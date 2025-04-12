@@ -20,6 +20,7 @@ class GameManager():
 		while True:
 			# try:
 				for gameID, game in active_sessions.items():
+					print(gameID)
 					updates = game.update_state()
 					if updates:
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
@@ -42,6 +43,7 @@ class GameManager():
 			# except Exception as e:
 			# 	print(f"Error in game loop: {e}")
 			# 	break
+		self.running_tasks.clear()
 
 gameManager = GameManager()
 
@@ -51,6 +53,8 @@ class GameChannel():
 		self.status = "uninitialized"
 
 	async def start_game(self, consumer, gameID):
+		global gameManager
+
 		self.status = "on"
 		self.consumer = consumer
 		self.gameID = gameID
@@ -68,6 +72,8 @@ class GameChannel():
 			print('callling start...')
 			active_sessions[self.gameID] = Game(self.gameID)
 			names = get_player_alias(self.gameID)
+			if not gameManager.running_tasks:
+				gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
 			await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
 		else:
 			print("pending...")
