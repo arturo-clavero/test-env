@@ -24,15 +24,10 @@ export class Socket {
 			const data = JSON.parse(event.data);
 			if (!data)
 				return ;
-			console.log("received: ", data);
 			if (data.type == "game update")
-			{
-				console.log("game update...");
 				pongGame["receive"](data);
-			}
 			else if (data.type == "tour.updates")
 			{
-				console.log("received: ", data);
 				if ("update_tour_registration" in data) this.updateTourRegistration(data);
 				else if ("update_display" in data) this.updateTourSubState(data);
 				else if ("notification" in data) this.notification(data);
@@ -40,12 +35,10 @@ export class Socket {
 		}
 	}
 	notification(data){
-		console.log("1.3");
 		if (data["notification"] == "start")
 			create_join_alert(data["tour_id"]);
 	}
 	updateTourSubState(data){
-		console.log("1.2");
 		if (data.update_display== "pay")
 		{
 			new StateManager().currentState.changeSubstate();
@@ -57,7 +50,6 @@ export class Socket {
 		}
 		else if (data.update_display == "matchmaking rounds")
 		{
-			console.log('matchmake ')
 			matchmake["dynamic-content"](data);
 			new StateManager().currentState.changeSubstate(8);
 		}
@@ -77,24 +69,15 @@ export class Socket {
 			new StateManager().currentState.changeSubstate(11);
 	}
 	updateTourRegistration(data){
-		console.log("update tour registration")
-		console.log(data);
 		if (data.update_tour_registration == "create")
-		{
-			console.log('create...');
 			new StateManager().states[3].update_start_index(2, update_tour_registration_conditions);
-		}
 		else if (data.update_tour_registration == "join")
 		{
 			join["dynamic-content"](data);
 			if ("button" in data)
 			{
 				new StateManager().states[3].update_start_index(4,);
-				if (data.button == "subscribed")
-				{
-					console.log("SUCRIBE!")
-					new StateManager().states[3].data["subscribed"] = true;
-			}}
+			}
 		}
 	}
 	myOpen(){
@@ -116,16 +99,9 @@ export class Socket {
 
 function update_tour_registration_conditions(){
 	if (join['get-button-type']() == "Subscribed")
-		{
-			console.log("subscribed, can not go to create...");
-			return false;
-		}
-		if (new StateManager().currentStateIndex == 3 &&
-		new StateManager().currentState.currentSubstateIndx >= 6)
-		{
-			console.log("wrong state, can not go to create ...");
-			return false;
-		}
-		console.log("create returns true");
-		return true;
+		return false;
+	if (new StateManager().currentStateIndex == 3 &&
+	new StateManager().currentState.currentSubstateIndx >= 6)
+		return false;
+	return true;
 }

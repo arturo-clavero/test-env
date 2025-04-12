@@ -39,9 +39,8 @@ class State {
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];
 		}
 		this.currentSubstate.enter();
-		// if (postCam)
-		// 	console.log("post cam enter...")
-		// 	this.currentSubstate.postCamEnter();
+		if (postCam)
+			this.currentSubstate.postCamEnter();
     }
 	enter() {
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
@@ -65,12 +64,9 @@ class State {
 	animate() { this.currentSubstate?.animate(); }
 	isActive() { return this.currentSubstate?.active; }
 	update_start_index(index, should_update = ()=>{return true}){
-		// if (this.startIndex == index)
-		// {
-		// 	console.log("current start index: ", this.startIndex);
-		// 	console.log("same start index: ", index);
-		// 	return ;
-		// } 
+		if (this.startIndex == index)
+			return ;
+		//this up was commened before...
 		if (this.currentSubstateIndex < this.blockedIndex && should_update())
 		{
 			if (this.currentSubstateIndex % 2 == 0)
@@ -78,10 +74,7 @@ class State {
 			else
 				this.changeSubstate(index + 1)
 		}
-		console.log("current start index: ", this.startIndex);
 		this.startIndex = index;
-		console.log("new start index: ", index);
-		console.log("updated start index: ", this.startIndex);
 	}
 }
 

@@ -77,7 +77,6 @@ function fadeOut(){
 }
 
 function payment_successful(){
-	console.log("hey - ", new StateManager().currentState.currentSubstate)
 	new Socket().send({
 		"channel" : "tournament",
 		"action": "succesfull payment",

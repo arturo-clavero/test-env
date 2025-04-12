@@ -26,7 +26,6 @@ import * as THREE from 'three';
 	let gameID, mode, num;
 
 export	function startPongGame(type = "local"){
-		console.log('start local game');
 		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
 			fetch('http://localhost:8004/new-game/', {
 				method: 'POST',
@@ -40,7 +39,6 @@ export	function startPongGame(type = "local"){
 					alert(data["error"]);
 					return;
 				}
-			console.log("data: ", data);
 			new_round(data["gameID"], data["userID"], "local");
 			})
 			.catch(error => {
@@ -49,7 +47,6 @@ export	function startPongGame(type = "local"){
 		}
 	function	new_round(gameID_input, userID, player_mode)
 	{
-		console.log("new round");
 		window.addEventListener("keydown", key.handleKeyDown);
 		window.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
@@ -69,7 +66,6 @@ export	function startPongGame(type = "local"){
 	}
 	
 function	updatesFromBackend(data){
-	console.log("updates from backend");
 	if (data.updates.state == "countdown")
 	{
 		if (state != "countdown")
@@ -132,8 +128,6 @@ function completed(msg){
 	clean();
 	if (mode == "local" || mode == "AI")
 		new StateManager().currentState.changeSubstate();
-	else
-		console.log("did nto exit because mdoe is ", mode);
 }
 
 

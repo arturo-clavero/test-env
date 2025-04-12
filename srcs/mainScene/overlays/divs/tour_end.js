@@ -80,26 +80,13 @@ const container = new Overlay([
 function dynamic_content(data){
 	container.element.style.visibility = "visible";
 
-	console.log("dynamic content");
 	if (data.button == "exit") container.getElementById("button").element.textContent = "EXIT";
 	else if (data.button == "wait") container.getElementById("button").element.textContent = "loading next round...";
-	else console.log("button: ", data.button)
 	container.getElementById("title").element.textContent = data["title"];
-
-	// container.getElementById("container").element.style.justifyContent = "center";
-
-	container.getElementById("prize-announcement").element.style.display = "none";
-	container.getElementById("prize-announcement").element.style.height = "0px";
-
-	// container.getElementById("prize-announcement").element.style.visibility = "hidden";
 	if ("prize" in data)
 	{
-		// container.getElementById("container").element.style.justifyContent = "space-around";
-
-	// 	console.log("showing prize!")
 		container.getElementById("prize-announcement").element.style.display = "";
 		container.getElementById("prize-announcement").element.style.height = "";
-		// container.getElementById("prize-announcement").element.style.visibility = "visible";
 		const text = container.getElementById("prize").element;
 
 		gsap.to({ val: 0 }, {
@@ -124,6 +111,10 @@ function dynamic_content(data){
 			}
 		});
 	}	
+	else{
+		container.getElementById("prize-announcement").element.style.display = "none";
+		container.getElementById("prize-announcement").element.style.height = "0px";
+	}
 }
 
 function show_buttons(){

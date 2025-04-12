@@ -1,16 +1,13 @@
 
 class AlertManager{
 	constructor(){
-		console.log("alert manager.construcotr,,");
 		if (AlertManager.instance)
 			return AlertManager.instance;
-		console.log("new instance");
 		this.queue = [];
 		this.currentAlert = null;
 		AlertManager.instance = this;
 	}
 	add_alert(alert){
-		console.log("add alert")
 		if (!this.currentAlert && this.queue.length == 0)
 			this.display_latest_alert(alert);
 		else if (alert.priority > this.currentAlert.priority)
@@ -36,12 +33,10 @@ class AlertManager{
 		}
 	}
 	display_latest_alert(alert){
-		console.log("display alert")
 		this.currentAlert = alert;
 		this.currentAlert.show();
 	}
 	remove_latest_alert(alert_id){
-		console.log("remove alert")
 		if (this.currentAlert.id != alert_id)
 			return;
 		this.currentAlert.hide();
@@ -91,16 +86,12 @@ class Alert{
 		document.body.appendChild(this.div);
 	}
 	show(){
-		console.log("show alert")
-		// this.div.style.display = "absolute";
 		this.div.style.visibility = "visible";
 		this.enter()
 
 	}
 	hide(later = "false"){
-		console.log("hide alert")
 		this.div.style.visibility = "hidden";
-		// this.div.style.display = "none";
 		if (!later)
 			this.exit()
 	}

@@ -80,8 +80,6 @@ function hide_div(){
 
 let offset, startTime, interval;
 function dynamic_content(data){
-	console.log("join div dynmic conetn");
-	console.log("dynamic content", data);
 	if ("prize_pool" in data)
 	{
 		let value = data["prize_pool"];
@@ -103,7 +101,6 @@ function dynamic_content(data){
 		else if (new_content == "locked" && button.textContent != "Subscribed")  button.textContent = "LOCKED";
 	}
 	if ("now" in data && "start" in data){
-		console.log("update timer");
 		offset = new Date() - new Date(data.now);
 		startTime = new Date(data.start);
 		updateTimer();

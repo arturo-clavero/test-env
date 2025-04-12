@@ -135,7 +135,6 @@ const startScreenJoin = new CssSubState(
 		divJoin['hide-buttons']();
 	},
 	()=>{
-		console.log("specific");
 		divJoin['show-buttons']();
 	},
 	()=>{
@@ -202,7 +201,6 @@ const screenMatchmake = new CssSubState(
 	divMatchmake['div'],
 	0,
 	()=>{
-		console.log("enter matchmake ... ")
 		divMatchmake['show-div']();
 	},
 	null,

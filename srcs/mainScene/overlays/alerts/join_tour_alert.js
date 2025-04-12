@@ -33,18 +33,9 @@ const children = [
 				fontSize: 0.85,
 				content: "JOIN",
 				onClick: ()=>{
-					console.log("clicked join")
 					new StateManager().forcedRedirect = true;
-					console.log("clicked join check? ")
-
 					new StateManager().changeState(3);
-					console.log("clicked join check? ")
-
-					//new StateManager().currentState.changeSubState(8);//failing
-
 					new StateManager().forcedRedirect = false;
-					console.log("clicked join check? ")
-
 					new AlertManager().remove_latest_alert("join_alert");
 					new Socket().send({
 						"channel" : "tournament",
@@ -69,7 +60,6 @@ function create_join_alert(input_tour_id){
 	// if (stateManager.currentStateIndex == 3 
 	// 	&& stateManager.currentState.currentSubstateIndex == 5)
 	// 	{
-	// 		console.log("confirm participation ...")
 	// 		new Socket().send({
 	// 			"channel" : "tournament",
 	// 			"action" : "confirm participation",
@@ -77,9 +67,6 @@ function create_join_alert(input_tour_id){
 	// 	}
 	// else{
 		tour_id = input_tour_id
-		console.log("sending not")
-		console.log("current state: ", new StateManager().currentStateIndex);
-		console.log("curren substate, ", new StateManager().currentState.currentSubstateIndex)
 		new AlertManager().add_alert(join_alert);
 	// }
 }

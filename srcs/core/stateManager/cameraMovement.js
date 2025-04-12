@@ -22,14 +22,12 @@ window.addEventListener("wheel", (event) => {
 		isAnimating = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
 		scrollDelta = 0;
-		console.log("wheel change states: ");
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
 	}
 });
 
 
 function moveCamera(data, onComplete) {
-	console.log("move cmaera cllaaed!!1");
 	gsap.killTweensOf(engine.camera);
 	gsap.killTweensOf(engine.camera.position);
 	gsap.killTweensOf(engine.camera.rotation);
@@ -72,7 +70,6 @@ function moveCamera(data, onComplete) {
 	tl.eventCallback("onComplete", () => {
 		isAnimating = false;
 		new StateManager().resize();
-		console.log("on complete... ? ");
 		onComplete();
 		engine.camera.position.x = data.pos[0];
 		engine.camera.position.y = data.pos[1];
