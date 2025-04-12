@@ -10,6 +10,7 @@ class StateManager {
         document.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		window.addEventListener('popstate', (event) => {
 			if (event.state)
+				console.log("window changing state")
 				this.changeState(event.state.num, false);
 		  });
 		StateManager.instance = this;
@@ -17,8 +18,11 @@ class StateManager {
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
         if (this.currentStateIndex == index || index < 0)
 			return;
+		console.log("changing state to ", index);
+		console.log("current index is ", this.currentStateIndex);
 		if (this.currentState && this.currentState.exit() == "cancelled" && !this.forcedRedirect)
 			return "cancelled";
+		console.log("exited from current state");
 		if (index >= this.states.length)
 			index = 0;
         this.currentStateIndex = index;
@@ -26,6 +30,7 @@ class StateManager {
 		if (shouldPushHistory)
 			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
 		this.setAllowedDirection();
+		console.log("entering new state: ", this.currentStateIndex)
         this.currentState.enter();
     }
 	setAllowedDirection(){
@@ -37,7 +42,10 @@ class StateManager {
     handleKeyPress(event) {
 		const view = this.currentState?.handleKeyPress(event);
 		if (view && view.change === "state")
+		{
+			console.log("click changing state?")
 			this.changeState(view.index || undefined);
+		}
     }
     resize() {
 		this.states.forEach(state => {

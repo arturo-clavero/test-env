@@ -90,7 +90,7 @@ const aiMachineState = new State(
 	(self)=>{
 		if (self.currentSubstate.exit() == "cancelled")
 			return "cancelled";
-		self.changeSubstate(0);
+		self.changeSubstate(0, false);
 	},
 	[
 		screenMaterial,

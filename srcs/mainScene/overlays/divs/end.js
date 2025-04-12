@@ -2,6 +2,7 @@ import { StateManager } from '../../../core/stateManager/StateManager';
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
+import { MainEngine } from '../../utils/MainEngine';
 
 class End{
 	constructor(color="white"){
@@ -22,7 +23,7 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "EXIT",
-						onClick : ()=> {new StateManager().changeState(0);}
+						onClick : ()=> {new MainEngine().blockRaycast(); new StateManager().changeState(0); }
 					}),
 					new Button({
 						color: color,

@@ -12,7 +12,7 @@ object.self.position.x = 0;
 object.self.position.y = 2;
 
 const aiMachineObj = object;
-aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
+aiMachineObj.add_onclick(()=>{ console.log("on click"); new StateManager().changeState(2);})
 
 const partIndex = 0;
 const surfaceIndex = 0;

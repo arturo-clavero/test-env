@@ -22,6 +22,7 @@ window.addEventListener("wheel", (event) => {
 		isAnimating = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
 		scrollDelta = 0;
+		console.log("wheel change states: ");
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
 	}
 });

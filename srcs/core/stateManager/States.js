@@ -1,5 +1,7 @@
+import { MainEngine } from '../../mainScene/utils/MainEngine';
 import { moveCamera } from './cameraMovement';
 import { StateManager } from './StateManager';
+import { localMachineObj } from '../../mainScene/objects/machines/localMachineObj';
 class State {
     constructor(name, cameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
         this.name = name;
@@ -37,8 +39,9 @@ class State {
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];
 		}
 		this.currentSubstate.enter();
-		if (postCam)
-			this.currentSubstate.postCamEnter();
+		// if (postCam)
+		// 	console.log("post cam enter...")
+		// 	this.currentSubstate.postCamEnter();
     }
 	enter() {
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
@@ -50,7 +53,7 @@ class State {
 	exit() {
 		if (this.currentSubstate.exit() == "cancelled")
 			return 'cancelled';
-		this.changeSubstate(this.startIndex);
+		this.changeSubstate(this.startIndex, false);
 	}
 	handleKeyPress(event) {
 		const view = this.currentSubstate?.handleKeyPress(event);

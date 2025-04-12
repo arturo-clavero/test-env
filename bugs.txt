@@ -1,19 +1,14 @@
 
+//NEXT
 1. EXIT GAME/STATES
-after alert of exiting mid game new games dont load
 changestate(0) doesnt work.... when exiting after local /ai game
 fix the exit controls of game ...  in turnament/local exit allowed when acc game is ended
-
 
 2. WEBSOCKET SHITS
 websocket doesnt start if i start the backend after laoding the page
 
 3. FRONT END LIL SHITS
-mathcmake scroll in x dir too ? 
-NOW//end tournament not centered text ... 
-
-4. GLOBAL
-sometimes games dont start should be fixed with cache of main loop ... 
+NOW// payment back to strat after matchmake. .. //SHOUDL BE FIXED ?
 
 check tournament on 20++
 3, 2, 1, GO!

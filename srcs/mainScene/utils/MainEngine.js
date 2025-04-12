@@ -68,7 +68,18 @@ class MainEngine {
 		this.stateManager.resize();
 
 	}
+	blockRaycast(){
+		this.blockRaycast = true;
+	}
 	click(event){
+		console.log("click event?");
+		if (this.blockRaycast == true)
+		{
+			this.blockRaycast = false;
+			return
+		}
+		console.log("click event allowed");
+
 		this.mousemove(event);
 		this.raycaster.setFromCamera(this.mouse, this.camera);	
 		for (let i = 0; i < this.clickableObjects.length; i++)
@@ -78,7 +89,12 @@ class MainEngine {
 			const bbox = this.clickableObjects[i].userData.instance.get_bbox();
 			const intersectsModel = this.raycaster.ray.intersectBox(bbox, new THREE.Vector3());
 			if (intersectsModel)
+			{
+				console.log("clicked raycaster...");
 				this.clickableObjects[i].userData.instance.handle_click(this.raycaster);
+				return ;
+			}
+
 		}
 	}
 	mousemove(event){

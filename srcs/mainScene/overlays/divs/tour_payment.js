@@ -85,11 +85,9 @@ function payment_successful(){
 	})
 	container.getElementById("pay-message").element.textContent = "Payment Successful";
 	let stateManager = new StateManager();
-	let curr_state = stateManager.currentState;
-	let curr_substate =  stateManager.currentState.currentSubstate;
 	setTimeout(() => {
 		stateManager = new StateManager();
-		if (stateManager.currentState == curr_state && curr_substate == stateManager.currentState.currentSubstate)
+		if (stateManager.currentState == 3 && stateManager.currentState.currentSubstate == 6)
 			fadeOut();
 			stateManager.currentState.changeSubstate(5);
 	}, 2000);//10 second

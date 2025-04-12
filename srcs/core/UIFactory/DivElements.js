@@ -53,7 +53,10 @@ class FlexBox extends BaseDivElement {
 				this.element.style.paddingRight = padding;
 			}
 			if (flex > 0) this.element.style.flex = flex;
+			this.element.style.overflowY = "hidden";
+			this.element.style.overflowX = "hidden";
 			if (scrollable) this.element.style.overflowY = "auto";
+		
 		}
 }
 
