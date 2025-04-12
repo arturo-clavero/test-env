@@ -170,11 +170,11 @@ function	resize(e) {
 
 function exit(){
 	if (end == false){
-		const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
-		if (userConfirmed)
+		//const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
+		// if (userConfirmed)
 			clean();
-		else
-			return "forbidden";
+		// else
+		// 	return "forbidden";
 	}
 }
 

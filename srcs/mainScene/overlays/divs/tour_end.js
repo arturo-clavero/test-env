@@ -90,10 +90,6 @@ function dynamic_content(data){
 		console.log("showing prize!")
 		container.getElementById("prize-announcement").element.style.display = "";
 		container.getElementById("prize-announcement").element.style.visibility = "visible";
-		container.getElementById("subtitle").element.display = "";
-		container.getElementById("subtitle").element.visibility = "visible";
-		container.getElementById("coin").element.display = "";
-		container.getElementById("coin").element.visibility = "visible";
 		const text = container.getElementById("prize").element;
 
 		gsap.to({ val: 0 }, {

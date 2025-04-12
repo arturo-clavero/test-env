@@ -208,6 +208,7 @@ const screenMatchmake = new CssSubState(
 	null,
 	()=>{
 		divMatchmake['hide-div']();
+		divMatchmake["exit"]();
 	},
 	()=>{
 		divMatchmake["resize"]();

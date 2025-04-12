@@ -110,7 +110,8 @@ class TournamentChannel():
 	async def matchmake(self):
 		print("matchamke")
 		self.current_round += 1
-		self.total_matches = len(self.remaining_players) / 2 #+ len(self.remaining_players % 2)
+		print("remianining players: ", len(self.remaining_players))
+		self.total_matches = len(self.remaining_players) // 2 #+ len(self.remaining_players % 2)
 		await self.remaining_players[0].send_channel(self.remainingRoom, {
 			"type" : "tour.updates",
 			"update_display" : "matchmaking rounds",
@@ -132,6 +133,7 @@ class TournamentChannel():
 	async def start_remote_game(self, player1, player2):
 		from .playLog import new_game
 		print("START TORUNAMENT MATCH")
+		print("remianining players: ", len(self.remaining_players))
 		print(player1.user_id)
 		print(player2.user_id)
 
@@ -163,11 +165,13 @@ class TournamentChannel():
 
 	async def end_remote_game(self, data):
 		print("END TORUNAMENT MATCH")
+		print("remianining players: ", len(self.remaining_players))
 		print("received: ", data)
 		winner = next((user for user in self.registered_players if user.user_id == data["winner"]), None)
 		self.remaining_players.append(winner)
+		print("remianining players + winner: ", len(self.remaining_players))
 		looser = next((user for user in self.registered_players if user.user_id == data["looser"]), None)
-		looser.remove_channel(self.remainingRoom)
+		await looser.remove_channel(self.remainingRoom)
 		print("winer: ", winner, winner.user_id)
 		print("looser: ", looser, looser.user_id)
 		self.total_matches -= 1

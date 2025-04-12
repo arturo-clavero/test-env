@@ -18,10 +18,14 @@ ball.receiveShadow = true;
 ball.castShadow = true;
 engine.scene.add(ball);
 
+let dir = 1
 function animate() {
-	ball.rotation.x += 0.001;
-	ball.rotation.y += 0.001;
-	ball.rotation.z += 0.001;
+	ball.rotation.x += 0.01;
+	ball.rotation.y += 0.01;
+	ball.rotation.z += 0.01;
+	ball.position.z += 0.01 * dir;
+	if (ball.position.z == 2 || ball.position.z == 0)
+		dir *= -1;
   }
 
   function	resize(e) {

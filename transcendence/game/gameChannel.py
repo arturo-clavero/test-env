@@ -60,15 +60,17 @@ class GameChannel():
 		await self.consumer.join_channel(f"game_{self.gameID}")
 		await self.verify_user()
 		players[self.gameID]["ready"] += 1
-		if self.reconnected == True:
-			active_sessions[self.gameID] = self.old_game
-			active_connections[self.user_id] = self
-			ready_connections[self.gameID] += 1
+		# if self.reconnected == True:
+		# 	active_sessions[self.gameID] = self.old_game
+		# 	active_connections[self.user_id] = self
+		# 	ready_connections[self.gameID] += 1
 		if players[self.gameID]["ready"] == self.max_players:
+			print('callling start...')
 			active_sessions[self.gameID] = Game(self.gameID)
 			names = get_player_alias(self.gameID)
 			await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
 		else:
+			print("pending...")
 			pending_sessions[self.gameID] = time.time()
 
 	async def verify_user(self):
@@ -76,8 +78,10 @@ class GameChannel():
 			players[self.gameID] = {"connected" : 0, "ready" : 0}
 		self.max_players = get_max_players(self.gameID)
 		print("max players: ", self.max_players)
+		print("game id: ", self.gameID)
 		players[self.gameID]["connected"] += 1
 		if players[self.gameID]["connected"] > self.max_players:
+			print("too many... finish.. ")
 			await self.finish()
 		
 	async def manage_user_multitab(self):

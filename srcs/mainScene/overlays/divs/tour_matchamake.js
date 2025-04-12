@@ -40,11 +40,12 @@ function organize_players_array(array){
 	// array.unshift(...elementsToMove); 
 	return array;
 }
+let new_matches;
 function dynamic_content(data){
 	console.log("udating amthcmake content")
 	container.getElementById("title").element.textContent=`Round ${data["current round"]}/${data["max rounds"]}`;
 	container.getElementById("subtitle").element.textContent=`${data["players"].length} players`;
-	let new_matches = createTextGrid(organize_players_array(data["players"]));
+	new_matches = createTextGrid(organize_players_array(data["players"]));
 	container.getElementById("matches").element.replaceWith(new_matches.element);
 }
 
@@ -112,6 +113,9 @@ function hide_div(){
 	container.element.style.visibility = "hidden";
 }
 
+function exit(){
+	new_matches.element.replaceWith(container.getElementById("matches").element)
+}
 
 
 const matchmake = {
@@ -120,6 +124,7 @@ const matchmake = {
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
 	"dynamic-content": dynamic_content,
+	"exit" : exit,
 }
 
 export {matchmake}

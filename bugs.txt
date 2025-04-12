@@ -1,7 +1,16 @@
 
-1. after alert of exiting mid game new games dont load
-2. websocket doesnt start if i start the backend after laoding the page
-3. timer display not done for tournament ... 
+1. EXIT GAME/STATES
+after alert of exiting mid game new games dont load
 changestate(0) doesnt work.... when exiting after local /ai game
-mathcmake scroll in x dir too ? 
 fix the exit controls of game ...  in turnament/local exit allowed when acc game is ended
+
+
+2. WEBSOCKET SHITS
+websocket doesnt start if i start the backend after laoding the page
+
+3. FRONT END LIL SHITS
+mathcmake scroll in x dir too ? 
+end tournament not centered text ... 
+
+4. tournament
+round 2 after one skips ... 
