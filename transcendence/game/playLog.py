@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from uuid import uuid4, uuid1
 import pprint
-from .tournamentChannel import ongoing_tournaments
 
 active_game_logs = {}
 
@@ -33,9 +32,11 @@ def	new_game(request):
 			}, status=201)
 
 
-def	store_game_results(results):
+async def store_game_results(results):
+	from .tournamentChannel import ongoing_tournaments
 	global active_game_logs
 
+	print("store called")
 	if results["gameID"] not in active_game_logs:
 		return
 	log = active_game_logs[results["gameID"]]
@@ -82,10 +83,18 @@ def	store_game_results(results):
 	print("results: ", results)
 	print("log: ", log)
 	if log["type"] == "remote":
-		ongoing_tournaments[log["tour_id"]].end_remote_game({
-			"winner" : results["winner"],
-			"looser" : results["looser"]
-		})
+		print("ot: ", ongoing_tournaments[log["tour_id"]])
+		if log['players']['1']["result"] == "win" :
+			await ongoing_tournaments[log["tour_id"]].end_remote_game({
+				"winner" :  log['players']['1']['id'],
+				"looser" :  log['players']['2']['id'],
+			})
+		else:
+			await ongoing_tournaments[log["tour_id"]].end_remote_game({
+				"looser" :  log['players']['1']['id'],
+				"winner" :  log['players']['2']['id'],
+			})
+
 	# store log in data base ... 
 
 	pprint.pprint(log)	# end storage

@@ -130,7 +130,10 @@ function completed(msg){
 		content_body.new("game over", "thick", 0, 0, 0, 15, 1.5, engine);
 	}
 	clean();
-	new StateManager().currentState.changeSubstate();
+	if (mode == "local" || mode == "AI")
+		new StateManager().currentState.changeSubstate();
+	else
+		console.log("did nto exit because mdoe is ", mode);
 }
 
 

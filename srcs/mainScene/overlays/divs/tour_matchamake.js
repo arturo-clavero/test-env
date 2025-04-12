@@ -97,6 +97,7 @@ function createTextGrid(players) {
 		return new FlexBox({
 			dir: "column",
 			flex: 1,
+			width: "100%",
 			mainAxis: "space-evenly",
 			scrollable: "true",
 			children: rows

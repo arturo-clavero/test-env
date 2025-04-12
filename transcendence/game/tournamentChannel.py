@@ -116,15 +116,19 @@ class TournamentChannel():
 			"max rounds" : self.max_rounds,
 			"players" : [user.alias for user in self.remaining_players]
 		})
+		print("total matches: ", self.total_matches)
 		print("before sleep...")
 		await asyncio.sleep(5)
 		print('after sleep...')
-		while len(self.remaining_players) > 1:
+		while len(self.remaining_players) >= 2:
 			await self.start_remote_game(self.remaining_players.pop(), self.remaining_players.pop())
 
 	async def start_remote_game(self, player1, player2):
 		from .playLog import new_game
 		print("START TORUNAMENT MATCH")
+		print(player1.user_id)
+		print(player2.user_id)
+
 		response = new_game(APIRequestFactory().post("/api/new_game/", {
 			"type": "remote", 
 			"userID1": player1.user_id,
@@ -154,10 +158,16 @@ class TournamentChannel():
 	async def end_remote_game(self, data):
 		print("END TORUNAMENT MATCH")
 		print("received: ", data)
-		self.remaining_players.append(data["winner"])
-		confirmed_players[data["looser"]].consumer.remove_channel(self.remainingRoom)
+		winner = next((user for user in self.registered_players if user.user_id == data["winner"]), None)
+		self.remaining_players.append(winner)
+		looser = next((user for user in self.registered_players if user.user_id == data["looser"]), None)
+		looser.remove_channel(self.remainingRoom)
+		print("winer: ", winner, winner.user_id)
+		print("looser: ", looser, looser.user_id)
 		self.total_matches -= 1
-		confirmed_players[data["looser"]].consumer.send_self({
+		print("matches left: ", self.total_matches)
+		print("looser sent end game 1")
+		await looser.send_self({
 					"type":"tour.updates",
 					"update_display":"end game",
 					"title":f"You have lost round {self.current_round}",
@@ -165,25 +175,27 @@ class TournamentChannel():
 				})
 		if self.total_matches == 0 and len(self.remaining_players) == 1:
 				self.state = "end"
-				await self.finish(data["winner"])
-				confirmed_players[data["winner"]].consumer.send_self({
+				print("winner sent end game 1")
+				await winner.send_self({
 					"type":"tour.updates",
 					"update_display":"end game",
 					"title":"You have won the tournament",
 					"prize":self.prize_pool,
 					"button":"exit",
 				})
+				await self.finish(winner)
 				#blockhain send him payment! of self.prize_pool
 				return
 		else :
-			confirmed_players[data["winner"]].consumer.send_self({
+			print("winner sent end game cc")
+			await winner.send_self({
 					"type":"tour.updates",
 					"update_display":"end game",
 					"title":f"You have won round {self.current_round}",
 					"button":"wait",
 				})
-		if self.total_matches == 0  :
-				await self.matchmake()
+		if self.total_matches == 0 :
+			await self.matchmake()
 
 	async def finish(self, winner):
 		results = {
@@ -196,7 +208,7 @@ class TournamentChannel():
 			remaining_players.remove(self.consumer.user_id)
 		self.state == "end"
 		del ongoing_tournaments[self.tour_id]
-		await self.consumer.remove_channel(self.room)
+		# await self.consumer.remove_channel(self.room)
 
 	async def disconnect(self):
 		if self.status == "active":

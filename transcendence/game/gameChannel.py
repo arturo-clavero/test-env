@@ -24,7 +24,8 @@ class GameManager():
 					if updates:
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
 						if updates["state"] == "game end":
-							store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
+							print("gm calls store ")
+							await store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
 							active_sessions.pop(gameID, None)
 							pending_sessions.pop(gameID, None)
 							break
@@ -98,7 +99,8 @@ class GameChannel():
 			del active_sessions[self.gameID]
 			pending_sessions.pop(self.gameID, None)
 		elif self.gameID in pending_sessions:
-			store_game_results({"error":"player disconnected in waiting room", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
+			print("gme calls store err1")
+			await store_game_results({"error":"player disconnected in waiting room", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
 			del pending_sessions[self.gameID]
 		if players.get(self.gameID):
 			players[self.gameID]["connected"] -= 1
@@ -123,7 +125,8 @@ class GameChannel():
 							"type": "game update",
 							"updates": {"state" : updates["state"], "info" : updates["info"]}
 						}))
-			store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
+			print("gm calls store err 2")
+			await store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
 			await self.finish()
 		elif (updates["state"] == "playing" or updates["state"] == "game end"):
 			await self.consumer.send_self({

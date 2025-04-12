@@ -69,9 +69,9 @@ export class Socket {
 		else if (data.update_display == "end game")
 		{
 			end["dynamic-content"](data);
-			setTimeout(() => {
-				new StateManager().currentState.changeSubstate(10);
-			}, 3000);
+		//	setTimeout(() => {
+				new StateManager().currentState.changeSubstate();
+		//	}, 3000);
 		}
 	}
 	updateTourRegistration(data){

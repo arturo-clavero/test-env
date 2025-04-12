@@ -16,7 +16,8 @@ const container = new Overlay([
 				children: [
 					new Text({
 						id: "title",
-						fontSize : 1
+						fontSize : 1,
+						flex: 1,
 					}),
 					new FlexBox({
 						dir: "column",
@@ -24,7 +25,7 @@ const container = new Overlay([
 						id: "prize-announcement",
 						children: [
 							new Text({
-								id: "sub title",
+								id: "subtitle",
 								fontSize : 0.75,
 								content: "You earned: "
 							}),
@@ -56,36 +57,43 @@ const container = new Overlay([
 				children: [
 					new Button({
 						id: "button",
+						fontSize: 0.55,
+						content: "tst",
+						onClick: ()=>{
+							if (container.getElementById("button").element.textContent == "EXIT")
+								{
+									let stateManager = new StateManager();
+									stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
+								}	
+						}
 					})
 				]
 			})
 		])
 
-let exitButton = new Button({
-	id: "button",
-	fontSize: 0.75,
-	content: "EXIT",
-	onClick: ()=>{
-		if (container.getElementById("button").element.textContent == "EXIT")
-		{
-			let stateManager = new StateManager();
-			stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
-		}	
-	}
-})
-
-let waitButton = new Button({
-	id: "waitButton",
-	fontSize: 0.55,
-	content: "loading next round",
-})
-
 function dynamic_content(data){
-	if (data.button == "exit") container.getElementById("button").element.textContent == "EXIT";
-	else if (data.button == "wait") container.getElementById("button").element.textContent == "loading next round...";
+	container.element.style.visibility = "visible";
+
+	console.log("dynamic content");
+	if (data.button == "exit") container.getElementById("button").element.textContent = "EXIT";
+	else if (data.button == "wait") container.getElementById("button").element.textContent = "loading next round...";
+	else console.log("button: ", data.button)
 	container.getElementById("title").element.textContent = data["title"];
+	container.getElementById("prize-announcement").element.display = "none";
+	container.getElementById("prize-announcement").element.visibility = "hidden";
+	container.getElementById("subtitle").element.display = "none";
+	container.getElementById("subtitle").element.visibility = "hidden";
+	container.getElementById("coin").element.display = "none";
+	container.getElementById("coin").element.visibility = "hidden";
 	if ("prize" in data)
 	{
+		console.log("showing prize!")
+		container.getElementById("prize-announcement").element.display = "";
+		container.getElementById("prize-announcement").element.visibility = "visible";
+		container.getElementById("subtitle").element.display = "";
+		container.getElementById("subtitle").element.visibility = "visible";
+		container.getElementById("coin").element.display = "";
+		container.getElementById("coin").element.visibility = "visible";
 		const text = container.getElementById("prize").element;
 
 		gsap.to({ val: 0 }, {
@@ -127,7 +135,7 @@ function hide_buttons(){
 }
 
 function show_div(){
-	container.element.style.visibility = "visible";
+	//container.element.style.visibility = "visible";
 }
 
 function hide_div(){

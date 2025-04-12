@@ -3,3 +3,5 @@
 2. websocket doesnt start if i start the backend after laoding the page
 3. timer display not done for tournament ... 
 changestate(0) doesnt work.... when exiting after local /ai game
+mathcmake scroll in x dir too ? 
+fix the exit controls of game ...  in turnament/local exit allowed when acc game is ended
