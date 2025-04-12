@@ -18,7 +18,7 @@ class GameManager():
 
 	async def broadcast_game_state(self):
 		while True:
-			# try:
+			try:
 				for gameID, game in active_sessions.items():
 					print(gameID)
 					updates = game.update_state()
@@ -40,9 +40,9 @@ class GameManager():
 						break 
 
 				await asyncio.sleep(0.016)  # ~60 updates per second
-			# except Exception as e:
-			# 	print(f"Error in game loop: {e}")
-			# 	break
+			except Exception as e:
+				print(f"Error in game loop: {e}")
+				break
 		self.running_tasks.clear()
 
 gameManager = GameManager()
@@ -72,8 +72,6 @@ class GameChannel():
 			print('callling start...')
 			active_sessions[self.gameID] = Game(self.gameID)
 			names = get_player_alias(self.gameID)
-			if not gameManager.running_tasks:
-				gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
 			await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
 		else:
 			print("pending...")

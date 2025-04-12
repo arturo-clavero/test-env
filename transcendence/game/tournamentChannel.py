@@ -210,7 +210,7 @@ class TournamentChannel():
 	async def finish(self, winner):
 		results = {
 			"winner" : winner,
-			"participants" : self.all_players_alias,
+			"participants" : self.registered_players,
 			"prize pool" : self.prize_pool,
 		}
 		# store_tournament_results(results)
