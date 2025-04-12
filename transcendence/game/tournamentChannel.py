@@ -3,6 +3,8 @@ from channels.layers import get_channel_layer
 from rest_framework.test import APIRequestFactory
 from uuid import uuid4, uuid1
 from .channels import send_message
+from django.utils import timezone
+
 
 #short term storage
 ongoing_tournaments = {}
@@ -28,12 +30,13 @@ class TournamentChannel():
 		pending_tournament = self
 		ongoing_tournaments[self.tour_id] = self
 		self.consumer = consumer
+		self.start_time = timezone.now() + timezone.timedelta(seconds=waitTime)
 		# self.registered_user = None
 
 	async def join(self, consumer):
 		if len(self.registered_players) < max_players:
 			await consumer.send_self({"type" : "tour.updates",
-			"update_display" : "pay", "tour_id" : self.tour_id,})
+			"update_display" : "pay", "tour_id" : self.tour_id})
 		else:
 			await consumer.send_channel("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "full"})
@@ -55,7 +58,7 @@ class TournamentChannel():
 	async def notify_start(self):
 		global waitTime
 
-		await asyncio.sleep(waitTime)
+		await asyncio.sleep(waitTime - 5)
 		self.status = "locked"
 		if len(self.registered_players) > 0:
 			await self.registered_players[0].send_channel(self.registeredRoom, {"type" : "tour.updates",
@@ -67,7 +70,7 @@ class TournamentChannel():
 		from .consumers import active_users 
 		global ongoing_tournaments, pending_tournament, waitTime, min_players
 
-		await asyncio.sleep(waitTime + 5)
+		await asyncio.sleep(waitTime)
 		print("START")
 		#restart new tournament - create option
 		pending_tournament = None
@@ -122,6 +125,9 @@ class TournamentChannel():
 		print('after sleep...')
 		while len(self.remaining_players) >= 2:
 			await self.start_remote_game(self.remaining_players.pop(), self.remaining_players.pop())
+		if len(self.remaining_players) == 1:
+			await self.remaining_players[0].send_self({"type": "tour.updates",
+			"update_display" : 'waiting'})
 
 	async def start_remote_game(self, player1, player2):
 		from .playLog import new_game

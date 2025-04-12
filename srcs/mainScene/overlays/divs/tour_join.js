@@ -28,10 +28,12 @@ const container = new Overlay([
 				fontSize: 0.45
 			}),
 			new Text({
+				id: "timer",
 				content: "TIMER",
 				fontSize: 1
 			}),
 			new Text({
+				id: "entryprice",
 				content:  `entry ${entryPrice} ETC`,
 				fontSize: 0.45
 			}),
@@ -76,6 +78,7 @@ function hide_div(){
 	hide_buttons();
 }
 
+let offset, startTime, interval;
 function dynamic_content(data){
 	console.log("join div dynmic conetn");
 	console.log("dynamic content", data);
@@ -88,15 +91,42 @@ function dynamic_content(data){
 			container.getElementById("prize-context").element.textContent = `WIN UP TO ${value} ETC !`;
 	}
 	if ("button" in data){
+		container.getElementById("entryprice").element.style.display = ""
 		let new_content = data["button"];
 		let button = container.getElementById("button").element;
 		if (new_content == "join") button.textContent = "JOIN";
-		else if (new_content == "subscribed")  button.textContent = "Subscribed";
+		else if (new_content == "subscribed")
+		{
+			button.textContent = "Subscribed";
+			container.getElementById("entryprice").element.style.display = "none"
+		}
 		else if (new_content == "locked" && button.textContent != "Subscribed")  button.textContent = "LOCKED";
-
 	}
-
+	if ("now" in data && "start" in data){
+		console.log("update timer");
+		offset = new Date() - new Date(data.now);
+		startTime = new Date(data.start);
+		updateTimer();
+		interval = setInterval(updateTimer, 100);
+	}
 }
+
+let lastShown = null;
+function updateTimer() {
+	const now = new Date();
+	const correctedNow = new Date(now - offset);
+	const remaining = Math.floor((startTime - correctedNow) / 1000);
+	if (remaining !== lastShown) {
+		lastShown = remaining;
+
+		const minutes = Math.floor(remaining / 60);
+		const seconds = remaining % 60;
+		document.getElementById("timer").textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+	}
+	if (remaining <= 0)
+		clearInterval(interval);
+}
+
 const join = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,

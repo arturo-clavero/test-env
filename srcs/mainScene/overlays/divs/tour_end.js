@@ -79,8 +79,8 @@ function dynamic_content(data){
 	else if (data.button == "wait") container.getElementById("button").element.textContent = "loading next round...";
 	else console.log("button: ", data.button)
 	container.getElementById("title").element.textContent = data["title"];
-	container.getElementById("prize-announcement").element.display = "none";
-	container.getElementById("prize-announcement").element.visibility = "hidden";
+	container.getElementById("prize-announcement").element.style.display = "none";
+	container.getElementById("prize-announcement").element.style.visibility = "hidden";
 	container.getElementById("subtitle").element.display = "none";
 	container.getElementById("subtitle").element.visibility = "hidden";
 	container.getElementById("coin").element.display = "none";
@@ -88,8 +88,8 @@ function dynamic_content(data){
 	if ("prize" in data)
 	{
 		console.log("showing prize!")
-		container.getElementById("prize-announcement").element.display = "";
-		container.getElementById("prize-announcement").element.visibility = "visible";
+		container.getElementById("prize-announcement").element.style.display = "";
+		container.getElementById("prize-announcement").element.style.visibility = "visible";
 		container.getElementById("subtitle").element.display = "";
 		container.getElementById("subtitle").element.visibility = "visible";
 		container.getElementById("coin").element.display = "";

@@ -13,6 +13,7 @@ import { refund } from '../overlays/divs/tour_refund';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
+import { waiting } from '../overlays/scenes/waiting';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -246,6 +247,14 @@ const screenEnd = new CssSubState(
 	null,
 )
 
+const screenWaiting = new MeshSubState(
+	"waiting", 
+	screenSurface,
+	waiting,
+	2,
+	null,
+)
+
 const tourMachineState = new State(
 	"tour game screen", 
 	{
@@ -265,6 +274,7 @@ const tourMachineState = new State(
 		screenMatchmake,//8
 		screenGame,
 		screenEnd,
+		screenWaiting, //11
 	],
 	(self)=>{
 		self.changeSubstate();
@@ -279,6 +289,7 @@ const tourMachineState = new State(
 	[
 		screenMaterial,
 		pongGame.renderMaterial,
+		waiting.renderMaterial,
 	],
 )
 

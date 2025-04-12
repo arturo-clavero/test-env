@@ -9,6 +9,7 @@ import asyncio
 # from .playLog import store_game_results
 from .gameChannel import GameChannel, gameManager
 from .tournamentChannel import TournamentChannel, ongoing_tournaments, pending_tournament
+from django.utils import timezone
 
 # from .tournamentChannel import TournamentChannel
 import numpy as np
@@ -55,6 +56,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 								"update_tour_registration" : "join",
 								"button" : "join",
 								"prize_pool" : newTour.prize_pool,
+								"now" : timezone.now().isoformat(),
+								"start" : newTour.start_time.isoformat()
 							})
 					# asyncio.create_task(newTour.notify_start())
 					asyncio.create_task(newTour.start())
@@ -64,6 +67,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 								"update_tour_registration" : "join",
 								"button" : "join",
 								"prize_pool" : pending_tournament.prize_pool,
+								"now" : timezone.now().isoformat(),
+								"start" : newTour.start_time.isoformat(),
 							})
 
 			elif data["action"] == "join" and pending_tournament != None:
@@ -92,7 +97,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"update_tour_registration" : "join",
 				"button" : "subscribed",
 				"prize_pool" : pending_tournament.prize_pool,
-
+				"now" : timezone.now().isoformat(),
+				"start" : pending_tournament.start_time.isoformat()
 			})
 		elif pending_tournament.status == "locked":
 			print('locke')
@@ -101,6 +107,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"update_tour_registration" : "join",
 				"button" : "locked",
 				"prize_pool" : pending_tournament.prize_pool,
+				"now" : timezone.now().isoformat(),
+				"start" : pending_tournament.start_time.isoformat()
 			})
 		else:
 			print('join')
@@ -109,6 +117,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"update_tour_registration" : "join",
 				"button" : "join",
 				"prize_pool" : pending_tournament.prize_pool,
+				"now" : timezone.now().isoformat(),
+				"start" : pending_tournament.start_time.isoformat()
 			})
 
 

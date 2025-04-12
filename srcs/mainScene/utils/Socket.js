@@ -73,6 +73,8 @@ export class Socket {
 				new StateManager().currentState.changeSubstate();
 		//	}, 3000);
 		}
+		else if (data.update_display == "waiting")
+			new StateManager().currentState.changeSubstate(11);
 	}
 	updateTourRegistration(data){
 		console.log("update tour registration")
