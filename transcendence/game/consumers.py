@@ -77,6 +77,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 					await pending_tournament.confirm_payment(self)
 			elif data["action"] == "confirm participation" and "tour_id" in data:
 				await ongoing_tournaments[data["tour_id"]].confirm_participation(self)
+			elif data["action"] == "finish":
+				await ongoing_tournaments[]
 
 
 	async def update_tournament_display(self):

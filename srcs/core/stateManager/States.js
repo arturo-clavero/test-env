@@ -7,8 +7,8 @@ class State {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
-		this.enterState = enterState;
-		this.exitState = exitState;
+		this.enterState = enterState || (()=>{});
+		this.exitState = exitState || (()=>{});
 		this.materials = materials;
 		this.materialIndex = -1;
 		this.changeSubstate(0);
@@ -43,6 +43,7 @@ class State {
 			this.currentSubstate.postCamEnter();
     }
 	enter() {
+		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
 		if (this.cameraMovement)
 			moveCamera(this.cameraMovement, () =>{
@@ -50,7 +51,7 @@ class State {
 			})
 	}
 	exit() {
-		if (this.currentSubstate.exit() == "cancelled")
+		if (this.exitState() == "cancelled" || this.currentSubstate.exit() == "cancelled")
 			return 'cancelled';
 		this.changeSubstate(this.startIndex, false);
 	}

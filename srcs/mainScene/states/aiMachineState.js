@@ -84,14 +84,8 @@ const aiMachineState = new State(
 		fakeGameScreen,
 		endScreen
 	],
-	(self)=>{
-		self.changeSubstate();
-	},
-	(self)=>{
-		if (self.currentSubstate.exit() == "cancelled")
-			return "cancelled";
-		self.changeSubstate(0, false);
-	},
+	null,
+	null,
 	[
 		screenMaterial,
 		pongGame.renderMaterial,

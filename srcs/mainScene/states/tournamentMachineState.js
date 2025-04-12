@@ -14,6 +14,8 @@ import { pongGame } from '../overlays/scenes/pong-game/Game';
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
 import { waiting } from '../overlays/scenes/waiting';
+import { StateManager } from '../../core/stateManager/StateManager';
+import { Socket } from '../utils/Socket';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -275,15 +277,16 @@ const tourMachineState = new State(
 		screenEnd,
 		screenWaiting, //11
 	],
-	(self)=>{
-		self.changeSubstate();
-	},
-	(self)=>{
-		if (self.currentSubstateIndex != 2)
+	null,
+	()=>{
+		if (new StateManager().currentState.currentSubstateIndex >= 8 && divEnd["cant-exit"]() == true)
 		{
-			self.currentSubstate.exit();
-			self.changeSubstate(0);
+			console.log("alert")
 		}
+		new Socket().send({
+			"channel" : "tournament",
+			"action" : "finish",
+		})
 	},
 	[
 		screenMaterial,

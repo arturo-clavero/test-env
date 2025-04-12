@@ -24,11 +24,8 @@ const mainState = new State(
 		ease: "power2.inOut"
 	}, 
 	[ mainSub ],
-	(self)=>{
-		if (!self.currentSubstate)
-			self.changeSubstate(0);
-	},
-	()=>{},
+	null,
+	null,
 	[],
 );
 

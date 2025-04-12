@@ -83,14 +83,8 @@ const localMachineState = new State(
 		fakeGameScreen,
 		endScreen
 	],
-	(self)=>{
-		self.changeSubstate();
-	},
-	(self)=>{
-		if (self.currentSubstate.exit() == "cancelled")
-			return "cancelled";
-		self.changeSubstate(0);
-	},
+	null,
+	null,
 	[
 		screenMaterial,
 		pongGame.renderMaterial,
