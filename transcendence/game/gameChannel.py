@@ -64,10 +64,10 @@ class GameChannel():
 		await self.consumer.join_channel(f"game_{self.gameID}")
 		await self.verify_user()
 		players[self.gameID]["ready"] += 1
-		# if self.reconnected == True:
-		# 	active_sessions[self.gameID] = self.old_game
-		# 	active_connections[self.user_id] = self
-		# 	ready_connections[self.gameID] += 1
+		if self.reconnected == True:
+			active_sessions[self.gameID] = self.old_game
+			active_connections[self.user_id] = self
+			ready_connections[self.gameID] += 1
 		if players[self.gameID]["ready"] == self.max_players:
 			print('callling start...')
 			active_sessions[self.gameID] = Game(self.gameID)

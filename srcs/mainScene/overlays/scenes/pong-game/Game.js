@@ -71,7 +71,11 @@ function	updatesFromBackend(data){
 		if (state != "countdown")
 			countdown();
 		num = data.updates.num == 1 ? "|" : data.updates.num;
-		content_body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
+		if (data.updates.num == 0)
+			content_body.new("GO", "thick", 0, 0, 0, 5.5, 1, engine);
+
+		else
+			content_body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
 	}
 	if (data.updates.state == "playing")
 	{

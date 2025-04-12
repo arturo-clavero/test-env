@@ -44,7 +44,7 @@ class Game:
 		if time.time() - self.countdown_timer >= 1 or self.active == False:
 			self.active = True
 			self.countdown_num -= 1
-			if (self.countdown_num <= 0):
+			if (self.countdown_num < 0):
 				self.update_state = self.update_play
 			else:
 				update["state"] = "countdown"
