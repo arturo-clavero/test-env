@@ -13,7 +13,7 @@ import { screenSurface } from './mainScene/objects/machines/aiMachineObj';
 
 import { arcadeMachine } from './mainScene/objects/arcadeMachine';
 import { Socket } from './mainScene/utils/Socket';
-
+import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
 document.addEventListener('keydown', (event) => {
 	if (event.key == "i")
 	{
@@ -26,7 +26,6 @@ document.addEventListener('keydown', (event) => {
 		)
 	}
 });
-
 const engine = new MainEngine();
 
 engine.add(backBox, false);
@@ -35,8 +34,10 @@ engine.add(aiMachineObj, true);
 engine.add(tourMachineObj, true);
 
 engine.stateManager = stateManager;
-new Socket()
+new Socket();
 //shakeCamera(engine.camera);
+create_redirection_alert()
+
 function animate() {
 	requestAnimationFrame(animate);
 	engine.animate();

@@ -14,72 +14,45 @@ const children = [
 		children:
 		[
 			new Text({
-				content: "ALERT!",
-				fontSize: 1,
-				marginBot: "4%",
-			}),
-			new Text({
-				content: "Join tournament within one minute,",
+				content: "TOURNAMENT STARTS SOON",
 				fontSize: 0.75,
-				marginBot: "2%",
+				marginBot: "4%",
 
 			}),
 			new Text({
-				content: "or loose your place!",
-				fontSize: 0.75,
+				content: "You will be redirected",
+				fontSize: 0.55,
 				marginBot: "4%",
 			}),
-			new Button({
-				fontSize: 0.85,
-				content: "JOIN",
-				onClick: ()=>{
-					new StateManager().forcedRedirect = true;
-					new StateManager().changeState(3);
-					new StateManager().forcedRedirect = false;
-					new AlertManager().remove_latest_alert("join_alert");
-					new Socket().send({
-						"channel" : "tournament",
-						"action" : "confirm participation",
-						"tour_id" : get_tour_id()
-					})
-				},
-			})
-			
 		]
-
 	})
 	
 ]
-let tour_id = 0
+let interval;
 
-function get_tour_id(){
-	return tour_id;
-}
-function create_join_alert(input_tour_id){
-	// let stateManager = new StateManager();
-	// if (stateManager.currentStateIndex == 3 
-	// 	&& stateManager.currentState.currentSubstateIndex == 5)
-	// 	{
-	// 		new Socket().send({
-	// 			"channel" : "tournament",
-	// 			"action" : "confirm participation",
-	// 		})
-	// 	}
-	// else{
-		tour_id = input_tour_id
-		new AlertManager().add_alert(join_alert);
-	// }
+function create_redirection_alert(){
+	new AlertManager().add_alert(redirection_alert);
 }
 
 function enter(){
+	const icons = ["assets/icons/Empty.png", "assets/icons/a5.png"];
+    let index = 0;
+	interval = setInterval(() => {
+		const link = document.getElementById("dynamic-favicon");
+		index = (index + 1) % icons.length;
+		link.href = icons[index];
+	  }, 500)
 	setTimeout(() => {
-			new AlertManager().remove_latest_alert("join_alert");
-		}, 10000);//60s
+			new AlertManager().remove_latest_alert("redirection_alert");
+			clearInterval(interval);
+			document.getElementById("dynamic-favicon").href = "assets/icons/a2.png";
+			new StateManager().changeState(3);
+	}, 30000);
 }
 function exit(){
-
+	
 }
 
-const join_alert = new Alert("join_alert", children, "urgent", 100, enter, exit, false);
+const redirection_alert = new Alert("redirection_alert", children, "urgent", 100, enter, exit, false);
 
-export {create_join_alert}
+export {create_redirection_alert}

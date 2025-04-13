@@ -3,7 +3,7 @@ import { pongGame} from '../overlays/scenes/pong-game/Game'
 import {getUserID} from './utils'
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
-import { create_join_alert } from '../overlays/alerts/redirection_warning';
+import { create_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { join } from '../overlays/divs/tour_join';
 
 export class Socket {
@@ -39,7 +39,7 @@ export class Socket {
 	}
 	notification(data){
 		if (data["notification"] == "start")
-			create_join_alert(data["tour_id"]);
+			create_redirection_alert();
 	}
 	updateTourSubState(data){
 		if (data.update_display== "pay")
