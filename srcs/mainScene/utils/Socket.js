@@ -25,7 +25,10 @@ export class Socket {
 			if (!data)
 				return ;
 			if (data.type == "game update")
+			{
+				console.log("received ", data);
 				pongGame["receive"](data);
+			}
 			else if (data.type == "tour.updates")
 			{
 				if ("update_tour_registration" in data) this.updateTourRegistration(data);

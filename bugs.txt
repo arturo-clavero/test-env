@@ -9,6 +9,7 @@ websocket doesnt start if i start the backend after laoding the page
 
 3. FRONT END LIL SHITS
 payment back to strat after matchmake. .. //SHOUDL BE FIXED by notification?
+clicking in id movement resets doesnt accumulate camera movement
 
 check tournament on 20++
 3, 2, 1, GO!

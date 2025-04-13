@@ -20,8 +20,10 @@ class GameManager():
 		while True:
 			try:
 				for gameID, game in active_sessions.items():
+					# print("state: ", game.state)
 					updates = game.update_state()
 					if updates:
+						print("updates: ", updates)
 						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
 						if updates["state"] == "game end":
 							print("gm calls store ")
@@ -54,6 +56,7 @@ class GameChannel():
 	async def start_game(self, consumer, gameID):
 		global gameManager
 
+		print("start game ", gameID)
 		self.status = "on"
 		self.consumer = consumer
 		self.gameID = gameID
@@ -98,6 +101,9 @@ class GameChannel():
 			active_connections[self.user_id] = self
 
 	async def finish(self):
+		if self.status == "uninitialized" or self.status == "off":
+			print("return in finish")
+			return
 		self.status = "off"
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
@@ -124,7 +130,7 @@ class GameChannel():
 				await self.start_game(consumer, data["game_id"])
 			if data["request"] == "update paddles":
 				active_sessions[self.gameID].update_paddles(data)
-			if data["request"] == "end game" and self.gameID in active_sessions :
+			if data["request"] == "end game" :
 				await self.finish()
 
 		

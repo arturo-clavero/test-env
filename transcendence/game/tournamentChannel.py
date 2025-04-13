@@ -220,10 +220,11 @@ class TournamentChannel():
 		del ongoing_tournaments[self.tour_id]
 		# await self.consumer.remove_channel(self.room)
 
-	async def disconnect(self):
+	async def disconnect(self, consumer):
 		if self.status == "active":
 			remaining_players.remove(self.consumer.user_id)
-			await self.consumer.remove_channel(self.room)
+			await consumer.remove_channel(self.remainingRoom)
+			consumer.tournament = None
 
 
 

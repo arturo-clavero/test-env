@@ -44,6 +44,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		if data["channel"] == "game":
+			print("game:", data)
 			await self.gameChannel.receive(self, data)
 
 		elif data["channel"] == "tournament":
@@ -75,10 +76,11 @@ class MainConsumer(AsyncWebsocketConsumer):
 					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
 					await pending_tournament.confirm_payment(self)
-			elif data["action"] == "confirm participation" and "tour_id" in data:
-				await ongoing_tournaments[data["tour_id"]].confirm_participation(self)
-			elif data["action"] == "finish":
-				await ongoing_tournaments[]
+			# elif data["action"] == "confirm participation" and "tour_id" in data:
+			# 	await ongoing_tournaments[data["tour_id"]].confirm_participation(self)
+			elif data["action"] == "finish" and self.tournament != None:
+				await self.tournament.disconnect(self)
+				await self.gameChannel.finish()
 
 
 	async def update_tournament_display(self):

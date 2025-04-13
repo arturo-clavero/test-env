@@ -48,11 +48,13 @@ export	function startPongGame(type = "local"){
 		}
 	function	new_round(gameID_input, userID, player_mode)
 	{
+		console.log("new round");
 		window.addEventListener("keydown", key.handleKeyDown);
 		window.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
 		mode = player_mode;
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
+		console.log('sending to game back end');
 		socket.socket.send({
 			"channel": "game",
 			request: "start game",
@@ -137,6 +139,7 @@ function completed(msg){
 
 
 function	clean(){
+		console.log("clean");
 		window.removeEventListener("keydown", key.handleKeyDown);
 		window.removeEventListener("keyup", key.handleKeyUp);
 		ball.hide();
@@ -144,6 +147,7 @@ function	clean(){
 		middleBars.hide();
 		content_body.hide();
 		header.hide();
+		state = "0";
 		// socket.socket.socket.close();
 		end = true;
 	}
