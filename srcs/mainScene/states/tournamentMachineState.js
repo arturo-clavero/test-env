@@ -16,6 +16,7 @@ import { matchmake } from '../overlays/divs/tour_matchamake';
 import { waiting } from '../overlays/scenes/waiting';
 import { StateManager } from '../../core/stateManager/StateManager';
 import { Socket } from '../utils/Socket';
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -275,14 +276,16 @@ const tourMachineState = new State(
 		screenRefund,
 		screenMatchmake,//8
 		screenGame,
-		screenEnd,
+		screenEnd,//10
 		screenWaiting, //11
 	],
 	null,
 	()=>{
-		if (new StateManager().currentState.currentSubstateIndex >= 8 && divEnd["cant-exit"]() == true)
+		let curr_sub = new StateManager().currentState.currentSubstateIndex;
+		if (curr_sub >= "8" && divEnd["cant-exit"])
 		{
-			console.log("alert")
+			if (create_exit_alert() == "cancelled")
+				return ("cancelled")
 		}
 		new Socket().send({
 			"channel" : "tournament",

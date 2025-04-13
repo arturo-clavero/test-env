@@ -91,7 +91,10 @@ const localMachineState = new State(
 	null,
 	()=>{
 		if (new StateManager().currentState.currentSubstateIndex == "2")
-			return create_exit_alert();
+			{
+				if (create_exit_alert() == "cancelled")
+					return ("cancelled")
+			}
 	},
 	[
 		screenMaterial,

@@ -3,6 +3,7 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { Ball } from "../scenes/pong-game/objects/Ball";
+import { AlertManager } from "../alerts/Alerts";
 
 //you won round x | you lost round x | you won the tournament!
 //you earned
@@ -80,7 +81,11 @@ const container = new Overlay([
 function dynamic_content(data){
 	container.element.style.visibility = "visible";
 
-	if (data.button == "exit") container.getElementById("button").element.textContent = "EXIT";
+	if (data.button == "exit") 
+	{
+		container.getElementById("button").element.textContent = "EXIT";
+		new AlertManager().remove_latest_alert("exit_alert");
+	}
 	else if (data.button == "wait") container.getElementById("button").element.textContent = "loading next round...";
 	container.getElementById("title").element.textContent = data["title"];
 	if ("prize" in data)
