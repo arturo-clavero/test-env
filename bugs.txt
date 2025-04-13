@@ -1,9 +1,3 @@
-
-//NEXT
-1. EXIT GAME/STATES
-fix the exit controls of game ...  in turnament/local exit allowed when acc game is ended
-other notifications
-
 GLOBAL
 change send from consumer to channel ...
 change global to reddis cache... 

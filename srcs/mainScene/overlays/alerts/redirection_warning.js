@@ -37,18 +37,20 @@ function create_redirection_alert(inputlength){
 function enter(){
 	const icons = ["assets/icons/Empty.png", "assets/icons/a5.png"];
     let index = 0;
+	let prev_title = document.title;
+	let favicon = document.getElementById("dynamic-favicon");
+	let prev_icon = favicon.getAttribute("href");
 	document.title = "Battle Begins!";
 	document.getElementById("dynamic-favicon").href = "assets/icons/a5.png";
 	interval = setInterval(() => {
-		const link = document.getElementById("dynamic-favicon");
 		index = (index + 1) % icons.length;
-		link.href = icons[index];
+		favicon.href = icons[index];
 	  }, 500)
 	setTimeout(() => {
-			document.title = "ArcadeHUB";
 			new AlertManager().remove_latest_alert("redirection_alert");
 			clearInterval(interval);
-			document.getElementById("dynamic-favicon").href = "assets/icons/a2.png";
+			document.title = prev_title;
+			favicon.href = prev_icon;
 			new StateManager().changeState(3);
 	}, length);
 }
