@@ -54,14 +54,14 @@ const children = [
 	
 ]
 let can_exit = false;
-
 function create_exit_alert(){
 		if (can_exit)
 		{
 			can_exit = false;
 			return ("continue");
 		}
-		new AlertManager().add_alert(exit_alert);
+		if (new AlertManager().add_alert(exit_alert) == "overrun")
+			return ("continue")
 		return ("cancelled")
 }
 

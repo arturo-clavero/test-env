@@ -39,7 +39,7 @@ export class Socket {
 	}
 	notification(data){
 		if (data["notification"] == "start")
-			create_redirection_alert();
+			create_redirection_alert(data["length"] * 1000);
 	}
 	updateTourSubState(data){
 		if (data.update_display== "pay")

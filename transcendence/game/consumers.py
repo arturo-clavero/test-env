@@ -60,7 +60,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 								"now" : timezone.now().isoformat(),
 								"start" : newTour.start_time.isoformat()
 							})
-					# asyncio.create_task(newTour.notify_start())
+					asyncio.create_task(newTour.notify_start())
 					asyncio.create_task(newTour.start())
 				else : 
 					await self.send_self({

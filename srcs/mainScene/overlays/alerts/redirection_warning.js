@@ -16,38 +16,41 @@ const children = [
 			new Text({
 				content: "TOURNAMENT STARTS SOON",
 				fontSize: 0.75,
-				marginBot: "4%",
+				marginBot: "8%",
 
 			}),
 			new Text({
 				content: "You will be redirected",
 				fontSize: 0.55,
-				marginBot: "4%",
 			}),
 		]
 	})
 	
 ]
 let interval;
-
-function create_redirection_alert(){
+let length;
+function create_redirection_alert(inputlength){
+	length = inputlength;
 	new AlertManager().add_alert(redirection_alert);
 }
 
 function enter(){
 	const icons = ["assets/icons/Empty.png", "assets/icons/a5.png"];
     let index = 0;
+	document.title = "Battle Begins!";
+	document.getElementById("dynamic-favicon").href = "assets/icons/a5.png";
 	interval = setInterval(() => {
 		const link = document.getElementById("dynamic-favicon");
 		index = (index + 1) % icons.length;
 		link.href = icons[index];
 	  }, 500)
 	setTimeout(() => {
+			document.title = "ArcadeHUB";
 			new AlertManager().remove_latest_alert("redirection_alert");
 			clearInterval(interval);
 			document.getElementById("dynamic-favicon").href = "assets/icons/a2.png";
 			new StateManager().changeState(3);
-	}, 30000);
+	}, length);
 }
 function exit(){
 	

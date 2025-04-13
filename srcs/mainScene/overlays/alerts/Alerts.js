@@ -8,29 +8,15 @@ class AlertManager{
 		AlertManager.instance = this;
 	}
 	add_alert(alert){
-		if (!this.currentAlert && this.queue.length == 0)
+		if (!this.currentAlert)
 			this.display_latest_alert(alert);
 		else if (alert.priority > this.currentAlert.priority)
 		{
-			this.queue.push = this.currentAlert;
 			this.currentAlert.hide(true);
 			this.display_latest_alert(alert);
 		}
-		else if (alert.canQueue == true)
-		{
-			let index = -1;
-			for (let i = 0; i < this.queue.length(); i++){
-				if (alert.priority > this.queue[i].priority)
-				{
-					index = i;
-					break;
-				}
-			}
-			if (index == -1)
-				this.queue.push(alert);
-			else
-				this.queue.splice(index, 0, alert);
-		}
+		else
+			return("overrun")
 	}
 	display_latest_alert(alert){
 		this.currentAlert = alert;

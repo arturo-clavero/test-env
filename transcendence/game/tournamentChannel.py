@@ -11,7 +11,8 @@ ongoing_tournaments = {}
 pending_tournament = None
 
 #constants
-waitTime = 10
+waitTime = 30
+notificationTime = 5
 entry_price = 100
 max_players = 1024
 min_players = 2
@@ -56,13 +57,13 @@ class TournamentChannel():
 		await consumer.join_channel(self.registeredRoom)
 	
 	async def notify_start(self):
-		global waitTime
+		global waitTime, notificationTime
 
-		await asyncio.sleep(waitTime - 5)
+		await asyncio.sleep(waitTime - notificationTime)
 		self.status = "locked"
 		if len(self.registered_players) > 0:
 			await self.registered_players[0].send_channel(self.registeredRoom, {"type" : "tour.updates",
-				"notification" : "start", "tour_id" : self.tour_id})
+				"notification" : "start", "length" : notificationTime})
 		await self.consumer.send_channel("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "locked"})
 	
