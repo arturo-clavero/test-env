@@ -68,7 +68,7 @@ function create_exit_alert(){
 function enter(){
 	setTimeout(() => {
 			new AlertManager().remove_latest_alert("exit_alert");
-		}, 60000);//60s
+		}, 4000);//60s
 }
 function exit(){
 

@@ -140,11 +140,11 @@ function hide_div(){
 	hide_buttons();
 }
 
-function cant_exit(){
+function can_exit(){
 	if (new StateManager().currentState.currentSubstateIndex == 10 &&
-	container.getElementById("button").element.textContent != "EXIT")
-		return false;
-	return true;
+	container.getElementById("button").element.textContent == "EXIT")
+		return true;
+	return false;
 }
 
 const end = {
@@ -155,7 +155,7 @@ const end = {
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
-	"cant-exit" : cant_exit,
+	"cant-exit" : can_exit,
 }
 
 export {end}

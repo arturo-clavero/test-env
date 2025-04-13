@@ -282,7 +282,7 @@ const tourMachineState = new State(
 	null,
 	()=>{
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
-		if (curr_sub >= "8" && divEnd["cant-exit"])
+		if (curr_sub >= "8" && divEnd["can-exit"] == false)
 		{
 			if (create_exit_alert() == "cancelled")
 				return ("cancelled")
