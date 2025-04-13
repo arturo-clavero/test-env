@@ -4,12 +4,14 @@
 fix the exit controls of game ...  in turnament/local exit allowed when acc game is ended
 other notifications
 
-2. WEBSOCKET SHITS
-websocket doesnt start if i start the backend after laoding the page
+GLOBAL
+change send from consumer to channel ...
+change global to reddis cache... 
 
-3. FRONT END LIL SHITS
-payment back to strat after matchmake. .. //SHOUDL BE FIXED by notification?
+FRONT END LIL SHITS
+add waiting for connection waiting () as default to game not starting ...
 clicking in id movement resets doesnt accumulate camera movement
+payment back to strat after matchmake. .. //SHOUDL BE FIXED by notification?
 
-check tournament on 20++
-3, 2, 1, GO!
+WEBSOCKET SHITS
+websocket doesnt start if i start the backend after laoding the page

@@ -13,7 +13,7 @@ players = {}
 class GameManager():
 	def __init__(self):
 		self.channel_layer = get_channel_layer()
-		self.pending_timeout = 100
+		self.pending_timeout = 30
 		self.running_tasks = set()
 
 	async def broadcast_game_state(self):
