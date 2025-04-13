@@ -6,8 +6,9 @@ import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
-
+import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+import { AlertManager } from '../overlays/alerts/Alerts';
+import { StateManager } from '../../core/stateManager/StateManager';
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -47,12 +48,15 @@ const startScreen = new CssSubState(
 )
 
 
-const fakeGameScreen = new MeshSubState(
+const gameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	pongGame,
 	1,
 	()=>{startPongGame("AI")},
+	()=>{
+		new AlertManager().remove_latest_alert("exit_alert");
+	},
 )
 
 const divEnd = new End("white");
@@ -81,11 +85,14 @@ const aiMachineState = new State(
 	[
 		restScreen,
 		startScreen, 
-		fakeGameScreen,
+		gameScreen,
 		endScreen
 	],
 	null,
-	null,
+	()=>{
+		if (new StateManager().currentState.currentSubstateIndex == "2")
+			return create_exit_alert();
+	},
 	[
 		screenMaterial,
 		pongGame.renderMaterial,

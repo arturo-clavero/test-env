@@ -3,7 +3,7 @@ import { pongGame} from '../overlays/scenes/pong-game/Game'
 import {getUserID} from './utils'
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
-import { create_join_alert } from '../overlays/alerts/join_tour_alert';
+import { create_join_alert } from '../overlays/alerts/redirection_warning';
 import { join } from '../overlays/divs/tour_join';
 
 export class Socket {

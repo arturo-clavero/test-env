@@ -37,7 +37,7 @@ class AlertManager{
 		this.currentAlert.show();
 	}
 	remove_latest_alert(alert_id){
-		if (this.currentAlert.id != alert_id)
+		if (this.currentAlert == null || this.currentAlert.id != alert_id)
 			return;
 		this.currentAlert.hide();
 		this.currentAlert = null;

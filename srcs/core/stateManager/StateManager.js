@@ -17,6 +17,7 @@ class StateManager {
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
         if (this.currentStateIndex == index || index < 0)
 			return;
+		this.scheduledStateIndex = index;
 		if (this.currentState && this.currentState.exit() == "cancelled" && !this.forcedRedirect)
 			return "cancelled";
 		if (index >= this.states.length)

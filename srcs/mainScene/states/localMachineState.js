@@ -7,7 +7,9 @@ import { screenSurface, center, object, partIndex, surfaceIndex } from '../objec
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
-
+import { StateManager } from '../../core/stateManager/StateManager';
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { AlertManager } from '../overlays/alerts/Alerts';
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -46,12 +48,15 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
-const fakeGameScreen = new MeshSubState(
+const gameScreen = new MeshSubState(
 	"rest", 
 	screenSurface,
 	pongGame,
 	1,
 	()=>{startPongGame("local")},
+	()=>{
+		new AlertManager().remove_latest_alert("exit_alert");
+	}
 )
 
 const divEnd = new End("white");
@@ -80,11 +85,14 @@ const localMachineState = new State(
 	[
 		restScreen,
 		startScreen, 
-		fakeGameScreen,
+		gameScreen,
 		endScreen
 	],
 	null,
-	null,
+	()=>{
+		if (new StateManager().currentState.currentSubstateIndex == "2")
+			return create_exit_alert();
+	},
 	[
 		screenMaterial,
 		pongGame.renderMaterial,

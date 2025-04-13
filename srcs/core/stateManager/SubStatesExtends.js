@@ -64,11 +64,11 @@ class CssSubState extends SubState {
 }
 
 class MeshSubState extends SubState {
-	constructor(name, surface, scene, materialIndex, enter){
+	constructor(name, surface, scene, materialIndex, enter, exit){
 		super(name, surface, materialIndex,
 			enter || (()=>{}), 
 			scene?.postCamMove || (()=>{}), 
-			null, 
+			exit || (()=>{}), 
 			scene?.resize || (()=>{}),
 			null, 
 			scene?.keyHandler || (()=>{}));
@@ -79,7 +79,7 @@ class MeshSubState extends SubState {
 		this.engine = new MainEngine();
 	}
 	exit(){
-		if (this.exitScene() == "cancelled" && new StateManager().forcedRedirect == false) return "cancelled";
+		if (this.exitScene() == "cancelled" || super.exit() == "cancelled") return "cancelled";
 		this.animate();
 	}
 	animate(){
