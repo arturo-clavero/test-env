@@ -1,3 +1,4 @@
+import { MainEngine } from "../../utils/MainEngine";
 
 class AlertManager{
 	constructor(){
@@ -69,7 +70,7 @@ class Alert{
 		for (let i = 0; i < children.length; i++){
 			this.div.appendChild(children[i].element)
 		}
-		document.body.appendChild(this.div);
+		new MainEngine().container.appendChild(this.div);
 	}
 	show(){
 		this.div.style.visibility = "visible";

@@ -1,10 +1,5 @@
-import { StateManager } from '../../core/stateManager/StateManager';
-import { pongGame} from '../overlays/scenes/pong-game/Game'
 import {getUserID} from './utils'
-import { end } from '../overlays/divs/tour_end';
-import { matchmake } from '../overlays/divs/tour_matchamake';
-import { create_redirection_alert } from '../overlays/alerts/redirection_warning';
-import { join } from '../overlays/divs/tour_join';
+import { msgRouter } from './BackendMsg';
 
 export class Socket {
 	constructor(){
@@ -17,78 +12,35 @@ export class Socket {
 	async init(){
 		this.userID = await getUserID();
 		this.msgQueue = [];
-		this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
-		this.socket.onopen = this.myOpen.bind(this);
-		this.socket.onclose = this.myClose.bind(this);
-		this.socket.onmessage = (event)=>{
-			const data = JSON.parse(event.data);
-			if (!data)
-				return ;
-			if (data.type == "game update")
-			{
-				console.log("received ", data);
-				pongGame["receive"](data);
-			}
-			else if (data.type == "tour.updates")
-			{
-				if ("update_tour_registration" in data) this.updateTourRegistration(data);
-				else if ("update_display" in data) this.updateTourSubState(data);
-				else if ("notification" in data) this.notification(data);
-			}
+		try {
+			this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
+			this.socket.onerror = this.myError.bind(this);
+			this.socket.onopen = this.myOpen.bind(this);
+			this.socket.onclose = this.myClose.bind(this);
+			this.socket.onmessage = msgRouter; 
+		}
+		catch(err){
+			this.myError(err)
 		}
 	}
-	notification(data){
-		if (data["notification"] == "start")
-			create_redirection_alert(data["length"] * 1000);
-	}
-	updateTourSubState(data){
-		if (data.update_display== "pay")
-		{
-			new StateManager().currentState.changeSubstate();
-			new StateManager().currentState.currentSubstate.data["tour_id"] = data["tour_id"];
-		}
-		else if (data.update_display == "refund")
-		{
-			new StateManager().currentState.changeSubstate(7);
-		}
-		else if (data.update_display == "matchmaking rounds")
-		{
-			matchmake["dynamic-content"](data);
-			new StateManager().currentState.changeSubstate(8);
-		}
-		else if (data.update_display == "start game")
-		{
-			pongGame["new-round"](data["gameID"], data["userID"], data["game-type"]);
-			new StateManager().currentState.changeSubstate(9);
-		}
-		else if (data.update_display == "end game")
-		{
-			end["dynamic-content"](data);
-		//	setTimeout(() => {
-				new StateManager().currentState.changeSubstate();
-		//	}, 3000);
-		}
-		else if (data.update_display == "waiting")
-			new StateManager().currentState.changeSubstate(11);
-	}
-	updateTourRegistration(data){
-		if (data.update_tour_registration == "create")
-			new StateManager().states[3].update_start_index(2, update_tour_registration_conditions);
-		else if (data.update_tour_registration == "join")
-		{
-			join["dynamic-content"](data);
-			if ("button" in data)
-			{
-				new StateManager().states[3].update_start_index(4,);
-			}
-		}
+	myError(err){
+		console.error("WebSocket error:", err);		
+		//this.myRetry();		
 	}
 	myOpen(){
 		this.msgQueue.forEach(msg => {
 			this.send(msg)});
 		this.msgQueue = [];
 	}
-	myClose(event){
+	myRetry(){
+		this.socket = null;
+		Socket.instance = null;
+		setTimeout(() => {
+			new Socket();
+		}, 1000);
+	}
+	myClose(){
+		console.log("close...");
 		this.socket = null;
 		Socket.instance = null;
 	}
@@ -98,13 +50,10 @@ export class Socket {
 		else
 			this.msgQueue.push(obj);
 	}
-}
-
-function update_tour_registration_conditions(){
-	if (join['get-button-type']() == "Subscribed")
-		return false;
-	if (new StateManager().currentStateIndex == 3 &&
-	new StateManager().currentState.currentSubstateIndx >= 6)
-		return false;
-	return true;
+	send(obj){
+		if (this.socket && this.socket.readyState == WebSocket.OPEN)
+				this.socket.send(JSON.stringify(obj));
+		else
+			this.msgQueue.push(obj);
+	}
 }

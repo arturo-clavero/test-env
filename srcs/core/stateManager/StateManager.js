@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { MainEngine } from '../../mainScene/utils/MainEngine';
 
 class StateManager {
     constructor(states = []) {
@@ -7,11 +8,7 @@ class StateManager {
         this.states = states;
 		if (this.states.length > 0) this.changeState(0);
 		this.forcedRedirect = false;
-        document.addEventListener('keydown', (event) => this.handleKeyPress(event));
-		window.addEventListener('popstate', (event) => {
-			if (event.state)
-				this.changeState(event.state.num, false);
-		  });
+        new MainEngine().container.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		StateManager.instance = this;
 	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {

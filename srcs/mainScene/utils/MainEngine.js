@@ -4,33 +4,51 @@ class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
 			return MainEngine.instance;
+		this.sceneInitialized = false;
+		this.setUpContainer();
 		this.setUpScene();
 		this.setUpRenderer();
 		this.setUpLights();
-		window.addEventListener('resize', () => {this.resize()});
-		window.addEventListener('click', (event) => {this.click(event)});
+		this.stateManager = null;
 		MainEngine.instance = this;
 	}
-	setUpRenderer(){
-		this.renderer = new THREE.WebGLRenderer({ antialias: true });
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		document.body.appendChild(this.renderer.domElement);
-		this.renderer.shadowMap.enabled = true;
-		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-		this.css3DRenderer = new CSS3DRenderer();
-		this.css3DRenderer.setSize(window.innerWidth, window.innerHeight);
-		this.css3DRenderer.domElement.style.position = "absolute";
-		this.css3DRenderer.domElement.style.top = 0;
-		document.body.appendChild(this.css3DRenderer.domElement);
+	addContainerWrapper(wrapper){
+		wrapper.appendChild(this.container);
+		this.resizeObserver = new ResizeObserver(() => this.resize());
+		this.resizeObserver.observe(this.container);
+		this.resize();
+	}
+	removeContainerWrapper(){
+		this.container?.remove();
+		this.resizeObserver?.disconnect();
+	}
+	setUpContainer(){
+		this.container = document.createElement('div');
+		this.container.style.position = 'relative'; // important for proper internal positioning
+		this.container.style.width = '100%';
+		this.container.style.height = '100%';
+		this.container.style.overflow = 'hidden';
 	}
 	setUpScene(){
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
 		this.camera.position.z = 10;
 		this.raycaster = new THREE.Raycaster();
 		this.mouse = new THREE.Vector2();
 		this.clickableObjects = [];
+	}
+	setUpRenderer(){
+		this.renderer = new THREE.WebGLRenderer({ antialias: true });
+		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+		this.renderer.shadowMap.enabled = true;
+		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		this.container.appendChild(this.renderer.domElement);
+
+		this.css3DRenderer = new CSS3DRenderer();
+		this.css3DRenderer.setSize(this.container.clientWidth, this.container.clientHeight);
+		this.css3DRenderer.domElement.style.position = "absolute";
+		this.css3DRenderer.domElement.style.top = 0;
+		this.container.appendChild(this.css3DRenderer.domElement);
 	}
 	setUpLights(){
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -58,15 +76,15 @@ class MainEngine {
 		if (clickable)
 			this.clickableObjects.push(newObject);
 	}
-	resize(){
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.css3DRenderer.setSize(window.innerWidth, window.innerHeight);
-		const aspectRatio =  window.innerWidth / window.innerHeight;
-		//TODO Tweak FOV to maintain smae look ... 
-		this.camera.aspect = aspectRatio;
+	resize(){	
+		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+		this.css3DRenderer.setSize(this.container.clientWidth, this.container.clientHeight);
+	
+		this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
 		this.camera.updateProjectionMatrix();
-		this.stateManager.resize();
-
+	
+		if (this.stateManager)
+			this.stateManager.resize();
 	}
 	blockRaycast(){
 		this.blockRaycast = true;
@@ -94,9 +112,14 @@ class MainEngine {
 		}
 	}
 	mousemove(event){
-		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-		this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+		const bounds = this.container.getBoundingClientRect();
+		this.mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+		this.mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
 	}
+	// mousemove(event){
+	// 	this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	// 	this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+	// }
 }
 
 

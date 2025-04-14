@@ -8,40 +8,79 @@ import { aiMachineObj } from './mainScene/objects/machines/aiMachineObj';
 import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineObj';
 import { StateManager } from './core/stateManager/StateManager';
 
-import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-import { screenSurface } from './mainScene/objects/machines/aiMachineObj';
-
-import { arcadeMachine } from './mainScene/objects/arcadeMachine';
 import { Socket } from './mainScene/utils/Socket';
+
+import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
-document.addEventListener('keydown', (event) => {
-	if (event.key == "i")
-	{
-		const stateManager = new StateManager();
-		console.log("Now: ", stateManager.currentState.name);
-		stateManager.states.forEach(state=>
-		{
-			console.log("state ", state.name, "substate: ", state.currentSubstate.name);
-		}
-		)
-	}
-});
+// document.addEventListener('keydown', (event) => {
+// 	if (event.key == "i")
+// 	{
+// 		const stateManager = new StateManager();
+// 		console.log("Now: ", stateManager.currentState.name);
+// 		stateManager.states.forEach(state=>
+// 		{
+// 			console.log("state ", state.name, "substate: ", state.currentSubstate.name);
+// 		}
+// 		)
+// 	}
+// });
+
 const engine = new MainEngine();
+let isAnimating = false;
 
-engine.add(backBox, false);
-engine.add(localMachineObj, true);
-engine.add(aiMachineObj, true);
-engine.add(tourMachineObj, true);
+// enterScene is called in mounted() or onMounted().
+function enterScene(app_container){
+	engine.addContainerWrapper(app_container);
+	if (!engine.sceneInitialized) {
+		engine.add(backBox, false);
+		engine.add(localMachineObj, true);
+		engine.add(aiMachineObj, true);
+		engine.add(tourMachineObj, true);
+		engine.stateManager = stateManager;
+		engine.sceneInitialized = true;
+	}
+	new Socket();
+	window.addEventListener('popstate', popstate);
+	window.addEventListener("wheel", wheel_scroll_animations);
+	window.addEventListener('resize', onResize);
+	window.addEventListener('click', onClick);
 
-engine.stateManager = stateManager;
-new Socket();
-//shakeCamera(engine.camera);
-// create_redirection_alert()
+	isAnimating = true;
+	animate();
+}
+
+
 
 function animate() {
+	if (!isAnimating) return ;
 	requestAnimationFrame(animate);
 	engine.animate();
 }
 
+//exitScene is called in beforeUnmount() or onBeforeUnmount().
+function exitScene(){
+	isAnimating = false;
+	engine.removeContainerWrapper();
+	window.removeEventListener('popstate', popstate);
+	window.removeEventListener("wheel", wheel_scroll_animations);
+	window.removeEventListener('resize', onResize);
+	window.removeEventListener('click', onClick);
+}
 
-animate();
+function popstate(event){
+	if (event.state)
+		new StateManager().changeState(event.state.num, false);
+}
+
+function onResize() {
+	engine.resize();
+}
+
+function onClick(event) {
+	engine.click(event);
+}
+
+enterScene(document.getElementById("app-container"));
+// enterScene(document.body);
+
+

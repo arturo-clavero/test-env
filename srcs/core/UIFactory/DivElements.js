@@ -1,3 +1,4 @@
+import { MainEngine } from '../../mainScene/utils/MainEngine';
 import {BaseDivElement} from './Base'
 
 class Overlay extends BaseDivElement{
@@ -13,7 +14,7 @@ class Overlay extends BaseDivElement{
 		this.element.style.boxSizing = 'border-box';
 		this.element.style.border = 'none';
 		this.element.style.visibility = "hidden";
-		document.body.appendChild(this.element);
+		new MainEngine().container.appendChild(this.element);
 		this.getElementsWith("text").forEach(element => { element.element.style.color = color;});
 	}
 	resize(){

@@ -40,9 +40,11 @@ class CssSubState extends SubState {
 		const bottomRight = new THREE.Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z);
 		const toScreenPosition = (pos, camera) => {
 			const vector = pos.clone().project(camera);
-			return {
-				x: (vector.x * 0.5 + 0.5) * window.innerWidth,
-				y: (1 - (vector.y * 0.5 + 0.5)) * window.innerHeight
+			return {//ARE YOU SURE ? THINK!
+				// x: (vector.x * 0.5 + 0.5) * window.innerWidth,
+				// y: (1 - (vector.y * 0.5 + 0.5)) * window.innerHeight
+				x: (vector.x * 0.5 + 0.5) * this.engine.container.clientWidth,
+				y: (1 - (vector.y * 0.5 + 0.5)) * this.engine.container.clientHeight,
 			};
 		};
 		const screenTopLeft = toScreenPosition(topLeft, this.engine.camera);
