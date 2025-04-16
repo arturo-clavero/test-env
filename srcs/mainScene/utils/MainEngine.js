@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { InstanceNode } from 'three/webgpu';
+import { fitCameraToObject } from '../../core/stateManager/cameraMovement';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -97,7 +98,15 @@ class MainEngine {
 		this.camera.updateProjectionMatrix();
 	
 		if (this.stateManager)
+		{
+			let state = this.stateManager.currentState;
+			// this.camera.position.set(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+			// let camera_pos =  
+			this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+			// console.log("pos ", camera_pos);)
 			this.stateManager.resize();
+		}
+
 	}
 	blockRaycast(){
 		this.blockRaycast = true;

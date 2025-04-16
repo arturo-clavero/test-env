@@ -5,7 +5,7 @@ import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from "./StateManager";
 import * as THREE from 'three';
 
-const engine = new MainEngine();
+// const engine = ;
 
 let scrollDelta = 0;
 const scrollThreshold = 400;
@@ -18,7 +18,7 @@ export function wheel_scroll_animations(event){
 	if (isAnimating || event.deltaY * 100 * stateManager.allowedDirection < 0)
 		return ;
 	scrollDelta += event.deltaY;
-	engine.camera.position.z += event.deltaY * 0.00001;
+	new MainEngine().camera.position.z += event.deltaY * 0.00001;
 	if (Math.abs(scrollDelta) > scrollThreshold) {
 		isAnimating = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
@@ -33,6 +33,7 @@ function moveCamera(data, targetObject, targetNormal, targetPadding, onComplete)
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
 	const newPosition = fitCameraToObject(targetObject, targetNormal, targetPadding);
+	const engine = new MainEngine()
 	console.log("enw positons: ", newPosition);
 	if ("pos" in data) {
 		tl.to(engine.camera.position, { 
@@ -52,7 +53,7 @@ function moveCamera(data, targetObject, targetNormal, targetPadding, onComplete)
 		}, 0);
 	}
 	if (data.fov !== undefined) {
-		tl.to(engine.camera, { 
+		tl.to(new engine.camera, { 
 			fov: data.fov,
 			onUpdate: () => engine.camera.updateProjectionMatrix() 
 		}, 0);
@@ -146,7 +147,7 @@ export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3
     //     .normalize()
     //     .multiplyScalar(distance);
 	// const  // or whatever normal you want
-const direction = targetNormal.clone().normalize().multiplyScalar(-distance); // move opposite of normal
+	const direction = targetNormal.clone().normalize().multiplyScalar(-distance); // move opposite of normal
 
 	console.log("direction, ", direction);
     return new THREE.Vector3().copy(center).add(direction);

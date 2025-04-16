@@ -76,7 +76,7 @@ class State {
     }
     resize() {
 		// if (get_camera_animation() == false)
-			// new MainEngine().camera.position.copy(fitCameraToObject(this.object));
+		// 	new MainEngine().camera.position.copy(fitCameraToObject(this.targetObject, this.targetNormal, this.targetPadding));
 		this.currentSubstate?.resize(this.object); 
 	}
 	animate() { this.currentSubstate?.animate(); }
