@@ -27,6 +27,7 @@ export function msgRouter(event){
 	}
 	else if (data.type == "tour.updates" || data.type == "consumer.updates")
 	{
+		console.log("received: ", data)
 		for (const key of Object.keys(tourActions)) {
 			if (key in data)
 			{
@@ -51,13 +52,9 @@ const tourActions = {
 				matchmake["dynamic-content"](data);
 				state.changeSubstate(8);
 			},
-			"start game": () => {
-				console.log("start game...")
-				
-			},
 			"end game": () => {
 				end["dynamic-content"](data);
-				state.changeSubstate();
+				state.changeSubstate(10);
 			},
 			"waiting": () => state.changeSubstate(11)
 		};

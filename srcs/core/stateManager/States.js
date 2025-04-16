@@ -1,9 +1,11 @@
 import { MainEngine } from '../../mainScene/utils/MainEngine';
 import { moveCamera } from './cameraMovement';
 import { StateManager } from './StateManager';
-import { localMachineObj } from '../../mainScene/objects/machines/localMachineObj';
+import { get_camera_animation, fitCameraToObject } from './cameraMovement';
+import * as THREE from 'three';
+
 class State {
-    constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
+    constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25) {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
@@ -14,6 +16,9 @@ class State {
 		this.changeSubstate(0);
 		this.startIndex = 0;
 		this.data = {}
+		this.targetObject = targetObject
+		this.targetNormal = targetNormal
+		this.targetPadding = targetPadding
 		this.blockedIndex = this.substates.length;
 		this.slowCameraMovement = slowCameraMovement
     }
@@ -46,12 +51,15 @@ class State {
 	enter(slow) {
 		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
+		console.log("this.object: ", this.object)
 		if (slow && this.slowCameraMovement)
-			moveCamera(this.slowCameraMovement, () =>{
+			moveCamera(this.slowCameraMovement, this.targetObject, this.targetNormal, this.targetPadding,
+			() =>{
 				this.currentSubstate.postCamEnter();
 			})
 		else if (this.cameraMovement)
-			moveCamera(this.cameraMovement, () =>{
+			moveCamera(this.cameraMovement,this.targetObject, this.targetNormal, this.targetPadding, 
+			() =>{
 				this.currentSubstate.postCamEnter();
 			})
 	}
@@ -66,7 +74,11 @@ class State {
 			this.changeSubstate(view.index || undefined);
 		return view;
     }
-    resize() { this.currentSubstate?.resize(); }
+    resize() {
+		// if (get_camera_animation() == false)
+			// new MainEngine().camera.position.copy(fitCameraToObject(this.object));
+		this.currentSubstate?.resize(this.object); 
+	}
 	animate() { this.currentSubstate?.animate(); }
 	isActive() { return this.currentSubstate?.active; }
 	update_start_index(index, should_update = ()=>{return true}){

@@ -180,6 +180,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.gameChannel.game_updates(event)
 
 	async def tour_updates(self, event):
+		print("wil send: ", event)
 		await self.send(text_data=json.dumps(event))
 
 			

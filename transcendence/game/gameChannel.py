@@ -11,7 +11,7 @@ players = {}
 
 class GameManager():
 	def __init__(self):
-		self.pending_timeout = 30
+		self.pending_timeout = 1
 		self.running_tasks = set()
 
 	async def broadcast_game_state(self):
@@ -33,7 +33,7 @@ class GameManager():
 						pending_sessions.pop(gameID, None)
 						break
 					if time.time() - start_time > self.pending_timeout:
-						await get_channel_layer().group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "oponent did not join the game", "score1":"", "score2":"", "start_time": start_time}})
+						await get_channel_layer().group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected", "score1":"", "score2":"", "start_time": start_time}})
 						pending_sessions.pop(gameID, None)
 						break 
 
@@ -58,12 +58,15 @@ class GameChannel():
 		await self.manage_user_multitab()
 		await self.consumer.join_channel(f"game_{self.gameID}")
 		await self.verify_user()
+		print("add player")
 		players[self.gameID]["ready"] += 1
+		print("players: ", players[self.gameID])
 		if self.reconnected == True:
 			active_sessions[self.gameID] = self.old_game
 			active_connections[self.user_id] = self
 			ready_connections[self.gameID] += 1
 		if players[self.gameID]["ready"] == self.max_players:
+			print("ready to start")
 			active_sessions[self.gameID] = Game(self.gameID)
 			names = get_player_alias(self.gameID)
 			await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
@@ -74,7 +77,10 @@ class GameChannel():
 		if self.gameID not in players:
 			players[self.gameID] = {"connected" : 0, "ready" : 0}
 		self.max_players = get_max_players(self.gameID)
+		print("max players: ", self.max_players)
+		print("players: ", players[self.gameID])
 		players[self.gameID]["connected"] += 1
+		print("players: ", players[self.gameID])
 		if players[self.gameID]["connected"] > self.max_players:
 			await self.finish()
 		
@@ -96,12 +102,12 @@ class GameChannel():
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
-				await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected from game", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
+				await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
 			del active_sessions[self.gameID]
 			pending_sessions.pop(self.gameID, None)
 		elif self.gameID in pending_sessions:
 			print("gme calls store err1")
-			await store_game_results({"error":"player disconnected in waiting room", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
+			await store_game_results({"error":"player disconnected", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
 			del pending_sessions[self.gameID]
 		if players.get(self.gameID):
 			players[self.gameID]["connected"] -= 1

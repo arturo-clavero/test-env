@@ -42,6 +42,7 @@ async def store_game_results(results):
 		return
 
 	if "error" in results:
+		print("error in results...")
 		log["error"] = results["error"]
 		log["start_time"] = results["start_time"]
 		if "winner" in results:
@@ -71,6 +72,7 @@ async def store_game_results(results):
 			log["players"]["2"]["score"] = results["score2"]
 
 	else:	
+		print("no error in results...")
 		log['start_time'] = results["start_time"]
 		log['players']['1']['score'] = results["score1"]
 		log['players']['2']['score'] = results["score2"]
@@ -89,11 +91,13 @@ async def store_game_results(results):
 				await tour.end_remote_game({
 					"winner" :  log['players']['1']['id'],
 					"looser" :  log['players']['2']['id'],
+					"error" : results.get("error", "")
 				})
 			else:
 				await tour.end_remote_game({
 					"looser" :  log['players']['1']['id'],
 					"winner" :  log['players']['2']['id'],
+					"error" : results.get("error", "")
 				})
 
 	# store log in data base ... TODO

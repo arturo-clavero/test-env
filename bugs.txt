@@ -1,7 +1,4 @@
 BACK END FRONT END
-disconnectioosn remote in matchmake
-disconnections in game
-disconnection while waiting
 add waiting for connection waiting () as default to game not starting ...
 
 GAME

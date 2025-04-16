@@ -3,12 +3,13 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/aiMachineObj';
+import { screenSurface, center, object, partIndex, surfaceIndex, aiMachineObj } from '../objects/machines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
 import { AlertManager } from '../overlays/alerts/Alerts';
 import { StateManager } from '../../core/stateManager/StateManager';
+import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -78,7 +79,7 @@ const endScreen = new CssSubState(
 const aiMachineState = new State(
 	"ai game screen", 
 	{
-		pos: [center.x,center.y,center.z],
+		pos: true,
 		duration: 2,
 		ease: "power2.inOut"
 	},
@@ -101,6 +102,10 @@ const aiMachineState = new State(
 		screenMaterial,
 		pongGame.renderMaterial,
 	],
+	// null,
+	aiMachineObj.self,
+	new THREE.Vector3(0, 0, -1),
+	1.5
 )
 
 export {aiMachineState}
