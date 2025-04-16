@@ -7,6 +7,7 @@ const container = new Overlay([
 			new FlexBox({
 				dir: "column",
 				mainAxis: "space-around",
+				crossAxis: "center",
 				flex: 1,
 				children: [
 					new FlexBox({

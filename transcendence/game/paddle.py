@@ -1,9 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import random
-import time
+import random, time, math
 from .playLog import get_paddle_type
-import math
 
 class Paddle:
 	accelaration = 0.01

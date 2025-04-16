@@ -20,15 +20,19 @@ const mainState = new State(
 	"main view",
 	{
 		pos: [0,2,7], 
-		duration: 5, 
+		duration: 2, 
 		ease: "power2.inOut"
 	}, 
+	{
+		pos: [0,2,7], 
+		duration: 5,
+		ease: "power2.inOut"
+	},
 	[ mainSub ],
 	null,
 	null,
 	[],
 );
-
 const stateManager = new StateManager(
 	[
 		mainState, 

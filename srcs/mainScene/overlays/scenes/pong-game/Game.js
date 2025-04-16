@@ -28,30 +28,19 @@ import { Socket } from '../../../utils/Socket';
 	let gameID, mode, num;
 
 export	function startPongGame(type = "local"){
-		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
-			fetch('http://localhost:8004/new-game/', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(brutdata)
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data["error"])
-				{
-					alert(data["error"]);
-					return;
-				}
-			new_round(data["gameID"], data["userID"], "local");
-			})
-			.catch(error => {
-				console.error('Error creating game:', error);
-			});
-		}
-	function	new_round(gameID_input, userID, player_mode)
+	console.log("new png game... ");
+	new Socket().send({
+		"channel" : "log",
+		"type" : type,
+		"userID1" : socket.socket.userID,
+	})
+}
+
+	function	new_round(gameID_input, player_mode)
 	{
 		console.log("new round");
-		window.addEventListener("keydown", key.handleKeyDown);
-		window.addEventListener("keyup", key.handleKeyUp);
+		document.addEventListener("keydown", key.handleKeyDown);
+		document.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
 		mode = player_mode;
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
@@ -81,7 +70,7 @@ function	updatesFromBackend(data){
 		else
 			content_body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
 	}
-	if (data.updates.state == "playing")
+	else if (data.updates.state == "playing")
 	{
 		if (state != "playing")
 			playing();
@@ -91,18 +80,21 @@ function	updatesFromBackend(data){
 		ball.object.position.y = data.updates.ball.y;
 		header.updateScores(data.updates.score1, data.updates.score2, engine);
 	}
-	if (data.updates.state == "game end")
+	else if (data.updates.state == "game end")
 	{
 		if (state != "completed")
 			completed();
 	}
-	if (data.updates.state == "error")
+	else if (data.updates.state == "error")
 	{
 		if (state != "error")
 			completed(data.updates.info);
 	}
-	if (data.updates.state == "player names")
+	else if (data.updates.state == "player names")
+	{
+		console.log("player_names: ", data)
 		header.new("hide", data.updates.name1, data.updates.name2, engine);
+	}
 }
 
 function	countdown(){
@@ -134,6 +126,7 @@ function completed(msg){
 		content_body.new("game over", "thick", 0, 0, 0, 15, 1.5, engine);
 	}
 	clean();
+	console.log("fame end ... mode", mode)
 	if (mode == "local" || mode == "AI")
 		new StateManager().currentState.changeSubstate();
 }
@@ -141,8 +134,8 @@ function completed(msg){
 
 function	clean(){
 		console.log("clean");
-		window.removeEventListener("keydown", key.handleKeyDown);
-		window.removeEventListener("keyup", key.handleKeyUp);
+		document.removeEventListener("keydown", key.handleKeyDown);
+		document.removeEventListener("keyup", key.handleKeyUp);
 		ball.hide();
 		paddles.hide();
 		middleBars.hide();

@@ -81,7 +81,8 @@ const aiMachineState = new State(
 		pos: [center.x,center.y,center.z],
 		duration: 2,
 		ease: "power2.inOut"
-	}, 
+	},
+	null,
 	[
 		restScreen,
 		startScreen, 

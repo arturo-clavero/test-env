@@ -12,21 +12,24 @@ import { Socket } from './mainScene/utils/Socket';
 
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
-// document.addEventListener('keydown', (event) => {
-// 	if (event.key == "i")
-// 	{
-// 		const stateManager = new StateManager();
-// 		console.log("Now: ", stateManager.currentState.name);
-// 		stateManager.states.forEach(state=>
-// 		{
-// 			console.log("state ", state.name, "substate: ", state.currentSubstate.name);
-// 		}
-// 		)
-// 	}
-// });
 
 const engine = new MainEngine();
 let isAnimating = false;
+
+//developent:
+document.addEventListener('keydown', (event) => {
+	if (event.key == "i")
+	{
+		const stateManager = new StateManager();
+		console.log("Now: ", stateManager.currentState.name);
+		stateManager.states.forEach(state=>
+		{
+			console.log("state ", state.name, "substate: ", state.currentSubstate.name);
+		}
+		)
+	}
+});
+
 
 // enterScene is called in mounted() or onMounted().
 function enterScene(app_container){
@@ -81,6 +84,7 @@ function onClick(event) {
 }
 
 enterScene(document.getElementById("app-container"));
+
 // enterScene(document.body);
 
 

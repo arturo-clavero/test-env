@@ -50,10 +50,4 @@ export class Socket {
 		else
 			this.msgQueue.push(obj);
 	}
-	send(obj){
-		if (this.socket && this.socket.readyState == WebSocket.OPEN)
-				this.socket.send(JSON.stringify(obj));
-		else
-			this.msgQueue.push(obj);
-	}
 }

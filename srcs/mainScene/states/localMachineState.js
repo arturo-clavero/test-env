@@ -82,6 +82,7 @@ const localMachineState = new State(
 		duration: 2,
 		ease: "power2.inOut"
 	}, 
+	null,
 	[
 		restScreen,
 		startScreen, 

@@ -141,9 +141,15 @@ function hide_div(){
 }
 
 function can_exit(){
+	console.log("can_exit ft");
 	if (new StateManager().currentState.currentSubstateIndex == 10 &&
 	container.getElementById("button").element.textContent == "EXIT")
+	{
+		console.log("curr state", new StateManager().currentState.currentSubstateIndex);
+		console.log("cutton: ", container.getElementById("button").element.textContent);
 		return true;
+	}
+	console.log("should create alert")
 	return false;
 }
 
@@ -155,7 +161,7 @@ const end = {
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
-	"cant-exit" : can_exit,
+	"can-exit" : can_exit,
 }
 
 export {end}

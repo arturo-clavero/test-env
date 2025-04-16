@@ -3,7 +3,7 @@ import { moveCamera } from './cameraMovement';
 import { StateManager } from './StateManager';
 import { localMachineObj } from '../../mainScene/objects/machines/localMachineObj';
 class State {
-    constructor(name, cameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
+    constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials) {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
@@ -15,6 +15,7 @@ class State {
 		this.startIndex = 0;
 		this.data = {}
 		this.blockedIndex = this.substates.length;
+		this.slowCameraMovement = slowCameraMovement
     }
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
@@ -42,10 +43,14 @@ class State {
 		if (postCam)
 			this.currentSubstate.postCamEnter();
     }
-	enter() {
+	enter(slow) {
 		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
-		if (this.cameraMovement)
+		if (slow && this.slowCameraMovement)
+			moveCamera(this.slowCameraMovement, () =>{
+				this.currentSubstate.postCamEnter();
+			})
+		else if (this.cameraMovement)
 			moveCamera(this.cameraMovement, () =>{
 				this.currentSubstate.postCamEnter();
 			})

@@ -27,9 +27,6 @@ export function wheel_scroll_animations(event){
 }
 
 function moveCamera(data, onComplete) {
-	gsap.killTweensOf(engine.camera);
-	gsap.killTweensOf(engine.camera.position);
-	gsap.killTweensOf(engine.camera.rotation);
 	isAnimating = true;
 	const tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
@@ -40,11 +37,7 @@ function moveCamera(data, onComplete) {
 			y: data.pos[1], 
 			z: data.pos[2],
 			onUpdate: () =>{ new StateManager().resize()
-				// engine.camera.position.x += (Math.random() - 0.5) * 0.2;
-				// engine.camera.position.y += (Math.random() - 0.5) * 0.2;
-				// engine.camera.position.z += (Math.random() - 0.5) * 0.2;
 			},
-
 			overwrite: "auto",
 		}, 0);
 	}

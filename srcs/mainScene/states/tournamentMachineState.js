@@ -264,7 +264,8 @@ const tourMachineState = new State(
 		pos: [center.x,center.y,center.z],
 		duration: 2,
 		ease: "power2.inOut"
-	}, 
+	},
+	null,
 	[
 		restScreen, 
 		startScreen,//1
@@ -282,11 +283,18 @@ const tourMachineState = new State(
 	null,
 	()=>{
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
-		if (curr_sub >= "8" && divEnd["can-exit"] == false)
+		if (curr_sub >= "8")
 		{
-			if (create_exit_alert() == "cancelled")
-				return ("cancelled")
+			console.log("exit warning maybe...", curr_sub)
+			if (divEnd["can-exit"]() == false)
+			{
+				console.log("should warn", curr_sub);
+				if (create_exit_alert() == "cancelled")
+					return ("cancelled")
+			}
 		}
+		else
+			console.log("no exit waring curr usb: ", curr_sub)
 		new Socket().send({
 			"channel" : "tournament",
 			"action" : "finish",

@@ -1,11 +1,17 @@
-GLOBAL
-change send from consumer to channel ...
-change global to reddis cache... 
-
-FRONT END LIL SHITS
+BACK END FRONT END
+disconnectioosn remote in matchmake
+disconnections in game
+disconnection while waiting
 add waiting for connection waiting () as default to game not starting ...
-clicking in id movement resets doesnt accumulate camera movement
-payment back to strat after matchmake. .. //SHOUDL BE FIXED by notification?
 
-WEBSOCKET SHITS
-websocket doesnt start if i start the backend after laoding the page
+GAME
+when moving paddle change material
+beginning bottom to move press: w s | to move press up down
+
+NEW GAME - State
+how to play
+-local move left , move right
+-ai move paddle up down
+
+REPOSITION CAMERA
+to fit object (or group of objects) for each State

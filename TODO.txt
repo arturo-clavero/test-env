@@ -1,18 +1,6 @@
-CHECK AI - backend
-REFACTOR LOG GAME 
-
-TOURNAMENT LOG 
-MATCHMAKING SYSTEM 
-TOURNAMENT DIVS - start screen, waiting for players, match rounds, game
-
-REPOSITION CAMERA
-to fit object (or group of objects) for each State
 
 2ND RENDERER 
 for game screen instead of texture
-
-POP UP MESSAGE 
-for exiting during game
 
 ARCADE MACHINE 
 add textures 
@@ -21,6 +9,3 @@ make the arcade machine screen surface match the window
 
 ADD BACKGROUND 
 ADD LIGHTS
-
-
-
