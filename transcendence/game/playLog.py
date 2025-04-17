@@ -42,7 +42,6 @@ async def store_game_results(results):
 		return
 
 	if "error" in results:
-		print("error in results...")
 		log["error"] = results["error"]
 		log["start_time"] = results["start_time"]
 		if "winner" in results:
@@ -72,7 +71,6 @@ async def store_game_results(results):
 			log["players"]["2"]["score"] = results["score2"]
 
 	else:	
-		print("no error in results...")
 		log['start_time'] = results["start_time"]
 		log['players']['1']['score'] = results["score1"]
 		log['players']['2']['score'] = results["score2"]
@@ -82,23 +80,18 @@ async def store_game_results(results):
 		elif (results["score1"] < results["score2"]):
 			log['players']['1']["result"] = "loose"
 			log['players']['2']["result"] = "win"
+		else:
+			log['players']['1']["result"] = "draw"
+			log['players']['2']["result"] = "draw"
 	# print("results: ", results)
 	# print("log: ", log)
 	if log["type"] == "remote":
 		tour = TournamentManager().get_tournament(log["tour_id"])
 		if tour :
-			if log['players']['1']["result"] == "win" :
-				await tour.end_remote_game({
-					"winners" :  [log['players']['1']['id']],
-					"loosers" :  [log['players']['2']['id']],
-					"error" : results.get("error", "")
-				})
-			else:
-				await tour.end_remote_game({
-					"loosers" :  [log['players']['1']['id']],
-					"winners" :  [log['players']['2']['id']],
-					"error" : results.get("error", "")
-				})
+			await tour.end_remote_game({
+				"players" :  [log['players']['1'], log['players']['2']],
+				"error" : results.get("error", "")
+			})
 
 	# store log in data base ... TODO
 	cache.delete(f"game_log:{results['gameID']}")

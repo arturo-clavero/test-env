@@ -15,11 +15,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if not gameManager.running_tasks:
 			gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
 		active_users = cache.get('active_users')
-		print("active users on connection: ", active_users)
 		if active_users == None:
 			active_users = []
 		active_users.append(self.user_id)
-		print("active users after connection: ", active_users)
 		cache.set('active_users', active_users)
 		#TODO cehck if self consumer was here before....
 		self.user_data = cache.get(f"consumer_{self.user_id}")
@@ -52,7 +50,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		print(data)
 		if data["channel"] == "log":
 			await new_game(data)
 	
@@ -61,7 +58,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 		elif data["channel"] == "tournament":
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
-			if data["action"] == "create":
+			if data["action"] == "exit live":
+				if self.gameChannel and self.gameChannel.status == "on":
+					await self.gameChannel.finish()
+				if self.tournament and self.tournament.status == "active":
+					await self.tournament.disconnect(self)
+			elif data["action"] == "create":
 				if pending_tournament == None:
 					newTour = TournamentChannel(self)
 					await self.send_channel("all", {
@@ -101,7 +103,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"button" : "create",
 			})
 		#paying
-		elif self.user_id in pending_tournament.registered_players:
+		elif self.user_id in pending_tournament.registered:
 			await self.send_self({
 				"type" : "tour.updates",
 				"update_tour_registration" : "join",
@@ -130,9 +132,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 			})
 
 	def update_self_tournament(self, value):
-		print("value: ", value)
-		self.update_user_data({"action":"set", "tournament":value})
-		self.tournament = TournamentManager().get_tournament(value)
+		if value == None:
+			self.update_user_data({"action":"set", "tournament": None})
+			self.tournament = None
+		else:
+			self.update_user_data({"action":"set", "tournament":value})
+			self.tournament = TournamentManager().get_tournament(value)
 
 	def update_user_data(self, data):
 		user_data = cache.get(f"consumer_{self.user_id}")
@@ -180,7 +185,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.gameChannel.game_updates(event)
 
 	async def tour_updates(self, event):
-		print("wil send: ", event)
 		await self.send(text_data=json.dumps(event))
 
 			

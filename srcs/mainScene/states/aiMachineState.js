@@ -10,7 +10,7 @@ import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';
 import { AlertManager } from '../overlays/alerts/Alerts';
 import { StateManager } from '../../core/stateManager/StateManager';
 import * as THREE from 'three';
-
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
 const divStart = new StartScreen('white', "START GAME");
 
 const restScreen = new CssSubState(

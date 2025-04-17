@@ -6,7 +6,7 @@ import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+	import { pongGame, startPongGame, demoGame, startDemoGame } from '../overlays/scenes/pong-game/Game';		
 import { StateManager } from '../../core/stateManager/StateManager';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { AlertManager } from '../overlays/alerts/Alerts';
@@ -49,8 +49,33 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
+const divChoose = new End("white");
+const chooseScreen = new CssSubState(
+	"choose", 
+	object,
+	partIndex,
+	surfaceIndex,
+	divChoose.div,
+	0,
+	()=>{divChoose.enter()},
+	null,
+	()=>{divChoose.exit()},
+	()=>{divChoose.resize()},
+	null,
+	null
+)
+
+const demoScreen = new MeshSubState(
+	"demo", 
+	screenSurface,
+	demoGame,
+	1,
+	()=>{startDemoGame("local")},
+	null
+)
+
 const gameScreen = new MeshSubState(
-	"rest", 
+	"game", 
 	screenSurface,
 	pongGame,
 	1,
@@ -86,7 +111,9 @@ const localMachineState = new State(
 	null,
 	[
 		restScreen,
-		startScreen, 
+		startScreen,
+		// chooseScreen,
+		// demoScreen,
 		gameScreen,
 		endScreen
 	],

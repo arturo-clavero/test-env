@@ -292,6 +292,10 @@ const tourMachineState = new State(
 				console.log("should warn", curr_sub);
 				if (create_exit_alert() == "cancelled")
 					return ("cancelled")
+				new Socket().send({
+					"channel" : "tournament",
+					"action" : "exit live"
+				})
 			}
 		}
 		else

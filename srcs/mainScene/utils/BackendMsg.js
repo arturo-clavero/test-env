@@ -56,7 +56,10 @@ const tourActions = {
 				end["dynamic-content"](data);
 				state.changeSubstate(10);
 			},
-			"waiting": () => state.changeSubstate(11)
+			"waiting": () => {
+				console.log("update waiting...")
+				state.changeSubstate(11)
+			}
 		};
 		return actions[data.update_display] ?? null;
 	},

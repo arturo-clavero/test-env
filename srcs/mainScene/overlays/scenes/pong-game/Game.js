@@ -25,7 +25,7 @@ import { Socket } from '../../../utils/Socket';
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
 	let end = false;
-	let gameID, mode, num;
+	let gameID, mode, num, demo_type;
 
 export	function startPongGame(type = "local"){
 	console.log("new png game... ");
@@ -58,6 +58,15 @@ export	function startPongGame(type = "local"){
 			// waiting();
 	}
 	
+export function	startDemoGame(type){
+	mode = "demo";
+	demo_type = type;	
+}
+
+function demoAnimate(){
+
+}
+
 function	updatesFromBackend(data){
 	if (data.updates.state == "countdown")
 	{
@@ -156,13 +165,14 @@ function	resize(e) {
 	ball.initPositions(engine);
 	paddles.initPositions(engine);
 	header.initPositions(engine);
-	socket.socket.send({
-		"channel": "game",
-		"boundaries" : {
-			"x" : paddles.collisionPos(ball),
-			"y" : engine.boundaryY,
-		},
-		})
+	if (mode != "demo")
+		socket.socket.send({
+			"channel": "game",
+			"boundaries" : {
+				"x" : paddles.collisionPos(ball),
+				"y" : engine.boundaryY,
+			},
+			})
 }
 
 
@@ -172,10 +182,11 @@ function exit(){
 		// if (userConfirmed)
 		console.log("exit")
 		clean();
-		new Socket().send({
-			"channel": "game",
-			"request": "end game",
-		})
+		if (mode != "demo")
+			new Socket().send({
+				"channel": "game",
+				"request": "end game",
+			})
 		// else
 		// 	return "forbidden";
 	//}
@@ -193,4 +204,14 @@ export	const pongGame = {
 		"exit": exit,
 		"receive" : (event)=>{updatesFromBackend(event);},
 		"new-round" : new_round 
+	}
+
+	export	const demoGame = {
+		"renderMaterial" : renderMaterial,
+		"renderTarget" : renderTarget,
+		"scene" : engine.scene,
+		"camera" : engine.camera,
+		"resize":resize,
+		"exit":clean,
+		"animate" : demoAnimate,
 	}
