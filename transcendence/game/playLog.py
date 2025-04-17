@@ -89,14 +89,14 @@ async def store_game_results(results):
 		if tour :
 			if log['players']['1']["result"] == "win" :
 				await tour.end_remote_game({
-					"winner" :  log['players']['1']['id'],
-					"looser" :  log['players']['2']['id'],
+					"winners" :  [log['players']['1']['id']],
+					"loosers" :  [log['players']['2']['id']],
 					"error" : results.get("error", "")
 				})
 			else:
 				await tour.end_remote_game({
-					"looser" :  log['players']['1']['id'],
-					"winner" :  log['players']['2']['id'],
+					"loosers" :  [log['players']['1']['id']],
+					"winners" :  [log['players']['2']['id']],
 					"error" : results.get("error", "")
 				})
 

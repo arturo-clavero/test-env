@@ -1,6 +1,3 @@
-BACK END FRONT END
-add waiting for connection waiting () as default to game not starting ...
-
 GAME
 when moving paddle change material
 beginning bottom to move press: w s | to move press up down
@@ -9,6 +6,3 @@ NEW GAME - State
 how to play
 -local move left , move right
 -ai move paddle up down
-
-REPOSITION CAMERA
-to fit object (or group of objects) for each State

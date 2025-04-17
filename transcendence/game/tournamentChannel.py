@@ -60,7 +60,8 @@ class TournamentChannel():
 		self.remainingRoom = f"remaining_tour_{self.tour_id}"
 		self.status = "open"
 		self.registered_players = []
-		self.remaining_players = []
+		self.waiting_players = []
+		self.remaining_players = {}
 		self.remaining_room_confirmed = 0
 		cache.set("pending_tournament", self.tour_id)
 		TournamentManager().add_tournament(self, _token)
@@ -122,20 +123,22 @@ class TournamentChannel():
 			print("checking user ", user)
 			if user.user_id in active_users:
 				print("user in active_users")
-				self.remaining_players.append(user)
+				self.remaining_players[user.user_id] = user
+				self.waiting_players.append(user.user_id)
 				await user.join_channel(self.remainingRoom)
 			else:
 				print("user not in active users")
 				print("active users: ", active_users)
 		if len(self.remaining_players) == 1:
-			await self.remaining_players[0].send_self({"type" : "tour.updates",
+			last = next(iter(self.remaining_players))
+			await last.send_self({"type" : "tour.updates",
 				"update_display" : "refund", "reason" : "insufficient players"})
-			await self.remaining_players[0].remove_channel(self.remainingRoom)
+			await last.remove_channel(self.remainingRoom)
 		if len(self.remaining_players) <= 1:
 			TournamentManager().remove_tournament(self.tour_id, _token)
 			return
 		self.status = "active"
-		random.shuffle(self.remaining_players)
+		random.shuffle(self.waiting_players)
 		self.current_round = 0
 		self.max_rounds = math.ceil(math.log2(len(self.remaining_players)))
 		await self.matchmake()
@@ -151,8 +154,8 @@ class TournamentChannel():
 		self.status = "matchmake"
 		self.current_round += 1
 		self.now_playing = {}
-		self.total_matches = len(self.remaining_players) // 2 #+ len(self.remaining_players % 2)
-		players = [get_alias(user) for user in self.remaining_players]
+		self.total_matches = len(self.waiting_players) // 2 #+ len(self.remaining_players % 2)
+		players = [get_alias(user) for user in self.waiting_players]
 		await get_channel_layer().group_send(f"{self.remainingRoom}", {
 			"type" : "tour.updates",
 			"update_display" : "matchmaking rounds",
@@ -163,12 +166,12 @@ class TournamentChannel():
 		})
 		await asyncio.sleep(7)
 		print("end matchmake")
-		while len(self.remaining_players) >= 2:
-			await self.start_remote_game(self.remaining_players.pop(), self.remaining_players.pop())
-		if len(self.remaining_players) == 1 and len(players) > 2:
+		while len(self.waiting_players) >= 2:
+			await self.start_remote_game(self.waiting_players.pop(), self.waiting_players.pop())
+		if len(self.waiting_players) == 1 and len(self.remaining_players > 1):
 			await self.remaining_players[0].send_self({"type": "tour.updates",
 			"update_display" : 'waiting'})
-		elif len(self.remaining_players) == 1:
+		elif len(self.waiting_players) == 1 and len(self.remaining_players <= 1):
 			print("send message to win automatically")
 			#send message players disconnected ? TODO
 			await self.remaining_players[0].send_self({
@@ -181,57 +184,87 @@ class TournamentChannel():
 				})
 			await self.finish(self.remaining_players[0])
 		self.status == "active"
+	
+	def _split_players(self, *players):
+		connected = []
+		disconnected = []
+		for player in players:
+			if player in self.remaining_players:
+				connected.append(player)
+			else:
+				disconnected.append(player)
+		return connected, disconnected
 
 	async def start_remote_game(self, player1, player2):
 		from .playLog import new_game
-		self.now_playing[player1.user_id] = player1
-		self.now_playing[player2.user_id] = player2
-		print("start remote game")
-		await new_game({
-			"type": "remote", 
-			"userID1": player1.user_id,
-			"userID2": player2.user_id,
-			"tour_id": self.tour_id,
-		})
+		connected, disconnected = self._split_players(player1, player2)
+
+		if len(connected) == 2:
+			print("start remote game")
+			await new_game({
+				"type": "remote", 
+				"userID1": player1,
+				"userID2": player2,
+				"tour_id": self.tour_id,
+			})
+		else:
+			await self.end_remote_game({
+				"losers": disconnected,
+				"winners": connected,
+				"error": "Player disconnected",
+			})
 
 	async def end_remote_game(self, data):
 		print("end remote game")
-		winner = self.now_playing[data["winner"]]
-		self.remaining_players.append(winner)
-		looser = self.now_playing[data["looser"]]
-		await looser.remove_channel(self.remainingRoom)
-		looser.update_self_tournament(None)
-		#looser remove from player_alias
-		self.total_matches -= 1
-		print(data)
-		await looser.send_self({
-					"type":"tour.updates",
-					"update_display":"end game",
-					"title":f"You have lost round {self.current_round}",
-					"button":"exit",
-				})
+		#bye bye loosers
+		for loser_id in data.get("losers", []):
+			print("looser: ", loser_id)
+			loser = self.remaining_players.get(loser_id)
+			if not loser:
+				continue
+			print("looser confirmed")
+			await loser.remove_channel(self.remainingRoom)
+			loser.update_self_tournament(None)
+			del self.remaining_players[loser_id]
+			self.total_matches -= 1
+			print("looser end game msg")
+			await loser.send_self({
+				"type": "tour.updates",
+				"update_display": "end game",
+				"title": f"You have lost round {self.current_round}",
+				"button": "exit",
+			})
+		#is it final winner?
 		if self.total_matches == 0 and len(self.remaining_players) == 1:
-				self.state = "end"
-				await winner.send_self({
-					"type":"tour.updates",
-					"update_display":"end game",
-					"title":"CHAMPION!",
-					"error":data["error"],
-					"prize":self.prize_pool,
-					"button":"exit",
-				})
-				await self.finish(winner)
-				#blockhain send him payment! of self.prize_pool
-				return
-		else :
+			print("final winner...")
+			self.state = "end"
+			remaining_winner = next(iter(self.remaining_players))
+			await remaining_winner.send_self({
+				"type": "tour.updates",
+				"update_display": "end game",
+				"title": "CHAMPION!",
+				"error": data.get("error", ""),
+				"prize": self.prize_pool,
+				"button": "exit",
+			})
+			await self.finish(remaining_winner)
+			# TODO: Send blockchain prize payment here
+			return
+		#false alarm still more rounds to go ...
+		for winner_id in data.get("winners", []):
+			winner = self.remaining_players.get(winner_id)
+			if not winner:
+				continue
+			self.waiting_players.append(winner_id)
 			await winner.send_self({
-					"type":"tour.updates",
-					"update_display":"end game",
-					"error":data["error"],
-					"title":f"won round {self.current_round}",
-					"button":"wait",
-				})
-		if self.total_matches == 0 :
+				"type": "tour.updates",
+				"update_display": "end game",
+				"title": f"won round {self.current_round}",
+				"error": data.get("error", ""),
+				"button": "wait",
+			})
+		#ready for next round?
+		if self.total_matches == 0:
 			await self.matchmake()
 
 	async def finish(self, winner):
@@ -255,5 +288,5 @@ class TournamentChannel():
 			self.remaining_players.remove(consumer)
 		await consumer.remove_channel(self.remainingRoom)
 		consumer.update_self_tournament(None)
-		if self.status == "matchmade":
-			self.total_matches -= 1
+		if self.status != "matchmake":
+			self.waiting_players,remove(consumer.user_id)

@@ -73,9 +73,11 @@ class MainEngine {
 	}
 	add(newObject, clickable){
 		if (newObject instanceof THREE.Group) {
+			console.log("adding group: ", newObject)
 			this.scene.add(newObject)
 			if (clickable) {
-				newObject.traverse(child => {
+				newObject.children.forEach(child => {
+					console.log("child: ", child)
 					if (child instanceof THREE.Object3D)
 						this.clickableObjects.push(child);
 					else
