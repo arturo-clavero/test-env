@@ -114,6 +114,7 @@ class GameChannel():
 			players[self.gameID]["ready"] -= 1
 			if players[self.gameID]["connected"] == 0:
 				del players[self.gameID]
+		print("finish and removing chabbel")
 		await self.consumer.remove_channel(f"game_{self.gameID}")
 
 	async def receive(self, consumer, data):

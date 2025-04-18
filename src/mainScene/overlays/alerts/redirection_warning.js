@@ -6,6 +6,7 @@ import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
+import { fadeout, doublePump } from '../../../core/UIFactory/effects';
 
 const children = [
 	new FlexBox({
@@ -27,37 +28,53 @@ const children = [
 	})
 	
 ]
-let interval;
+
+let prev_title, prev_icon, favicon;
+let interval_favicon, interval_display;
 let length;
 function create_redirection_alert(inputlength){
 	length = inputlength;
 	new AlertManager().add_alert(redirection_alert);
 }
 
-function enter(self){
+function enter(){
 	const icons = ["/src/assets/icons/Empty.png", "/src/assets/icons/a5.png"];
-    let index = 0;
-	let prev_title = document.title;
-	let favicon = document.getElementById("dynamic-favicon");
-	let prev_icon = favicon.getAttribute("href");
+    let favicon_index = 0;
+	prev_title  = document.title;
+	favicon = document.getElementById("dynamic-favicon");
+	prev_icon = favicon.getAttribute("href");
 	document.title = "Battle Begins!";
 	document.getElementById("dynamic-favicon").href = "assets/icons/a5.png";
-	interval = setInterval(() => {
-		index = (index + 1) % icons.length;
-		favicon.href = icons[index];
+	interval_favicon = setInterval(() => {
+		favicon_index = (favicon_index + 1) % icons.length;
+		if (favicon)
+			favicon.href = icons[favicon_index];
 	  }, 500)
-	setTimeout(() => {
-			new AlertManager().remove_latest_alert(self);
-			clearInterval(interval);
-			document.title = prev_title;
-			favicon.href = prev_icon;
-			new StateManager().changeState(3);
-	}, length);
+
+	  interval_display = setInterval(() => {
+		  doublePump(redirection_alert.div);
+		  doublePump(redirection_alert.div);
+
+	  }, 5000);
 }
 function exit(){
 	
 }
 
+function delete_redirection_alert(){
+	console.log("delete? ")
+	new AlertManager().remove_latest_alert(redirection_alert);
+	clearInterval(interval_display);
+	clearInterval(interval_favicon);
+	document.title = prev_title;
+	favicon.href = prev_icon;
+	new StateManager().changeState(3);
+}
+
+function fadeout_redirection_alert(length_in_s){
+	fadeout(redirection_alert.div, length_in_s)
+}
+
 const redirection_alert = new Alert("redirection_alert", children, "urgent", 100, enter, exit, false);
 
-export {create_redirection_alert}
+export {create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert}

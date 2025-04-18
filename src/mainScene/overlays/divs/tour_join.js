@@ -122,10 +122,25 @@ function updateTimer() {
 		container.getElementById("timer").element.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 		// console.log("content;>",container.getElementById("timer").textContent)
 	}
-	if (remaining <= 0)
+	if (remaining == 0)
+	{
 		clearInterval(interval);
+		setInterval(move_on ,2000)
+	}
+	else if (remaining < 0)
+	{
+		clearInterval(interval);
+		move_on()
+	}
 }
 
+function move_on(){
+	let state = new StateManager().states[3];
+	if (state.currentSubstate == 4 || state.currentSubstate == 5)
+	{
+		state.changeSubstate(state.startIndex)
+	}
+}
 const join = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,

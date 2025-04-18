@@ -54,11 +54,17 @@ class Alert{
 		this.hide(true);
 	}
 	style_div(){
+		let wrapper = document.createElement("div");
+		wrapper.style.position = "absolute";
+		wrapper.style.top = "5%";
+		wrapper.style.left = "50%";
+		wrapper.style.transform = "translateX(-50%)";
+		wrapper.style.display = "flex";
+		wrapper.style.justifyContent = "center";
+		wrapper.style.alignItems = "center";
+		wrapper.style.width = "100%";
+		wrapper.style.pointerEvents = "none";
 		let popup = document.createElement("div");
-		popup.style.position = "fixed";
-		popup.style.top = "10px";
-		popup.style.left = "50%";
-		popup.style.transform = "translateX(-50%)";
 		popup.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
 		popup.style.color = "white";
 		popup.style.padding = "2% 2%";
@@ -68,16 +74,20 @@ class Alert{
 		popup.style.whiteSpace = "nowrap";
 		popup.style.zIndex = "1000";
 		popup.style.textAlign = "center";
-		// popup.style.margin= "8px 15px";
+		popup.style.transition = "transform 0.2s ease";
+		popup.style.transformOrigin = "center center";
 		popup.id = "popup-message";
-		popup.className = "position-fixed top-0 start-50 translate-middle-x bg-dark text-white text-center p-3 rounded shadow-lg";
+		popup.className = "bg-dark text-white text-center p-3 rounded shadow-lg";
+		wrapper.appendChild(popup);
+		document.body.appendChild(wrapper);
 		this.div = popup;
+		this.wrapper = wrapper;``
 	}
 	append_children(children){
 		for (let i = 0; i < children.length; i++){
 			this.div.appendChild(children[i].element)
 		}
-		new MainEngine().container.appendChild(this.div);
+		new MainEngine().container.appendChild(this.wrapper);
 	}
 	show(){
 		this.div.style.visibility = "visible";

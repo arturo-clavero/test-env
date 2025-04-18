@@ -6,6 +6,7 @@ import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
+import { fadeout } from '../../../core/UIFactory/effects';
 
 const children = [
 	new FlexBox({
@@ -67,11 +68,17 @@ function create_exit_alert(){
 
 function enter(self){
 	setTimeout(() => {
+		new AlertManager().remove_latest_alert(self);
+		fadeout(exit_alert.div)
+	}, 3000);
+	
+	setTimeout(() => {
 			new AlertManager().remove_latest_alert(self);
-		}, 4000);//60s
+		}, 4500);
 }
-function exit(){
 
+function exit(){
+	
 }
 
 const exit_alert = new Alert("exit_alert", children, "warning", 0, enter, exit, false);

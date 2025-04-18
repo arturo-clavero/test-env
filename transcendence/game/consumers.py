@@ -26,19 +26,25 @@ class MainConsumer(AsyncWebsocketConsumer):
 			active_users = []
 		active_users.append(self.user_id)
 		cache.set('active_users', active_users)
-		#TODO cehck if self consumer was here before....
 		self.user_data = cache.get(f"consumer_{self.user_id}")
 		if self.user_data :
-			self.tournament = TournamentManager().get_tournament(self.user_data.tournament)
-			for room in self.user_data.rooms:
+			print("retrieving consumer", self.user_data)
+			tour_id = self.user_data.get("tournament")
+			print("tour_id: ", tour_id)
+			if tour_id is not None:
+				self.tournament = TournamentManager().get_tournament(tour_id)
+			else:
+				self.tournament = None
+			for room in self.user_data.get("rooms"):
+				print("adding room: ", room)
 				await self.join_channel(room, False)
 		else :
 			self.tournament = None
 			self.user_data = {"rooms":[], "tournament":None}
-			await self.join_channel("all")
-			await self.join_channel(f"{self.user_id}")
-			await self.update_tournament_display()
 			cache.set(f"consumer_{self.user_id}", self.user_data)
+			await self.join_channel(f"{self.user_id}")
+		await self.join_channel("all")
+		await self.update_tournament_display()
 
 	async def exit_live(self):
 		if self.gameChannel and self.gameChannel.status == "on":
@@ -73,12 +79,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 			if data["action"] == "exit live":
 				print("exit live")
-				print("exit live")
-				print("exit live")
-				print("exit live")
-				print("exit live")
-				print("exit live")
-				print("exit live")
 				await self.exit_live()
 
 			elif data["action"] == "create":
@@ -93,7 +93,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 								"start" : newTour.start_time.isoformat()
 							})
 					asyncio.create_task(newTour.notify_start())
+					asyncio.create_task(newTour.fade_out_notification())
 					asyncio.create_task(newTour.start())
+
 				else : 
 					await self.send_self({
 								"type" : "tour.updates",
@@ -101,7 +103,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 								"button" : "join",
 								"prize_pool" : pending_tournament.prize_pool,
 								"now" : timezone.now().isoformat(),
-								"start" : newTour.start_time.isoformat(),
+								"start" : pending_tournament.start_time.isoformat(),
 							})
 
 			elif data["action"] == "join" and pending_tournament != None:
@@ -111,23 +113,31 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def update_tournament_display(self):
 		pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
+		if self.tournament:
+			if pending_tournament == None or self.tournament.tour_id == pending_tournament.tour_id:
+				print("has self tournaemnt: ", self.tournament.status)
+				if self.tournament.status == "open" or self.tournament.status == "locked":
+					print("subscribed?")
+					await self.send_self({
+						"type" : "tour.updates",
+						"update_tour_registration" : "join",
+						"button" : "subscribed",
+						"prize_pool" : pending_tournament.prize_pool,
+						"now" : timezone.now().isoformat(),
+						"start" : pending_tournament.start_time.isoformat()
+					})
+					if self.tournament.status == "locked" and self.tournament.fadeout == False:
+						await self.send_self({"type" : "tour.updates",
+						"notification" : "start"})
 		if pending_tournament == None:
+			print("create too...")
 			await self.send_self({
 				"type" : "tour.updates",
 				"update_tour_registration" : "create",
 				"button" : "create",
 			})
 		#paying
-		elif self.user_id in pending_tournament.registered:
-			await self.send_self({
-				"type" : "tour.updates",
-				"update_tour_registration" : "join",
-				"button" : "subscribed",
-				"prize_pool" : pending_tournament.prize_pool,
-				"now" : timezone.now().isoformat(),
-				"start" : pending_tournament.start_time.isoformat()
-			})
-		elif pending_tournament.status == "locked":
+		elif pending_tournament.status == "locked" and self.tournament == None:
 			await self.send_self({
 				"type" : "tour.updates",
 				"update_tour_registration" : "join",
@@ -136,7 +146,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"now" : timezone.now().isoformat(),
 				"start" : pending_tournament.start_time.isoformat()
 			})
-		else:
+		elif self.tournament == None:
 			await self.send_self({
 				"type" : "tour.updates",
 				"update_tour_registration" : "join",
@@ -146,46 +156,34 @@ class MainConsumer(AsyncWebsocketConsumer):
 				"start" : pending_tournament.start_time.isoformat()
 			})
 
-	def update_self_tournament(self, value):
-		if value == None:
-			self.update_user_data({"action":"set", "tournament": None})
-			self.tournament = None
-		else:
-			self.update_user_data({"action":"set", "tournament":value})
-			self.tournament = TournamentManager().get_tournament(value)
-
 	def update_user_data(self, data):
 		user_data = cache.get(f"consumer_{self.user_id}")
-		for key, command in data.items():
-			if not isinstance(command, dict) or "action" not in command:
-				continue  # Skip invalid entries
-			action = command["action"]
-			value = command.get("value")
-			if action == "set":
-				user_data[key] = value
-			elif action == "append":
-				if key not in user_data:
-					user_data[key] = []
-				if isinstance(user_data[key], list):
-					user_data[key].append(value)
-			elif action == "remove":
-				if isinstance(user_data.get(key), list):
-					try:
-						user_data[key].remove(value)
-					except ValueError:
-						pass  # Item not in list, ignore
+		# print("current user data: ", user_data)
+		# print("have to add : ", data)
+		if data.get("action") == "set":
+			user_data[ data.get("key")] = data.get("value")
 
+		elif data.get("action") == "append":
+			if data.get("key") not in user_data:
+				user_data[data.get("key")] = []
+			user_data[data.get("key")].append(data.get("value"))
+
+		elif data.get("action") == "remove":
+			if data.get("key") in user_data and data.get("value") in user_data[data.get("key")]:
+				user_data[data.get("key")].remove(data.get("value"))
+
+		# print("after user data: ", user_data)				
 		cache.set(f"consumer_{self.user_id}", user_data)
 
 
 	async def join_channel(self, room, update = True):
 		await self.channel_layer.group_add(room, self.channel_name)
 		if update:
-			self.update_user_data({"action":"append", "value": room})
+			self.update_user_data({"action":"append", "key":"rooms", "value":room})
 
 	async def remove_channel(self, room):
 		await self.channel_layer.group_discard(room, self.channel_name)
-		self.update_user_data({"action":"remove", "value": room})
+		self.update_user_data({"action":"remove", "key":"rooms", "value": room})
 
 	async def send_channel(self, room, message):
 		await self.channel_layer.group_send(room, message)

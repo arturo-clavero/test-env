@@ -8,6 +8,7 @@ from django.core.cache import cache
 #constants
 waitTime = 15
 notificationTime = 5
+fadeOutTime = 0.5
 entry_price = 100
 max_players = 1024
 min_players = 2
@@ -40,7 +41,7 @@ class TournamentManager:
 		return self._tournaments
 
 	def get_tournament(self, tournament_id = None):
-		if tournament_id == None:
+		if tournament_id == None or tournament_id not in self._tournaments:
 			return None
 		return self._tournaments[tournament_id]
 
@@ -57,12 +58,13 @@ class TournamentChannel():
 	def __init__(self, consumer):
 		global waitTime, _token
 
+		self.fadeOut = False
 		self.prize_pool = 0
 		self.tour_id = str(uuid4())
 		self.registeredRoom = f"registered_tour_{self.tour_id}"
 		self.playersRoom = f"players_tour_{self.tour_id}"
 		self.status = "open"
-		self.registered = []
+		self.registered = {}
 		self.players = {}
 		self.now_playing = []
 		self.now_waiting = []
@@ -83,7 +85,7 @@ class TournamentChannel():
 	async def confirm_payment(self, consumer):
 		global entry_price, max_players
 
-		self.registered.append(consumer)
+		self.registered[consumer.user_id] = consumer
 		self.prize_pool += entry_price * 0.95
 		await consumer.send_self({ "type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "subscribed", "id":self.tour_id})
@@ -94,7 +96,7 @@ class TournamentChannel():
 			await get_channel_layer().group_send("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join",  "button" : "full", "prize_pool": self.prize_pool})
 		await consumer.join_channel(self.registeredRoom)
-		consumer.update_self_tournament(self.tour_id)
+		consumer.update_user_data({"action":"set", "key":"tournament", "value": self.tour_id})
 	
 	async def notify_start(self):
 		global waitTime, notificationTime
@@ -103,10 +105,20 @@ class TournamentChannel():
 		self.status = "locked"
 		if len(self.registered) > 0:
 			await get_channel_layer().group_send(f"{self.registeredRoom}", {"type" : "tour.updates",
-				"notification" : "start", "length" : notificationTime})
+				"notification" : "start"})
 		await get_channel_layer().group_send("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "locked"})
-	
+		await get_channel_layer().group_send("all", {"type" : "tour.updates",
+			"update_tour_registration" : "create", "button" : "create"})
+
+	async def fade_out_notification(self):
+		global waitTime, fadeOutTime
+
+		self.fadeout = True
+		await asyncio.sleep(waitTime - fadeOutTime - 0.5)
+		if len(self.registered) > 0:
+			await get_channel_layer().group_send(f"{self.registeredRoom}", {"type" : "tour.updates",
+				"notification" : "fadeOut", "length" : fadeOutTime})
 
 	async def start(self):
 		global waitTime, min_players, _token
@@ -117,29 +129,33 @@ class TournamentChannel():
 		cache.delete("pending_tournament")
 		await get_channel_layer().group_send("all", {"type" : "tour.updates",
 			"update_tour_registration" : "create", "button" : "create"})
-		
+		await get_channel_layer().group_send(f"{self.registeredRoom}", {"type" : "tour.updates",
+			"update_tour_registration" : "exit redirection alert"})
 		#get registered users who are "active"
 		# [players{id:user}, now_waiting[id], playersRoom]
 		active_users = cache.get('active_users')
 		if active_users == None:
 			active_users = []
-		for user in self.registered:
-			if user.user_id in active_users:
-				self.players[user.user_id] = user
+		for user_id in self.registered:
+			user = self.registered[user_id]
+			await user.remove_channel(self.registeredRoom)
+			if user_id in active_users:
+				self.players[user_id] = user
 				alias = await get_alias(user.user_id)
-				self.players[user.user_id].alias = alias
+				self.players[user_id].alias = alias
 				self.now_waiting.append(user.user_id)
 				await user.join_channel(self.playersRoom)
 
 		#not enough players ? refund | cancel
 		if len(self.players) == 1:
 			print("one player, refund")
-			lone_player = self.players[self.now_waiting[0]]
-			await lone_player.send_self({"type" : "tour.updates",
+			print("self.nowaitning[0[]]", self.now_waiting[0])
+			await get_channel_layer().group_send(f"{self.now_waiting[0]}", {"type" : "tour.updates",
 				"update_display" : "refund", "reason" : "insufficient players"})
-			await lone_player.remove_channel(self.playersRoom)
+			await self.remove_player(self.now_waiting[0])
 		if len(self.players) <= 1:
 			print("1 or less players, tournament cancelled")
+			# cache.set("pending_tournament", None)
 			TournamentManager().remove_tournament(self.tour_id, _token)
 			return
 
@@ -223,11 +239,12 @@ class TournamentChannel():
 
 	async def remove_player(self, player_id):
 
+		if player_id not in self.players:
+			return
 		consumer = self.players[player_id]
 		await consumer.remove_channel(self.playersRoom)
-		consumer.update_self_tournament(None)
-		if player_id in self.players:
-			del self.players[player_id]
+		consumer.update_user_data({"action":"set", "key":"tournament", "value": None})
+		del self.players[player_id]
 		if self.now_waiting and player_id in self.now_waiting:
 			self.now_waiting.remove(player_id)
 		if self.now_playing and player_id in self.now_playing:
