@@ -3,7 +3,7 @@ import { Shape } from "./Shape";
 import { order_path, mapToCenter } from '../../mainScene/utils/utils';
 
 class Part {
-	constructor(pointsLeftXY, pointsRightXY, materials){
+	constructor(pointsLeftXY, pointsRightXY, materials, mode = "normal"){
 		this.width = 0;
 		this.shapes = [];
 		this.self = null;
@@ -74,7 +74,8 @@ class Part {
 	init_group(){
 		this.self = new THREE.Group();
 		// this.mesh = new THREE.Group();
-		for (let i = 0; i < this.shapes.length; i++)
+		// for (let i = 0; i < this.shapes.length; i++)
+		for (let i = 0; i < 2; i++)
 		{
 			// this.mesh.add(this.shapes[i].self);
 			this.self.add(this.shapes[i].self);

@@ -70,7 +70,7 @@ class Shape {
 			shape.moveTo(points[0][0], points[0][1]);
 			for (let i = 1; i < points.length; i++)
 				shape.lineTo(points[i][0], points[i][1]);
-			shape.closePath();
+			//shape.closePath();
 			geometry = new THREE.ShapeGeometry(shape);
 		}
 		const uvs = this.calc_uvs(geometry);

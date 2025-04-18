@@ -1,5 +1,7 @@
 import {getUserID} from './utils'
 import { msgRouter } from './BackendMsg';
+//OPTION RAINBOW
+// import axios from 'axios';
 
 export class Socket {
 	constructor(){

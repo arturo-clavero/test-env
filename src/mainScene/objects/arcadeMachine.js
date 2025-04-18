@@ -22,17 +22,19 @@ function get_shape(total_height, total_width)
 	squareShape.lineTo(w[4], h[0]);
 	return squareShape;
 }
+
 const scale = 0.2;
 const height = 6 * scale;
 const width = 3 * scale;
 
+
+const baseShape = get_shape(height, width);
 const materials = [
 	new THREE.MeshStandardMaterial({ color: 0x0000ff ,}),
 	new THREE.MeshStandardMaterial({ color: 0x0000ff ,}),
 	new THREE.MeshStandardMaterial({ color: 0xff00ff ,}),
 
 ];
-const baseShape = get_shape(height, width);
 const baseGeometry = new THREE.ExtrudeGeometry(baseShape, { depth: width, bevelEnabled: false });
 baseGeometry.rotateY(-Math.PI / 2);
 

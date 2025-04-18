@@ -53,16 +53,16 @@ class MainEngine {
 		this.container.appendChild(this.css3DRenderer.domElement);
 	}
 	setUpLights(){
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 		this.scene.add(ambientLight);
 
 		const topLight = new THREE.SpotLight(0x0053f9, 50);
-		topLight.position.set(0, 6, 2);
+		topLight.position.set(9,-6, 2);
 		topLight.castShadow = true;
 		this.scene.add(topLight);
 
 		const spotLight = new THREE.SpotLight(0xd34dee, 50);
-		spotLight.position.set(0, 2, 5);
+		spotLight.position.set(5,5, 4);
 		// spotLight.position.set(0, 0, 3.5);
 		spotLight.castShadow = true;
 		this.scene.add(spotLight);

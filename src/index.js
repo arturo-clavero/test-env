@@ -11,9 +11,18 @@ import { StateManager } from './core/stateManager/StateManager';
 import { Socket } from './mainScene/utils/Socket';
 
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
+import { testObj } from './mainScene/objects/testBase';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
 
 const engine = new MainEngine();
+engine.scene.add(testObj.self)
+
+export function animate() {
+	if (!isAnimating) return ;
+	requestAnimationFrame(animate);
+	testObj.self.rotation.y += 0.001;
+	engine.animate();
+}
 
 let isAnimating = false;
 
@@ -53,11 +62,7 @@ export function enterScene(app_container){
 
 
 
-export function animate() {
-	if (!isAnimating) return ;
-	requestAnimationFrame(animate);
-	engine.animate();
-}
+
 
 //exitScene is called in beforeUnmount() or onBeforeUnmount().
 function exitScene(){
