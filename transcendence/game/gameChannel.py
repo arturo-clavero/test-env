@@ -21,13 +21,6 @@ class GameManager():
 					updates = game.update_state()
 					if updates:
 						await get_channel_layer().group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
-						if updates["state"] == "game end":
-							print("store game results///")
-							await store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
-							print("end store")
-							active_sessions.pop(gameID, None)
-							pending_sessions.pop(gameID, None)
-							break
 				for gameID, start_time in pending_sessions.items():
 					if gameID in active_sessions:
 						pending_sessions.pop(gameID, None)
@@ -161,3 +154,9 @@ class GameChannel():
 							"type": "live.game.updates",
 							"updates": updates,
 						})
+		if updates["state"] == "game end":
+							print("store game results///")
+							await store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
+							print("end store")
+							active_sessions.pop(gameID, None)
+							pending_sessions.pop(gameID, None)
