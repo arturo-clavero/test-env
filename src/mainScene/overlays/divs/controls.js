@@ -21,6 +21,7 @@ const container = new Overlay([
 						mainAxis: "end",
 						children: [
 							new Button({
+								width: "100%",
 								id: "button",
 								content: "READY",
 								fontSize : 0.55,
@@ -35,11 +36,12 @@ const container = new Overlay([
 		])
 function box_style(element){
 	element.style.display = "inline-flex";
+	element.style.aspectRatio = 1;
 	element.style.justifyContent = "center";
 	element.style.alignItems = "center";
-	element.style.aspectRatio = "1 / 1";
-	element.style.height = "100%"; // or 100%
-	element.style.margin = "10%";
+	// element.style.width = "100%";
+	element.style.height = "50%";
+	element.style.margin = "20%";
 	element.style.border = "2px solid #ccc";
 	element.style.borderRadius = "8px";
 	element.style.background = "#f9f9f9";
@@ -68,67 +70,50 @@ function get_controls_tab(title, up, down){
 	if (down == "arrow down")
 		down = "\u2193";
 	let controls = new FlexBox({
+		flex: 1,
 		dir: "column",
 		marginBottom: "20%",
-		flex: 1,
-		width: "100%",
 		children: [
 			new Text({
 				content: title,
-				fontSize: 0.55,
+				fontSize: 0.75,
 				marginBottom: "3%",
 			}),
 			new FlexBox({
 				dir: "row",
 				marginBottom: "5%",
 				crossAxis: "center",
-				mainAxis: "space-between",
-				width: "100%",
-				flex: 1,
+				mainAxis: "center",
 				children: [
+					new Text({
+						content: "Up",
+						fontSize: 0.65,
+					}),
 					new FlexBox({
-						width: "100%",
-						dir : "row",
-						mainAxis: "center",
+						id: "up-box",
+						marginBottom : "10%",
 						children: [
 							new Text({
-								content: "Up",
-								fontSize: 0.45,
-							}),
-							new FlexBox({
-								id: "up-box",
-								marginBottom : "10%",
-								children: [
-									new Text({
-										color: "black",
-										content: up,
-										fontSize: "2rem",
-										fontFamily: "monospace",
-									}),
-								]
+								color: "black",
+								content: up,
+								fontSize: "2rem",
+								marginLR: "6%",
 							}),
 						]
 					}),
+					new Text({
+						content: "Down",
+						fontSize: 0.65,
+						marginLR: "6%",
+					}),
 					new FlexBox({
-						width: "50%",
-						dir : "row",
-						mainAxis: "center",
+						id: "down-box",
 						children: [
 							new Text({
-								content: "Down",
-								fontSize: 0.45,
+								color: "black",
+								content: down,
+								fontSize: "2rem",
 							}),
-							new FlexBox({
-								id: "down-box",
-								children: [
-									new Text({
-										color: "black",
-										content: down,
-										fontSize: "2rem",
-										fontFamily: "monospace",
-									}),
-								]
-							})
 						]
 					})
 				]
@@ -147,10 +132,10 @@ function enter(type){
 	if (type == "local")
 	{
 		new_controls = new FlexBox({
-			dir: "column",
-			crossAxis: "center",
 			flex: 1,
-			mainAxis: "space-evenly",
+			dir: "column",
+			// crossAxis: "center",
+			// mainAxis: "space-evenly",
 			children: [
 				get_controls_tab( "Left Player", "W", "S"),
 				get_controls_tab( "Right Player", "arrow up", "arrow down")
@@ -161,7 +146,6 @@ function enter(type){
 		new_controls = new FlexBox({
 			dir: "column",
 			mainAxis: "center",
-			flex: 1,
 			children: [
 				get_controls_tab( "Player (left)", "arrow up", "arrow down"),
 			]
@@ -171,7 +155,6 @@ function enter(type){
 		new_controls = new FlexBox({
 			dir: "column",
 			mainAxis: "center",
-			flex: 1,
 			children: [
 				get_controls_tab( "Player (left or right)", "arrow up", "arrow down"),
 			]
