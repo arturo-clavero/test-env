@@ -41,7 +41,7 @@ function box_style(element){
 	element.style.justifyContent = "center";
 	element.style.alignItems = "center";
 	// element.style.width = "100%";
-	element.style.height = "50%";
+	element.style.height = "70%";
 	element.style.margin = "20%";
 	element.style.border = "2px solid #ccc";
 	element.style.borderRadius = "8px";
@@ -77,18 +77,19 @@ function get_controls_tab(title, up, down){
 		children: [
 			new Text({
 				content: title,
-				fontSize: 0.75,
-				marginBottom: "3%",
+				fontSize: 1.2,
+				marginBottom: "23%",
 			}),
 			new FlexBox({
 				dir: "row",
 				marginBottom: "5%",
 				crossAxis: "center",
 				mainAxis: "center",
+				marginTop: "10%",
 				children: [
 					new Text({
 						content: "Up",
-						fontSize: 0.65,
+						fontSize: 0.95,
 					}),
 					new FlexBox({
 						id: "up-box",
@@ -104,7 +105,7 @@ function get_controls_tab(title, up, down){
 					}),
 					new Text({
 						content: "Down",
-						fontSize: 0.65,
+						fontSize: 0.95,
 						marginLR: "6%",
 					}),
 					new FlexBox({
