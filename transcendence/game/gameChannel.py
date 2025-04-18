@@ -55,7 +55,7 @@ class GameChannel():
 		self.gameID = gameID
 		self.user_id = consumer.user_id
 		self.reconnected = False
-		await self.manage_user_multitab()
+		# await self.manage_user_multitab()
 		await self.consumer.join_channel(f"game_{self.gameID}")
 		await self.verify_user()
 		print("add player")
@@ -84,15 +84,15 @@ class GameChannel():
 		if players[self.gameID]["connected"] > self.max_players:
 			await self.finish()
 		
-	async def manage_user_multitab(self):
-		if self.user_id in active_connections:
-			old_connection = active_connections[self.user_id]
-			if self.gameID in active_sessions:
-				self.old_game = active_sessions[self.gameID]
-				self.reconnected = True
-			await old_connection.close()
-		else:
-			active_connections[self.user_id] = self
+	# async def manage_user_multitab(self):
+	# 	if self.user_id in active_connections:
+	# 		old_connection = active_connections[self.user_id]
+	# 		if self.gameID in active_sessions:
+	# 			self.old_game = active_sessions[self.gameID]
+	# 			self.reconnected = True
+	# 		await old_connection.close()
+	# 	else:
+	# 		active_connections[self.user_id] = self
 
 	async def finish(self):
 		if self.status == "uninitialized" or self.status == "off":

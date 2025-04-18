@@ -11,6 +11,14 @@ class StateManager {
         new MainEngine().container.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		StateManager.instance = this;
 	}
+	get_index_for(name){
+		for (let i = 0; i < this.states.length; i++)
+		{
+			if (this.states[i].name == name)
+				return i;
+		}
+		return -1;
+	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = false) {
         if (this.currentStateIndex == index || index < 0)
 			return;

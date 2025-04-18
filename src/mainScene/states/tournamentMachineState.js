@@ -299,17 +299,17 @@ const tourMachineState = new State(
 		restScreenJoin,
 		startScreenJoin,//5
 		screenPay,//6
+		screenEnd,//7
 		screenRefund,
-		screenMatchmake,//8
+		screenMatchmake,//9
+		screenWaiting, //10
 		screenGame,
-		screenEnd,//10
-		screenWaiting, //11
 		screenControls,
 	],
 	null,
 	()=>{
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
-		if (curr_sub >= "8")
+		if (curr_sub >= new StateManager().get_index_for("game"))
 		{
 			console.log("exit warning maybe...", curr_sub)
 			if (divEnd["can-exit"]() == false)

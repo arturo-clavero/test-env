@@ -27,6 +27,7 @@ const container = new Overlay([
 								fontSize : 0.55,
 								onClick: ()=>{
 									new StateManager().currentState.changeSubstate();
+									console.log("clicked")
 								}
 							})
 						]
@@ -192,8 +193,9 @@ function hide_div(){
 }
 
 function exit(){
+	console.log("exit")
 	clearInterval(interval);
-	new_controls.element.replaceWith(container.getElementById("matches").element)
+	new_controls.element.replaceWith(container.getElementById("controls").element)
 	hide_div();
 }
 

@@ -74,7 +74,7 @@ const controlScreen = new CssSubState(
 
 
 const gameScreen = new MeshSubState(
-	"rest", 
+	"game", 
 	screenSurface,
 	pongGame,
 	1,
@@ -117,7 +117,7 @@ const aiMachineState = new State(
 	],
 	null,
 	()=>{
-		if (new StateManager().currentState.currentSubstateIndex == "2")
+		if (new StateManager().currentState.currentSubstate.name == "game")
 			{
 				if (create_exit_alert() == "cancelled")
 					return ("cancelled")

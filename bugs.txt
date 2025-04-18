@@ -10,3 +10,5 @@ keep disconnection for up to 20s
 
 end game space
 
+buttons enter 
+buttons switch
