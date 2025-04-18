@@ -136,8 +136,9 @@ class GameChannel():
 							"updates": {"state" : updates["state"], "info" : updates["info"]}
 						}))
 			print("gm calls store err 2")
-			await store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
-			await self.finish()
+			if self.status != "off":
+				await store_game_results({"error":updates["info"], "winner": self.user_id, "gameID":self.gameID, "score1" : updates["score1"], "score2" : updates["score2"], "start_time": updates["start_time"]})
+				await self.finish()
 		elif (updates["state"] == "playing" or updates["state"] == "game end"):
 			await self.consumer.send_self({
 							"type": "live.game.updates",

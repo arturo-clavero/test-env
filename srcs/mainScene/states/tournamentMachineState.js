@@ -298,12 +298,6 @@ const tourMachineState = new State(
 				})
 			}
 		}
-		else
-			console.log("no exit waring curr usb: ", curr_sub)
-		new Socket().send({
-			"channel" : "tournament",
-			"action" : "finish",
-		})
 	},
 	[
 		screenMaterial,

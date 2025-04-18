@@ -10,14 +10,14 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
-		this.userID = await getUserID();
+		this.userID = await getUserID()
 		this.msgQueue = [];
 		try {
 			this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
-			this.socket.onmessage = msgRouter; 
+			this.socket.onmessage = msgRouter;
 		}
 		catch(err){
 			this.myError(err)

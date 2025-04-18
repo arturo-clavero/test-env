@@ -85,6 +85,7 @@ async def store_game_results(results):
 			log['players']['2']["result"] = "draw"
 	# print("results: ", results)
 	# print("log: ", log)
+	print("store game results")
 	if log["type"] == "remote":
 		tour = TournamentManager().get_tournament(log["tour_id"])
 		if tour :

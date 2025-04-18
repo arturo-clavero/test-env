@@ -109,6 +109,10 @@ function	updatesFromBackend(data){
 function	countdown(){
 	state = "countdown";
 	content_body.show();
+	ball.hide();
+	paddles.hide();
+	middleBars.hide();
+	header.hide();
 }
 
 function	playing(){

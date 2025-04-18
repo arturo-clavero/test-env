@@ -6,6 +6,13 @@ from .playLog import new_game
 from django.utils import timezone
 from django.core.cache import cache
 
+#LERA use online
+def isUserOnline(user_id):
+	active_users = cache.get('active_users')
+	if active_users == None or user_id not in active_users:
+		return False
+	return True
+
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		print("websocket connected!")
@@ -33,12 +40,18 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.update_tournament_display()
 			cache.set(f"consumer_{self.user_id}", self.user_data)
 
+	async def exit_live(self):
+		if self.gameChannel and self.gameChannel.status == "on":
+			print("end game")
+			await self.gameChannel.finish()
+		if self.tournament :
+			print("end tournament")
+			await self.tournament.remove_player(self.user_id)
+
 	async def disconnect(self, code=None):
 		global active_users
-		if self.gameChannel and self.gameChannel.status == "on":
-			await self.gameChannel.finish()
-		if self.tournament and self.tournament.status == "active":
-			await self.tournament.disconnect(self)
+		
+		await self.exit_live()
 		await self.remove_channel("all")
 		active_users = None
 		active_users = cache.get('active_users')
@@ -59,10 +72,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 		elif data["channel"] == "tournament":
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 			if data["action"] == "exit live":
-				if self.gameChannel and self.gameChannel.status == "on":
-					await self.gameChannel.finish()
-				if self.tournament and self.tournament.status == "active":
-					await self.tournament.disconnect(self)
+				print("exit live")
+				print("exit live")
+				print("exit live")
+				print("exit live")
+				print("exit live")
+				print("exit live")
+				print("exit live")
+				await self.exit_live()
+
 			elif data["action"] == "create":
 				if pending_tournament == None:
 					newTour = TournamentChannel(self)
@@ -90,9 +108,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
 					await pending_tournament.confirm_payment(self)
-			elif data["action"] == "finish" and self.tournament != None:
-				await self.tournament.disconnect(self)
-				await self.gameChannel.finish()
 
 	async def update_tournament_display(self):
 		pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))

@@ -50,7 +50,8 @@ class TournamentManager:
 
 	def remove_tournament(self, tournament_id, token = None):
 		self._check_access(token)
-		del self._tournaments[tournament_id]
+		if tournament_id in self._tournaments:
+			del self._tournaments[tournament_id]
 
 class TournamentChannel():
 	def __init__(self, consumer):
@@ -221,10 +222,12 @@ class TournamentChannel():
 
 
 	async def remove_player(self, player_id):
+
 		consumer = self.players[player_id]
 		await consumer.remove_channel(self.playersRoom)
 		consumer.update_self_tournament(None)
-		del self.players[player_id]
+		if player_id in self.players:
+			del self.players[player_id]
 		if self.now_waiting and player_id in self.now_waiting:
 			self.now_waiting.remove(player_id)
 		if self.now_playing and player_id in self.now_playing:
@@ -235,13 +238,14 @@ class TournamentChannel():
 	async def match_looser(self, player_id):
 		print("match looser")
 		#send end message
-		await self.players[player_id].send_self({
-			"type":"tour.updates",
-			"update_display":"end game",
-			"title":f"You have lost round {self.current_round}",
-			"button":"exit",
-		})
-		await self.remove_player(player_id)
+		if player_id in self.players:
+			await self.players[player_id].send_self({
+				"type":"tour.updates",
+				"update_display":"end game",
+				"title":f"You have lost round {self.current_round}",
+				"button":"exit",
+			})
+			await self.remove_player(player_id)
 
 
 	async def match_winner(self, player_id, error, can_be_champion = True):
@@ -251,33 +255,37 @@ class TournamentChannel():
 			return
 		
 		#add player to waiting
-		self.now_waiting.append(player_id)
-		#send winning message
-		await self.players[player_id].send_self({
-			"type":"tour.updates",
-			"update_display":"end game",
-			"title":f"You have won round {self.current_round}",
-			"error":error,
-			"button":"wait",
-		})
+		if player_id in self.players:
+			self.now_waiting.append(player_id)
+			#send winning message
+			await self.players[player_id].send_self({
+				"type":"tour.updates",
+				"update_display":"end game",
+				"title":f"You have won round {self.current_round}",
+				"error":error,
+				"button":"wait",
+			})
 
 	async def tournament_winner(self, player_id, error = ""):
 		global _token
 
+		print("tournametn winner")
 		#check if there are other users now playing or waiting to play
 		if len(self.now_playing) > 0:
 			return False
 		if len(self.now_waiting) > 0 and not (len(self.now_waiting) == 1 and self.now_waiting[0] == player_id):
 			return False
 		#send winning message
-		await self.players[player_id].send_self({
-			"type":"tour.updates",
-			"update_display":"end game",
-			"title":"CHAMPION!",
-			"error":error,
-			"prize":self.prize_pool,
-			"button":"exit",
-		})
+		if player_id in self.players:
+			await self.players[player_id].send_self({
+				"type":"tour.updates",
+				"update_display":"end game",
+				"title":"CHAMPION!",
+				"error":error,
+				"prize":self.prize_pool,
+				"button":"exit",
+			})
+			await self.remove_player(player_id)
 		#store results TODO
 		results = {
 			"winner" : player_id,
@@ -285,7 +293,6 @@ class TournamentChannel():
 			"prize pool" : self.prize_pool,
 		}
 		#clean
-		await self.remove_player(player_id)
 		self.status = "end"
 		TournamentManager().remove_tournament(self.tour_id, _token)
 		return True
@@ -313,6 +320,6 @@ class TournamentChannel():
 			await asyncio.sleep(4)
 			await self.matchmake()
 
-	async def disconnect(self, consumer):
-		print("touranment disconnect")
-		self.remove_player(consumer.user_id)
+	# async def disconnect(self, consumer):
+	# 	print("touranment disconnect")
+		# await self.remove_player(consumer.user_id)
