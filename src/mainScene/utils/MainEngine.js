@@ -69,7 +69,8 @@ class MainEngine {
 	}
 	animate(){
 		this.renderer.render(this.scene, this.camera);
-		this.stateManager.animate();
+		if (this.stateManager)
+			this.stateManager.animate();
 	}
 	add(newObject, clickable){
 		if (newObject instanceof THREE.Group) {

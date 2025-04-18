@@ -37,8 +37,8 @@ export function enterScene(app_container){
 	engine.addContainerWrapper(app_container);
 	if (!engine.sceneInitialized) {	
 		engine.add(backBox, false);
-		engine.add(mainSceneObj, true);
-		engine.stateManager = stateManager;
+		// engine.add(mainSceneObj, true);
+		// engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
 	}
 	new Socket();
