@@ -33,7 +33,7 @@ document.addEventListener('keydown', (event) => {
 
 
 // enterScene is called in mounted() or onMounted().
-function enterScene(app_container){
+export function enterScene(app_container){
 	engine.addContainerWrapper(app_container);
 	if (!engine.sceneInitialized) {	
 		engine.add(backBox, false);
@@ -53,7 +53,7 @@ function enterScene(app_container){
 
 
 
-function animate() {
+export function animate() {
 	if (!isAnimating) return ;
 	requestAnimationFrame(animate);
 	engine.animate();
@@ -81,9 +81,5 @@ function onResize() {
 function onClick(event) {
 	engine.click(event);
 }
-
-enterScene(document.getElementById("app-container"));
-
-// enterScene(document.body);
 
 
