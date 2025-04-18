@@ -38,8 +38,8 @@ function box_style(element){
 	element.style.justifyContent = "center";
 	element.style.alignItems = "center";
 	element.style.aspectRatio = "1 / 1";
-element.style.height = "30%"; // or 100%
-	element.style.margin = "20%";
+	element.style.height = "100%"; // or 100%
+	element.style.margin = "10%";
 	element.style.border = "2px solid #ccc";
 	element.style.borderRadius = "8px";
 	element.style.background = "#f9f9f9";
