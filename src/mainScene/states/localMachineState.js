@@ -3,13 +3,14 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
+import { screenSurface, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-	import { pongGame, startPongGame, demoGame, startDemoGame } from '../overlays/scenes/pong-game/Game';		
+	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
 import { StateManager } from '../../core/stateManager/StateManager';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { AlertManager } from '../overlays/alerts/Alerts';
+import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
@@ -49,28 +50,19 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
-const divChoose = new End("white");
-const chooseScreen = new CssSubState(
-	"choose", 
+const divControls = controls;
+const controlScreen = new CssSubState(
+	"controls", 
 	object,
 	partIndex,
 	surfaceIndex,
-	divChoose.div,
+	divControls.div,
 	0,
-	()=>{divChoose.enter()},
+	()=>{divControls.enter("local")},
 	null,
-	()=>{divChoose.exit()},
-	()=>{divChoose.resize()},
-	null,
-	null
-)
-
-const demoScreen = new MeshSubState(
-	"demo", 
-	screenSurface,
-	demoGame,
-	1,
-	()=>{startDemoGame("local")},
+	()=>{divControls.exit()},
+	()=>{divControls.resize()},
+	()=>{divControls.keyHandler()},
 	null
 )
 
@@ -112,8 +104,7 @@ const localMachineState = new State(
 	[
 		restScreen,
 		startScreen,
-		// chooseScreen,
-		// demoScreen,
+		controlScreen,
 		gameScreen,
 		endScreen
 	],

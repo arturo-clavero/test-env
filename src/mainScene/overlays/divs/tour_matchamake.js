@@ -25,9 +25,6 @@ const container = new Overlay([
 	})
 	
 ])
-function getAlias(){
-	return "alias"
-}
 
 function organize_players_array(array){
 	console.log("all players length: ", array.length)

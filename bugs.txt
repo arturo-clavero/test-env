@@ -1,8 +1,12 @@
 GAME
 when moving paddle change material
-beginning bottom to move press: w s | to move press up down
 
 NEW GAME - State
-how to play
--local move left , move right
--ai move paddle up down
+how to play controls div
+
+keep state upon disconnection...
+
+keep disconnection for up to 20s
+
+end game space
+
