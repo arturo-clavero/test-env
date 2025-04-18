@@ -10,10 +10,18 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
+			// OPTION RAINBOW
+		// const response = await axios.get('api/profiles/me/')
+		// this.userID = response.data.id
+			// OPTION TEST
 		this.userID = await getUserID()
-		this.msgQueue = [];
+			///end
 		try {
+					// OPTION RAINBOW
+			// this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
+				// OPTION TEST
 			this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
+				//end
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
