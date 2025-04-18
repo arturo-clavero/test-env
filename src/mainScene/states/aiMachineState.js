@@ -11,6 +11,8 @@ import { AlertManager } from '../overlays/alerts/Alerts';
 import { StateManager } from '../../core/stateManager/StateManager';
 import * as THREE from 'three';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { controls } from '../overlays/divs/controls';
+
 const divStart = new StartScreen('white', "START GAME");
 
 const restScreen = new CssSubState(
@@ -46,6 +48,28 @@ const startScreen = new CssSubState(
 	()=>{ divStart.resize();},
 	(event)=> { return divStart.keyHandler(event);},
 	()=>{divStart.animate()},
+)
+
+const divControls = controls;
+const controlScreen = new CssSubState(
+	"controls", 
+	object,
+	partIndex,
+	surfaceIndex,
+	divControls.div,
+	0,
+	()=>{
+		divControls['show-buttons']();
+		divControls["enter"]("ai");
+	},
+	null,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["exit"]()
+	},
+	()=>{divControls["resize"]()},
+	()=>{divControls["keyHandler"]()},
+	null
 )
 
 
@@ -86,7 +110,8 @@ const aiMachineState = new State(
 	null,
 	[
 		restScreen,
-		startScreen, 
+		startScreen,
+		controlScreen,
 		gameScreen,
 		endScreen
 	],

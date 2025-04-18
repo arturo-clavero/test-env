@@ -17,6 +17,7 @@ import { waiting } from '../overlays/scenes/waiting';
 import { StateManager } from '../../core/stateManager/StateManager';
 import { Socket } from '../utils/Socket';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = start;
@@ -196,6 +197,29 @@ const screenRefund = new CssSubState(
 	null,
 )
 
+const divControls = controls;
+const screenControls = new CssSubState(
+	"controls", 
+	object,
+	partIndex,
+	surfaceIndex,
+	divControls.div,
+	0,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["enter"]("local");
+	},
+	null,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["exit"]()
+	},
+	()=>{divControls["resize"]()},
+	()=>{divControls["keyHandler"]()},
+	null
+)
+
+
 const divMatchmake = matchmake;
 const screenMatchmake = new CssSubState(
 	"end",
@@ -280,6 +304,7 @@ const tourMachineState = new State(
 		screenGame,
 		screenEnd,//10
 		screenWaiting, //11
+		screenControls,
 	],
 	null,
 	()=>{

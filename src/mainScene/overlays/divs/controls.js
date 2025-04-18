@@ -144,6 +144,7 @@ function enter(type){
 	}
 	else if (type == "ai"){
 		new_controls = new FlexBox({
+			flex: 1,
 			dir: "column",
 			mainAxis: "center",
 			children: [
@@ -153,6 +154,7 @@ function enter(type){
 	}
 	else if (type == "remote"){
 		new_controls = new FlexBox({
+			flex: 1,
 			dir: "column",
 			mainAxis: "center",
 			children: [
@@ -162,8 +164,12 @@ function enter(type){
 	}
 	container.getElementById("controls").element.replaceWith(new_controls.element);
 	show_div();
+	let stable_i = 0, i =0;
 	interval = setInterval(()=>{
-		let i = Math.floor(Math.random() * boxes.length);
+		if (boxes.length > 2)
+			i = Math.floor(Math.random() * boxes.length);
+		else
+			i = (i + 1) % 2;
 		box_pressed(boxes[i]);
 	}, 1000);
 }
@@ -179,12 +185,10 @@ function hide_buttons(){
 
 function show_div(){
 	container.element.style.visibility = "visible";
-	show_buttons();
 }
 
 function hide_div(){
 	container.element.style.visibility = "hidden";
-	hide_buttons();
 }
 
 function exit(){
@@ -197,6 +201,8 @@ container.element.style.visibility = "hidden";
 
 const controls = {
 	"div" : container.element,
+	"show-buttons": show_buttons,
+	"hide-buttons": hide_buttons,
 	"enter" : enter,
 	"resize": ()=>{container.resize()},
 	"exit" : exit,

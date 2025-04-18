@@ -58,11 +58,17 @@ const controlScreen = new CssSubState(
 	surfaceIndex,
 	divControls.div,
 	0,
-	()=>{divControls.enter("local")},
+	()=>{
+		divControls['show-buttons']();
+		divControls["enter"]("local");
+	},
 	null,
-	()=>{divControls.exit()},
-	()=>{divControls.resize()},
-	()=>{divControls.keyHandler()},
+	()=>{
+		divControls['hide-buttons']();
+		divControls["exit"]()
+	},
+	()=>{divControls["resize"]()},
+	()=>{divControls["keyHandler"]()},
 	null
 )
 
