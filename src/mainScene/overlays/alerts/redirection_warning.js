@@ -35,7 +35,7 @@ function create_redirection_alert(inputlength){
 }
 
 function enter(self){
-	const icons = ["assets/icons/Empty.png", "assets/icons/a5.png"];
+	const icons = ["/src/assets/icons/Empty.png", "/src/assets/icons/a5.png"];
     let index = 0;
 	let prev_title = document.title;
 	let favicon = document.getElementById("dynamic-favicon");
