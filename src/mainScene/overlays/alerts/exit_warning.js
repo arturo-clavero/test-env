@@ -81,8 +81,8 @@ function create_exit_alert(){
 
 function enter(self) {
 	setTimeout(() => {
-		new AlertManager().remove_latest_alert(self);
-		fadeout(exit_alert.div)
+		// new AlertManager().remove_latest_alert(self);
+		fadeout(self.div)
 	}, 5000);
 	
 	setTimeout(() => {

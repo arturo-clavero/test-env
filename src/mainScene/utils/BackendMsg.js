@@ -8,7 +8,7 @@ import { State } from '../../core/stateManager/States';
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	console.log("data: ", data);
+	// console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "game.updates")

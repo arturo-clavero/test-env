@@ -127,7 +127,7 @@ class GameChannel():
 	async def logic_updates(self):
 		updates = self.logic.update_state()
 		if updates:
-			print("updates: ", updates)
+			# print("updates: ", updates)
 			await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 			"updates" : updates})
 			if updates["state"] == "game end":
@@ -154,7 +154,7 @@ class GameChannel():
 	async def disconnect(self, consumer):
 		if self.status == "finished":
 			return
-		self.players.remove(consumer.user_id)
+		self.active_players.remove(consumer.user_id)
 		await consumer.remove_channel(self.room)
 		self.disconnected_players.append(consumer.user_id)
 		await self.error_end("player disconnected")

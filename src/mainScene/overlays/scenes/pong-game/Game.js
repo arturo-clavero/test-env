@@ -59,9 +59,8 @@ export	function startPongGame(type = "local"){
 	}
 	
 function	updatesFromBackend(msg){
-	console.log("received data... ", msg)
 	const data = msg.updates|| msg;
-	console.log("data:", data)
+	// console.log("data:", data)
 	if (data.state == "countdown")
 	{
 		if (state != "countdown")
@@ -178,11 +177,11 @@ function exit(){
 	//if (end == false){
 		//const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
 		// if (userConfirmed)
-		console.log("exit")
+		console.log("exit sending to socket ")
 		clean();
 		new Socket().send({
 			"channel": "game",
-			"request": "end game",
+			"request": "game end",
 		})
 		// else
 		// 	return "forbidden";

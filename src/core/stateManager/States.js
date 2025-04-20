@@ -63,9 +63,9 @@ class State {
 			})
 	}
 	exit() {
-		if (this.exitState() == "cancelled" || this.currentSubstate.exit() == "cancelled")
+		if (this.exitState() == "cancelled" || this.changeSubstate(this.startIndex, false) == "cancelled")
 			return 'cancelled';
-		this.changeSubstate(this.startIndex, false);
+		//this.changeSubstate(this.startIndex, false);
 	}
 	handleKeyPress(event) {
 		const view = this.currentSubstate?.handleKeyPress(event);

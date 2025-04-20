@@ -78,6 +78,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await new_game(data)
 	
 		if data["channel"] == "game":
+			print("data received: ", data)
 			if "boundaries" in data:
 				self.dimensions = data["boundaries"]
 			if data["request"] == "start game":
@@ -88,6 +89,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			elif self.game and "request" in data and data["request"] == "update paddles":
 				self.game.logic.update_paddles(data)
 			elif self.game and "request" in data and data["request"] == "game end":
+				print("request game end!!!")
 				await self.game.disconnect(self)
 
 		elif data["channel"] == "tournament":
