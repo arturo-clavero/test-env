@@ -58,7 +58,7 @@ export function uponEnter(){
 	window.addEventListener('resize', onResize);
 	window.addEventListener('click', onClick);
 	console.log(engine.camera.position)
-	engine.resize()
+	//engine.resize()
 	isAnimating = true;
 	animate();
 	window.dispatchEvent(new Event("resize"));

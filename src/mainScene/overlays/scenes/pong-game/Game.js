@@ -9,6 +9,7 @@ import { Font } from '../../../../core/objectFactory/customFont3d';
 import { dispose_object } from '../../../utils/utils';
 import { StateManager } from '../../../../core/stateManager/StateManager';
 import { createRenderTarget, createScreenMaterial } from '../utils';
+import { OnLoad } from '../../../utils/OnLoad';
 import * as THREE from 'three';
 import { Socket } from '../../../utils/Socket';
 
@@ -30,11 +31,20 @@ import { Socket } from '../../../utils/Socket';
 export	function startPongGame(type = "local"){
 	clean();
 	console.log("new png game... ");
-	new Socket().send({
-		"channel" : "log",
-		"type" : type,
-		"userID1" : socket.socket.userID,
-	})
+	if ( new OnLoad().reconnecting == false)
+	{
+		new Socket().send({
+			"channel" : "log",
+			"type" : type,
+			"userID1" : socket.socket.userID,
+		})
+	}
+	else
+	{
+		mode = type;
+	}
+	    
+	
 }
 
 	function	new_round(gameID_input, player_mode)

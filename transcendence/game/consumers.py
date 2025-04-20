@@ -142,7 +142,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 			elif self.user_id in self.tournament.now_playing:
 				state = 3
 				substate = 11
-		elif self.game is not None:
+		if self.game is not None:
+			await self.send_self({"type": "game.updates", 
+			"state" : "player names", 
+			"name1" : self.game.names[0], 
+			"name2" : self.game.names[1],
+			})
 			print("in game")
 			if self.game.logic.paddles[1].owner == "local":
 				print("in local game")

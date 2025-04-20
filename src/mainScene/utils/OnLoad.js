@@ -9,6 +9,7 @@ export class OnLoad{
 		this.socket_ready = false;
 		this.textures_ready = false;
 		this.switched_already = false;
+		this.reconnecting = false;
 		OnLoad.instance = this;
 	}
 	set_first_load(newPage){

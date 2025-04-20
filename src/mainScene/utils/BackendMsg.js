@@ -40,14 +40,17 @@ export function msgRouter(event, socket){
 	}
 	else if (data.type == "ready"){
 		console.log("ready!")
+		const onLoad = new OnLoad();
 		if ("state" in data && "substate" in data)
 		{
 			console.log("udating substate ... ")
+			onLoad.reconnecting = true
 			stateManager.changeState(data["state"], true, -1);
 			stateManager.currentState.changeSubstate(data["substate"])
+			onLoad.reconnecting = false
 		}
 		//logic here 
-		new OnLoad().set_socket_ready()
+		onLoad.set_socket_ready()
 	}
 }
 
