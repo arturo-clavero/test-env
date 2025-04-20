@@ -58,42 +58,46 @@ export	function startPongGame(type = "local"){
 			// waiting();
 	}
 	
-function	updatesFromBackend(data){
-	if (data.updates.state == "countdown")
+function	updatesFromBackend(msg){
+	console.log("received data... ", msg)
+	const data = msg.updates|| msg;
+	console.log("data:", data)
+	if (data.state == "countdown")
 	{
 		if (state != "countdown")
 			countdown();
-		num = data.updates.num == 1 ? "|" : data.updates.num;
-		if (data.updates.num == 0)
+		num = data.num == 1 ? "|" : data.num;
+		if (data.num == 0)
 			content_body.new("GO", "thick", 0, 0, 0, 5.5, 1, engine);
 
 		else
 			content_body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
 	}
-	else if (data.updates.state == "playing")
+	else if (data.state == "playing")
 	{
 		if (state != "playing")
 			playing();
-		paddles.paddles[0].object.position.y = data.updates.paddle_left;
-		paddles.paddles[1].object.position.y = data.updates.paddle_right;
-		ball.object.position.x = data.updates.ball.x;
-		ball.object.position.y = data.updates.ball.y;
-		header.updateScores(data.updates.score1, data.updates.score2, engine);
+		paddles.paddles[0].object.position.y = data.paddle_left;
+		paddles.paddles[1].object.position.y = data.paddle_right;
+		ball.object.position.x = data.ball.x;
+		ball.object.position.y = data.ball.y;
+		header.updateScores(data.score1, data.score2, engine);
 	}
-	else if (data.updates.state == "game end")
+	else if (data.state == "game end")
 	{
 		if (state != "completed")
 			completed();
 	}
-	else if (data.updates.state == "error")
+	else if (data.state == "error")
 	{
 		if (state != "error")
-			completed(data.updates.info);
+			completed(data.info);
 	}
-	else if (data.updates.state == "player names")
+	else if (data.state == "player names")
 	{
+		console.log("PLAYER NAMES!")
 		console.log("player_names: ", data)
-		header.new("hide", data.updates.name1, data.updates.name2, engine);
+		header.new("hide", data.name1, data.name2, engine);
 	}
 }
 

@@ -32,6 +32,7 @@ class GameManager:
 	async def delete_game(self, game):
 		async with self._finished_games_lock:
 			self._finished_games.append(game)
+		print("deleted game!")
 
 	async def _routine(self):
 		print("start routine")
@@ -46,9 +47,12 @@ class GameManager:
 				async with self._finished_games_lock:
 					# remove finished games from active
 					for game in self._finished_games:
+						print("attempt to delete")
 						if game in self._active_games:
+							print("Delete!")
 							self._active_games.remove(game)
 					self._finished_games.clear()
+
 
 				# check active
 				for game in self._active_games:
@@ -73,6 +77,7 @@ class GameChannel():
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
 		self.active_players = []
+		self.disconnected_players = []
 		self.expected_players_id = get_expected_players(game_id, "id")
 		self.names = get_expected_players(game_id, "alias")
 		print(self.expected_players_id)
@@ -122,45 +127,54 @@ class GameChannel():
 	async def logic_updates(self):
 		updates = self.logic.update_state()
 		if updates:
-			# print("updates: ", updates)
+			print("updates: ", updates)
 			await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 			"updates" : updates})
-			# if updates["state"] == "game end":
-			# 	store_game_results({
-			# 		"results": self.logic.get_scores(),
-			# 		"gameID" : self.game_id,
-			# 		"connected" : self.players,
-			# 		"error" : updates.get("error", "none"),
-			# 	})
-				# self.finish()
+			if updates["state"] == "game end":
+				print("GAME END")
+				store_game_results({
+					"score1":updates["score1"],
+					"score2":updates["score2"],
+					"start_time" : self.logic.start_time,
+					"gameID" : self.game_id,
+					"connected" : self.active_players,
+					"error" : updates.get("error", ""),
+				})
+				await self.finish()
 
 	async def finish(self):
+		if self.status == "finished":
+			print("already finished in finsih...")
+			return
 		self.status = "finished"
 		await GameManager().delete_game(self)
 		await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 		"action" : "delete game"})
 	
 	async def disconnect(self, consumer):
+		if self.status == "finished":
+			return
 		self.players.remove(consumer.user_id)
 		await consumer.remove_channel(self.room)
+		self.disconnected_players.append(consumer.user_id)
 		await self.error_end("player disconnected")
 
 	async def error_end(self, error):
+		if self.status == "finished":
+			print("already finished in error")
+			return
 		store_game_results({
 				"error": error,
 				"gameID" : self.game_id,
-				"connected" : self.players,
+				"start_time" : self.logic.start_time,
+				"looser" : self.disconnected_players[0],
+				"score1" : "",
+				"score2" : "",
 			})
-		await get_channel_layer.group_send(self.room, {"type" : "game.updates",
+		await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 			"error" : error,
 			"game end" : True,
 		})
-		await finish()
+		await self.finish()
 
-	async def receive(self, data):
-		if "request" in data:
-			if data["request"] == "update paddles":
-				self.logic.update_paddles(data)
-			if data["request"] == "end game" :
-				await self.error_end("player disconnected")
 

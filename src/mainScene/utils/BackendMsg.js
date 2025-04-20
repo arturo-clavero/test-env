@@ -7,7 +7,6 @@ import { join } from '../overlays/divs/tour_join';
 import { State } from '../../core/stateManager/States';
 
 export function msgRouter(event){
-	console.log("event: ", event);
 	const data = JSON.parse(event.data);
 	console.log("data: ", data);
 	if (!data)

@@ -85,8 +85,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 				print(data)
 				self.game = GameChannel(self, data["game_id"])
 				await self.game.join(self)	
-			elif self.game:
-				await self.game.receive(data)
+			elif self.game and "request" in data and data["request"] == "update paddles":
+				self.game.logic.update_paddles(data)
+			elif self.game and "request" in data and data["request"] == "game end":
+				await self.game.disconnect(self)
 
 		elif data["channel"] == "tournament":
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
@@ -208,7 +210,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
-		# print("event: ", event)
+		print("event: ", event)
 		if "action" in event and event["action"] == "delete game":
 			await self.remove_channel(self.game.room)
 			self.update_user_data({"action":"set", "key":"game", "value": None})
