@@ -1,12 +1,10 @@
 NEW BACKEND
-game_dimensions...
-game_paddle_ball positions
-player exits early
 player exits early live
 player disconnects max time live
 player disconnects and reconnects live
 
 GAME
+when retyr there is some speck of game...
 when moving paddle change material
 
 NEW GAME - State

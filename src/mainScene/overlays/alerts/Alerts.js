@@ -9,8 +9,13 @@ class AlertManager{
 		AlertManager.instance = this;
 	}
 	add_alert(alert){
+		console.log("add alert... ");
 		if (!this.currentAlert)
 			this.display_latest_alert(alert);
+		else if(this.currentAlert.id == alert.id){
+			console.log("double alert !");
+			return("error");
+		}
 		else if (alert.priority > this.currentAlert.priority)
 		{
 			this.currentAlert.hide(true);
@@ -20,13 +25,14 @@ class AlertManager{
 			return("overrun")
 	}
 	display_latest_alert(alert){
+		console.log("displaying latest aert")
 		this.currentAlert = alert;
 		this.currentAlert.show();
 	}
-	remove_latest_alert(alert_to_remove){
+	remove_latest_alert(alert_to_remove_id){
 		if (this.currentAlert == null) //|| this.currentAlert != alert_to_remove)
 			return;
-		if (alert_to_remove && this.currentAlert != alert_to_remove)
+		if (alert_to_remove_id && this.currentAlert.id != alert_to_remove_id)
 		{
 			console.log("alert already removed")
 			return ;

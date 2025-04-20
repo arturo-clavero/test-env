@@ -81,16 +81,12 @@ class MeshSubState extends SubState {
 		this.engine = new MainEngine();
 	}
 	exit(){
-		console.log("calling this exit scene()");
-		if (this.exitScene() == "cancelled")
-			return "cancelled";
-		console.log("calling this.super exit()")
-		if (super.exit() == "cancelled") 
+		if (this.exitScene() == "cancelled" || super.exit() == "cancelled")
 			return "cancelled";
 		this.animate();
 	}
 	animate(){
-		if (this.animateScene() == "stop") return; 
+		// if (this.animateScene() == "stop") return; 
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);
 		this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);
 		this.engine.renderer.setRenderTarget(null); 

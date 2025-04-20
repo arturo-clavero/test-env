@@ -61,16 +61,19 @@ let can_exit = false;
 function create_exit_alert(){
 		console.log("create exit alert!");
 		console.log("can exit is: ", can_exit)
+		const alertManager = new AlertManager();
 		if (can_exit)
 		{
-			console.log("can exit");
+			console.log("can exit is true will allow it....");
 			can_exit = false;
 			console.log("can exit is: ", can_exit)
 			return ("continue");
 		}
-		if (new AlertManager().add_alert(exit_alert) == "overrun")
+		if (alertManager.currentAlert && alertManager.currentAlert.id == "exit alert")
+			return("cancelled")
+		if (alertManager.add_alert(new Alert("exit alert", children, "warning", 0, enter, exit, false)) == "overrun")
 		{
-			console.log("created alert");
+			console.log("created alert but its overrun ... so you can go");
 			console.log("can exit is: ", can_exit)
 			return ("continue");
 		}
@@ -80,21 +83,22 @@ function create_exit_alert(){
 }
 
 function enter(self) {
+	let duration = 5000;
+	let length_in_s = 1;
 	setTimeout(() => {
 		// new AlertManager().remove_latest_alert(self);
-		fadeout(self.div)
+		fadeout(self.div, length_in_s)
 	}, 5000);
 	
 	setTimeout(() => {
 			console.log("remove latest alert timeout")
-			new AlertManager().remove_latest_alert(self);
-		}, 10500);
+			const alertManager = new AlertManager();
+			if (alertManager.currentAlert && alertManager.currentAlert == self)
+				new AlertManager().remove_latest_alert();
+		}, duration + (length_in_s * 1000));
 }
 
 function exit(){
 	
 }
-
-const exit_alert = new Alert("exit_alert", children, "warning", 0, enter, exit, false);
-
 export {create_exit_alert}

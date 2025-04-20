@@ -62,7 +62,7 @@ function exit(){
 }
 
 function delete_redirection_alert(){
-	new AlertManager().remove_latest_alert(redirection_alert);
+	new AlertManager().remove_latest_alert(redirection_alert.id);
 	clearInterval(interval_display);
 	clearInterval(interval_favicon);
 	document.title = prev_title;

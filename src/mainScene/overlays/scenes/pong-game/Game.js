@@ -28,6 +28,7 @@ import { Socket } from '../../../utils/Socket';
 	let gameID, mode, num;
 
 export	function startPongGame(type = "local"){
+	clean();
 	console.log("new png game... ");
 	new Socket().send({
 		"channel" : "log",

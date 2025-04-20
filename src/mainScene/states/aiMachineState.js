@@ -80,7 +80,7 @@ const gameScreen = new MeshSubState(
 	1,
 	()=>{startPongGame("AI")},
 	()=>{
-		new AlertManager().remove_latest_alert("exit_alert");
+		new AlertManager().remove_latest_alert("exit alert");
 	},
 )
 

@@ -91,7 +91,7 @@ function dynamic_content(data){
 	if (data.button == "exit") 
 	{
 		container.getElementById("button").element.textContent = "EXIT";
-		new AlertManager().remove_latest_alert("exit_alert");
+		new AlertManager().remove_latest_alert("exit alert");
 	}
 	else if (data.button == "wait")
 	{
