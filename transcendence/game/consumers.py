@@ -208,7 +208,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
-		print("event: ", event)
+		# print("event: ", event)
 		if "action" in event and event["action"] == "delete game":
 			await self.remove_channel(self.game.room)
 			self.update_user_data({"action":"set", "key":"game", "value": None})
@@ -231,7 +231,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			# 			}))
 			x = nested_value_in(event, ["updates", "x", 0])
 			y = nested_value_in(event, ["updates", "y", 0])
-			print("x: ", x, "y", y)
+			# print("x: ", x, "y", y)
 			if x is not None and y is not None:
 				updates["ball"] = {
 					"x": x * self.dimensions["x"],
@@ -247,7 +247,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				value = nested_value_in(event, ["updates", key])
 				if value is not None:
 					updates[key] = value
-			print("updates: ", updates)
+			# print("updates: ", updates)
 			await self.send(text_data=json.dumps({"type": "game.updates", "updates":updates}))
 		else :
 			await self.send(text_data=json.dumps(event))

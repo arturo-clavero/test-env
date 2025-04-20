@@ -57,7 +57,7 @@ class GameManager:
 					elif game.status == "active":
 						await game.logic_updates()
 
-				await asyncio.sleep(0.16) #breathing room 
+				await asyncio.sleep(0.016) #breathing room 
 
 			except Exception as e:
 				print(f"Error in game loop: {e}")
@@ -122,7 +122,7 @@ class GameChannel():
 	async def logic_updates(self):
 		updates = self.logic.update_state()
 		if updates:
-			print("updates: ", updates)
+			# print("updates: ", updates)
 			await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 			"updates" : updates})
 			# if updates["state"] == "game end":
@@ -160,7 +160,7 @@ class GameChannel():
 	async def receive(self, data):
 		if "request" in data:
 			if data["request"] == "update paddles":
-				active_sessions[self.gameID].update_paddles(data)
+				self.logic.update_paddles(data)
 			if data["request"] == "end game" :
 				await self.error_end("player disconnected")
 
