@@ -97,7 +97,7 @@ function enter(self) {
 				new AlertManager().remove_latest_alert();
 		}, duration + (length_in_s * 1000));
 }
-
+//
 function exit(){
 	
 }
