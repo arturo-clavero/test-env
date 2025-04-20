@@ -34,8 +34,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			self.game = GameManager().get_game(self.user_data.get("game"))
 			for room in self.user_data.get("rooms"):
 				print("adding room: ", room)
-				await self.join_channel(room, False)
-			
+				await self.join_channel(room, False)	
 		else :
 			self.game = None
 			self.tournament = None
@@ -85,7 +84,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			if "boundaries" in data:
 				self.dimensions = data["boundaries"]
 				self.update_user_data({"action":"set", "key":"dimensions", "value":self.dimensions})
-			if data["request"] == "start game":
+			if "request" in data and data["request"] == "start game":
 				print("request to start game")
 				print(data)
 				self.game = GameChannel(self, data["game_id"])
@@ -133,8 +132,32 @@ class MainConsumer(AsyncWebsocketConsumer):
 					await pending_tournament.confirm_payment(self)
 
 	async def enter_scene(self):
-		await self.send_self({ "type" : "ready"
-		})
+		state = None
+		substate = None
+		if self.tournament is not None:
+			print("in tournament")
+			if self.user_id in self.tournament.now_waiting:
+				state = 3
+				substate = 10
+			elif self.user_id in self.tournament.now_playing:
+				state = 3
+				substate = 11
+		elif self.game is not None:
+			print("in game")
+			if self.game.logic.paddles[1].owner == "local":
+				print("in local game")
+				state = 1
+				substate = 3
+			elif self.game.logic.paddles[1].owner == "AI":
+				print("in ai game")
+				state = 2
+				substate = 3
+		msg = { "type": "ready" }
+		if state is not None and substate is not None:
+			msg["state"] = state
+			msg["substate"] = substate
+
+		await self.send_self(msg)
 		await self.update_tournament_display()
 
 	async def update_tournament_display(self):
@@ -221,7 +244,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
-		print("event: ", event)
+		# print("event: ", event)
 		if "action" in event and event["action"] == "delete game":
 			await self.remove_channel(self.game.room)
 			self.update_user_data({"action":"set", "key":"game", "value": None})

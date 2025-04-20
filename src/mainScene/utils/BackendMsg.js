@@ -7,6 +7,7 @@ import { join } from '../overlays/divs/tour_join';
 import { State } from '../../core/stateManager/States';
 import { MainEngine } from './MainEngine';
 import { OnLoad } from './OnLoad';
+import { stateManager } from '../states/mainMenuState';
 
 export function msgRouter(event, socket){
 	const data = JSON.parse(event.data);
@@ -39,6 +40,12 @@ export function msgRouter(event, socket){
 	}
 	else if (data.type == "ready"){
 		console.log("ready!")
+		if ("state" in data && "substate" in data)
+		{
+			console.log("udating substate ... ")
+			stateManager.changeState(data["state"], true, -1);
+			stateManager.currentState.changeSubstate(data["substate"])
+		}
 		//logic here 
 		new OnLoad().set_socket_ready()
 	}

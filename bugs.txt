@@ -3,15 +3,16 @@ player exits early live
 player disconnects max time live
 player disconnects and reconnects live
 
-ALIAS
+TOURNAMENT
+add controls at the beginning before first matchmake
 get alais in front end at joing game...
 
 NEW GAME - State
-keep state upon disconnection... //VUE
-end game space // display results ... 
+enter game / touranment upon disconnection
 
 buttons enter keyboard
 buttons switch
 
 GAME
+end game space // display results ... 
 when moving paddle change material

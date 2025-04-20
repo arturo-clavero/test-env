@@ -112,7 +112,7 @@ const aiMachineState = new State(
 		restScreen,
 		startScreen,
 		controlScreen,
-		gameScreen,
+		gameScreen,//3
 		endScreen
 	],
 	null,

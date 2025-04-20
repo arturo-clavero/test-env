@@ -35,8 +35,8 @@ document.addEventListener('keydown', (event) => {
 // enterScene is called in mounted() or onMounted().
 export function preEnterScene(app_container){
 	console.log("pre enter")
+	new Socket();
 	init_scene_state();
-	engine.addContainerWrapper(app_container);
 	if (!engine.sceneInitialized) {	
 		console.log("add to engine...")
 		engine.add(backBox, false);
@@ -46,7 +46,7 @@ export function preEnterScene(app_container){
 	}
 	if (!engine.stateManager)
 		engine.stateManager = stateManager
-	new Socket();
+	engine.addContainerWrapper(app_container);
 }
 
 export function uponEnter(){
@@ -61,6 +61,7 @@ export function uponEnter(){
 	engine.resize()
 	isAnimating = true;
 	animate();
+	window.dispatchEvent(new Event("resize"));
 }
 
 export function animate() {

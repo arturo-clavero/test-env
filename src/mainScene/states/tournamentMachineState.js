@@ -303,7 +303,7 @@ const tourMachineState = new State(
 		screenRefund,
 		screenMatchmake,//9
 		screenWaiting, //10
-		screenGame,
+		screenGame, //11
 		screenControls,
 	],
 	null,
