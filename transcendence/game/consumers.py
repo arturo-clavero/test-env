@@ -1,8 +1,8 @@
 import json, asyncio, numpy as np
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .gameChannel import GameChannel, gameManager
+from .gameChannel import GameChannel, GameManager
 from .tournamentChannel import TournamentChannel, TournamentManager
-from .playLog import new_game
+from .registration import new_game
 from django.utils import timezone
 from django.core.cache import cache
 
@@ -13,14 +13,14 @@ def isUserOnline(user_id):
 		return False
 	return True
 
+#static global
+max_reconnection_time = 10
+
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		print("websocket connected!")
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		await self.accept()
-		self.gameChannel = GameChannel()
-		if not gameManager.running_tasks:
-			gameManager.running_tasks.add(asyncio.create_task(gameManager.broadcast_game_state()))
 		active_users = cache.get('active_users')
 		if active_users == None:
 			active_users = []
@@ -29,35 +29,40 @@ class MainConsumer(AsyncWebsocketConsumer):
 		self.user_data = cache.get(f"consumer_{self.user_id}")
 		if self.user_data :
 			print("retrieving consumer", self.user_data)
-			tour_id = self.user_data.get("tournament")
-			print("tour_id: ", tour_id)
-			if tour_id is not None:
-				self.tournament = TournamentManager().get_tournament(tour_id)
-			else:
-				self.tournament = None
+			self.tournament = TournamentManager().get_tournament(self.user_data.get("tournament"))
+			self.game = GameManager().get_game(self.user_data.get("game"))
 			for room in self.user_data.get("rooms"):
 				print("adding room: ", room)
 				await self.join_channel(room, False)
 		else :
+			self.game = None
 			self.tournament = None
 			self.user_data = {"rooms":[], "tournament":None}
 			cache.set(f"consumer_{self.user_id}", self.user_data)
 			await self.join_channel(f"{self.user_id}")
+			self.dimensions = None
 		await self.join_channel("all")
 		await self.update_tournament_display()
 
 	async def exit_live(self):
-		if self.gameChannel and self.gameChannel.status == "on":
+		global max_reconnection_time
+
+		asyncio.sleep(max_reconnection_time)
+		active_users = None
+		active_users = cache.get('active_users')
+		if active_users != None and self.user_id in active_users:
+			return	
+		print("exit live")
+		if self.game and self.game.status != "finished":
 			print("end game")
-			await self.gameChannel.finish()
+			await self.game.disconnect(self)
 		if self.tournament :
 			print("end tournament")
 			await self.tournament.remove_player(self.user_id)
 
 	async def disconnect(self, code=None):
-		global active_users
 		
-		await self.exit_live()
+		asyncio.create_task(self.exit_live())
 		await self.remove_channel("all")
 		active_users = None
 		active_users = cache.get('active_users')
@@ -73,7 +78,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await new_game(data)
 	
 		if data["channel"] == "game":
-			await self.gameChannel.receive(self, data)
+			if "boundaries" in data:
+				self.dimensions = data["boundaries"]
+			if data["request"] == "start game":
+				print("request to start game")
+				print(data)
+				self.game = GameChannel(self, data["game_id"])
+				await self.game.join(self)	
+			elif self.game:
+				await self.game.receive(data)
 
 		elif data["channel"] == "tournament":
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
@@ -190,16 +203,71 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def send_self(self, message):
 		await self.send(text_data=json.dumps(message))
-	
-	async def game_updates(self, event):
-		if ("update_display") in event:
-			await self.send(text_data=json.dumps(event))
-		else :
-			await self.gameChannel.game_updates(event)
 
 	async def tour_updates(self, event):
 		await self.send(text_data=json.dumps(event))
 
-			
+	async def game_updates(self, event):
+		print("event: ", event)
+		if "action" in event and event["action"] == "delete game":
+			await self.remove_channel(self.game.room)
+			self.update_user_data({"action":"set", "key":"game", "value": None})
+		elif nested_value_in(event, ["updates", "state"], "playing"):
+			updates = {}
+			# updates = event["updates"]
+			# await self.send(text_data=json.dumps({
+			# 				"type": "game.updates",
+			# 				"updates": {
+			# 					"ball" : {
+			# 						"x" : updates["x"][0]  * self.dimensions["x"], 
+			# 						"y" : updates["y"][0] * self.dimensions["y"],
+			# 					},
+			# 					"paddle_left" : updates["y"][1] * self.dimensions["y"],
+			# 					"paddle_right" : updates["y"][2] * self.dimensions["y"],
+			# 					"score1" : updates["score1"],
+			# 					"score2" : updates["score2"],
+			# 					"state" : updates["state"],
+			# 				}
+			# 			}))
+			x = nested_value_in(event, ["updates", "x", 0])
+			y = nested_value_in(event, ["updates", "y", 0])
+			print("x: ", x, "y", y)
+			if x is not None and y is not None:
+				updates["ball"] = {
+					"x": x * self.dimensions["x"],
+					"y": y * self.dimensions["y"]
+				}
+			paddle_left = nested_value_in(event, ["updates", "y", 1])
+			if paddle_left is not None:
+				updates["paddle_left"] = paddle_left * self.dimensions["y"]
+			paddle_right = nested_value_in(event, ["updates", "y", 2])
+			if paddle_right is not None:
+				updates["paddle_right"] = paddle_right * self.dimensions["y"]
+			for key in ["score1", "score2", "state"]:
+				value = nested_value_in(event, ["updates", key])
+				if value is not None:
+					updates[key] = value
+			print("updates: ", updates)
+			await self.send(text_data=json.dumps({"type": "game.updates", "updates":updates}))
+		else :
+			await self.send(text_data=json.dumps(event))
+
+def nested_value_in(data, keys, value=None):
+	current = data
+	for key in keys:
+		if isinstance(current, dict):
+			if key not in current:
+				return False
+			current = current[key]
+		elif isinstance(current, list):
+			if not isinstance(key, int) or key >= len(current):
+				return False
+			current = current[key]
+		else:
+			return False
+	if value is not None:
+		return current == value
+	return current
+
 
 

@@ -62,7 +62,6 @@ function exit(){
 }
 
 function delete_redirection_alert(){
-	console.log("delete? ")
 	new AlertManager().remove_latest_alert(redirection_alert);
 	clearInterval(interval_display);
 	clearInterval(interval_favicon);

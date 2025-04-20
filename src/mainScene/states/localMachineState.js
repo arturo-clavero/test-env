@@ -118,8 +118,12 @@ const localMachineState = new State(
 	()=>{
 		if (new StateManager().currentState.currentSubstate.name == "game")
 			{
+				console.log("tryong to exit game ... ")
 				if (create_exit_alert() == "cancelled")
-					return ("cancelled")
+				{
+					console.log("cancelled exit ....");
+					return ("cancelled");
+				}
 			}
 	},
 	[

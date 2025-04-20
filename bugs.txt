@@ -1,3 +1,11 @@
+NEW BACKEND
+game_dimensions...
+game_paddle_ball positions
+player exits early
+player exits early live
+player disconnects max time live
+player disconnects and reconnects live
+
 GAME
 when moving paddle change material
 

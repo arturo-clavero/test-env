@@ -7,24 +7,21 @@ import { join } from '../overlays/divs/tour_join';
 import { State } from '../../core/stateManager/States';
 
 export function msgRouter(event){
+	console.log("event: ", event);
 	const data = JSON.parse(event.data);
-	// console.log("data: ", data);
+	console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "game.updates")
 	{
-		pongGame["new-round"](data["gameID"], data["game-type"]);
-		if (new StateManager().currentState.name == "tour game screen")
+		if ("update_display" in data && data["update_display"] == "start game")
 		{
-			console.log("its tour game")
-			new StateManager().currentState.changeSubstate(9);
+			pongGame["new-round"](data["gameID"], data["game-type"]);
+			if (new StateManager().currentState.name == "tour game screen")
+				new StateManager().currentState.changeSubstate(9);
 		}
 		else
-			console.log("state name: ", new StateManager().currentState.name)
-	}
-	if (data.type == "live.game.updates")
-	{
-		pongGame["receive"](data);
+			pongGame["receive"](data);
 	}
 	else if (data.type == "tour.updates" || data.type == "consumer.updates")
 	{

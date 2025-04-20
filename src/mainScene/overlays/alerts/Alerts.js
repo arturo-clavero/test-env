@@ -76,12 +76,13 @@ class Alert{
 		popup.style.textAlign = "center";
 		popup.style.transition = "transform 0.2s ease";
 		popup.style.transformOrigin = "center center";
+		wrapper.style.pointerEvents = "auto";
 		popup.id = "popup-message";
 		popup.className = "bg-dark text-white text-center p-3 rounded shadow-lg";
 		wrapper.appendChild(popup);
 		document.body.appendChild(wrapper);
 		this.div = popup;
-		this.wrapper = wrapper;``
+		this.wrapper = wrapper;
 	}
 	append_children(children){
 		for (let i = 0; i < children.length; i++){

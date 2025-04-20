@@ -110,7 +110,6 @@ function dynamic_content(data){
 
 let lastShown = null;
 function updateTimer() {
-	// console.log("updateTimer");
 	const now = new Date();
 	const correctedNow = new Date(now - offset);
 	const remaining = Math.floor((startTime - correctedNow) / 1000);
@@ -120,7 +119,6 @@ function updateTimer() {
 		const minutes = Math.floor(remaining / 60);
 		const seconds = remaining % 60;
 		container.getElementById("timer").element.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-		// console.log("content;>",container.getElementById("timer").textContent)
 	}
 	if (remaining == 0)
 	{

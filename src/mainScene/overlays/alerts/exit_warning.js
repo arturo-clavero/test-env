@@ -34,6 +34,7 @@ const children = [
 						fontSize: 0.85,
 						content: "STAY",
 						onClick: ()=>{
+							console.log("clicked stay")
 							new AlertManager().remove_latest_alert();
 						},
 					}),
@@ -42,8 +43,10 @@ const children = [
 						fontSize: 0.85,
 						content: "EXIT",
 						onClick: ()=>{
+							console.log("clicked exit")
 							new AlertManager().remove_latest_alert();
 							can_exit = true;
+							console.log("exiting request");
 							new StateManager().changeState(new StateManager().scheduledStateIndex)
 						},
 					}),
@@ -56,25 +59,36 @@ const children = [
 ]
 let can_exit = false;
 function create_exit_alert(){
+		console.log("create exit alert!");
+		console.log("can exit is: ", can_exit)
 		if (can_exit)
 		{
+			console.log("can exit");
 			can_exit = false;
+			console.log("can exit is: ", can_exit)
 			return ("continue");
 		}
 		if (new AlertManager().add_alert(exit_alert) == "overrun")
-			return ("continue")
+		{
+			console.log("created alert");
+			console.log("can exit is: ", can_exit)
+			return ("continue");
+		}
+		console.log("can exit is: ", can_exit)
+		console.log("can not continue");
 		return ("cancelled")
 }
 
-function enter(self){
+function enter(self) {
 	setTimeout(() => {
 		new AlertManager().remove_latest_alert(self);
 		fadeout(exit_alert.div)
-	}, 3000);
+	}, 5000);
 	
 	setTimeout(() => {
+			console.log("remove latest alert timeout")
 			new AlertManager().remove_latest_alert(self);
-		}, 4500);
+		}, 10500);
 }
 
 function exit(){

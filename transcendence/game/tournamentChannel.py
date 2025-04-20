@@ -23,7 +23,7 @@ async def get_alias(user_id):
 	fake_alias = fake_alias + 1
 	return (f"p{fake_alias}")
 
-class TournamentManager:	
+class TournamentManager():	
 	_instance = None
 	_auth_token = _token
 

@@ -18,6 +18,7 @@ async def new_game(data):
 		log["tour_id"] = data.get('tour_id')
 
 	cache.set(f"game_log:{log['gameID']}", log)
+	print("game id: ", log["gameID"])
 	print("first player...")
 	await get_channel_layer().group_send(f"{data.get('userID1')}", {
 		"type" : "game.updates",
@@ -131,9 +132,19 @@ def create_new_player(data, userID, n):
 		player["alias"] = "alias0"
 	return player
 
-def	get_max_players(gameID):
+def	get_expected_players(gameID, key):
 	log = cache.get(f"game_log:{gameID}")
-	return log["players"]["max"] if log else None
+	if not log:
+		print("no log for ", gameID)
+		return None
+	if key == "id" and log["players"]["max"] == 1:
+		return [log["players"]["1"]["id"]]
+	elif key == "id" and log["players"]["max"] == 2:
+		return [log["players"]["1"]["id"], log["players"]["2"]["id"]]
+	elif key == "alias":
+		return [log["players"]["1"]["alias"], log["players"]["2"]["alias"]] if log else None
+	print("no key")
+	return None
 
 def get_paddle_type(gameID, side):
 	log = cache.get(f"game_log:{gameID}")
@@ -145,7 +156,3 @@ def get_paddle_type(gameID, side):
 		if log["type"] == "remote" and side == 1:
 			return "player2"
 	return "local"
-
-def	get_player_alias(gameID):
-	log = cache.get(f"game_log:{gameID}")
-	return [log["players"]["1"]["alias"], log["players"]["2"]["alias"]] if log else None

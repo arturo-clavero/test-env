@@ -32,7 +32,6 @@ class StateManager {
 		if (shouldPushHistory)
 			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
 		this.setAllowedDirection();
-		console.log("slow ? ", slow);
         this.currentState.enter(slow);
     }
 	setAllowedDirection(){

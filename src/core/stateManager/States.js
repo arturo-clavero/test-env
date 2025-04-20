@@ -51,7 +51,6 @@ class State {
 	enter(slow) {
 		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
-		console.log("this.object: ", this.object)
 		if (slow && this.slowCameraMovement)
 			moveCamera(this.slowCameraMovement, this.targetObject, this.targetNormal, this.targetPadding,
 			() =>{
