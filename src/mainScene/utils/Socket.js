@@ -2,7 +2,6 @@ import {getUserID} from './utils'
 import { msgRouter } from './BackendMsg';
 import { stateManager } from '../states/mainMenuState';
 import { StateManager } from '../../core/stateManager/StateManager';
-import { uponEnter } from '../..';
 //OPTION RAINBOW
 // import axios from 'axios';
 
@@ -11,25 +10,8 @@ export class Socket {
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];
-		this.firstLoad = null;
-		this.ready = false;
-		//this.textures_ready = false;
 		this.init();
 		Socket.instance = this;
-	}
-	init_scene(newPage){
-		this.firstLoad = newPage;
-		if (this.ready == true)
-			this.switch_pages()
-	}
-	switch_pages(){
-		console.log("switch pages");
-		//RAINBOW:
-			//this.firstLoad = true;
-			//TEST ENV:
-			document.getElementById("loading-screen").style.display = "none";
-			document.getElementById("app-container").style.display = "block";
-			uponEnter();
 	}
 	async init(){
 			// OPTION RAINBOW
@@ -73,7 +55,6 @@ export class Socket {
 		console.log("close...");
 		this.socket = null;
 		Socket.instance = null;
-		this.ready = false;
 	}
 	send(obj){
 		if (this.socket && this.socket.readyState == WebSocket.OPEN)

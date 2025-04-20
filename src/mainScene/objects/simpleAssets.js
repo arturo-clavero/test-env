@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Part } from '../../core/objectFactory/Part'
-
+import { OnLoad } from '../utils/OnLoad';
 const materialsgroup = [//phong
 	new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }),
 	new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide}),
@@ -17,6 +17,7 @@ loadingManager.onStart = () =>
 	loadingManager.onLoad = () =>
 	{
 		console.log('loading finished')
+		new OnLoad().set_texture_ready()
 	}
 	loadingManager.onProgress = () =>
 	{

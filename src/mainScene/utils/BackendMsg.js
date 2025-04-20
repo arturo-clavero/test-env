@@ -6,6 +6,7 @@ import { create_redirection_alert, delete_redirection_alert, fadeout_redirection
 import { join } from '../overlays/divs/tour_join';
 import { State } from '../../core/stateManager/States';
 import { MainEngine } from './MainEngine';
+import { OnLoad } from './OnLoad';
 
 export function msgRouter(event, socket){
 	const data = JSON.parse(event.data);
@@ -39,9 +40,7 @@ export function msgRouter(event, socket){
 	else if (data.type == "ready"){
 		console.log("ready!")
 		//logic here 
-		socket.ready = true;
-		if (socket.firstLoad)
-			socket.switch_pages()
+		new OnLoad().set_socket_ready()
 	}
 }
 

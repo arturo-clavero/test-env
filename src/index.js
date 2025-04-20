@@ -44,14 +44,13 @@ export function preEnterScene(app_container){
 		engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
 	}
+	if (!engine.stateManager)
+		engine.stateManager = stateManager
 	new Socket();
-	isAnimating = true;
 }
 
 export function uponEnter(){
 	console.log("upon enter")
-	if (!engine.stateManager)
-		engine.stateManager = stateManager
 	if (engine.stateManager.currentState == null)
 		engine.stateManager.changeState(0, true, 1);
 	window.addEventListener('popstate', popstate);
@@ -60,8 +59,8 @@ export function uponEnter(){
 	window.addEventListener('click', onClick);
 	console.log(engine.camera.position)
 	engine.resize()
+	isAnimating = true;
 	animate();
-	engine.resize()
 }
 
 export function animate() {

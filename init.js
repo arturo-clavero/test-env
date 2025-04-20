@@ -1,5 +1,5 @@
 import { preEnterScene } from "./src/index.js";
-import { Socket } from "./src/mainScene/utils/Socket.js";
+import { OnLoad } from "./src/mainScene/utils/OnLoad.js";
 
 
 //uponEnter()
@@ -7,7 +7,7 @@ import { Socket } from "./src/mainScene/utils/Socket.js";
 	const value = "fake"
 	const container = document.getElementById('app-container');
 	preEnterScene(container);
-	new Socket().init_scene(value)
+	new OnLoad().set_first_load(value)
 // }
 
 
@@ -17,7 +17,6 @@ import { Socket } from "./src/mainScene/utils/Socket.js";
 // onMounted(() => {
 // 	const container = document.getElementById('app-container');
 // 	preEnterScene(container);
-// new Socket().init_scene(showMainApp.value)
-
+// new OnLoad().set_first_load(showMainApp.value)
 //   });
 // });
