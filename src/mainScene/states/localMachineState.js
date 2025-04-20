@@ -100,7 +100,7 @@ const endScreen = new CssSubState(
 )
 
 const localMachineState = new State(
-	"local game screen", 
+	"classic-game", 
 	{
 		pos: true,
 		duration: 2,

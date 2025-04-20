@@ -17,7 +17,7 @@ export function msgRouter(event, socket){
 		if ("update_display" in data && data["update_display"] == "start game")
 		{
 			pongGame["new-round"](data["gameID"], data["game-type"]);
-			if (new StateManager().currentState.name == "tour game screen")
+			if (new StateManager().currentState.name == "tournament")
 				new StateManager().currentState.changeSubstate(9);
 		}
 		else

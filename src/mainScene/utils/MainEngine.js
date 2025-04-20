@@ -19,6 +19,7 @@ class MainEngine {
 		this.resizeObserver = new ResizeObserver(() => this.resize());
 		this.resizeObserver.observe(this.container);
 		this.resize();
+		console.log("add container wrapper")
 	}
 	removeContainerWrapper(){
 		this.container?.remove();
@@ -51,6 +52,7 @@ class MainEngine {
 		this.css3DRenderer.domElement.style.position = "absolute";
 		this.css3DRenderer.domElement.style.top = 0;
 		this.container.appendChild(this.css3DRenderer.domElement);
+		console.log("engine initiliazed")
 	}
 	setUpLights(){
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -98,7 +100,7 @@ class MainEngine {
 	
 		this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
 		this.camera.updateProjectionMatrix();
-	
+		//console.log("RESIZE")
 		if (this.stateManager)
 		{
 			let state = this.stateManager.currentState;
@@ -109,8 +111,11 @@ class MainEngine {
 				this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
 				this.stateManager.resize();
 			}
+			// else console.log("NO STATE")
 				// console.log("pos ", camera_pos);)
 		}
+		// else 
+		// 	console.log("NO STATE MANAGER")
 
 	}
 	blockRaycast(){

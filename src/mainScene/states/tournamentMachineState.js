@@ -284,7 +284,7 @@ const screenWaiting = new MeshSubState(
 )
 
 const tourMachineState = new State(
-	"tour game screen", 
+	"tournament", 
 	{
 		pos: true,
 		duration: 2,

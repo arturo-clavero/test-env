@@ -31,9 +31,7 @@ class StateManager {
         this.currentState = this.states[this.currentStateIndex];
 		if (shouldPushHistory)
 		{
-			const url = new URL(window.location.href);
-			url.searchParams.set("state", this.currentState.name); // or use a string name
-			window.history.pushState({ num: this.currentStateIndex }, '', url);
+			window.history.pushState({ num: this.currentStateIndex }, '', window.location.origin + `/${this.currentState.name}`);
 		}
 		this.setAllowedDirection();
         this.currentState.enter(slow);

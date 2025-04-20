@@ -35,8 +35,10 @@ document.addEventListener('keydown', (event) => {
 // enterScene is called in mounted() or onMounted().
 export function preEnterScene(app_container){
 	console.log("pre enter")
+	init_scene_state();
 	engine.addContainerWrapper(app_container);
 	if (!engine.sceneInitialized) {	
+		console.log("add to engine...")
 		engine.add(backBox, false);
 		engine.add(mainSceneObj, true);
 		engine.stateManager = stateManager;
@@ -44,22 +46,27 @@ export function preEnterScene(app_container){
 	}
 	new Socket();
 	isAnimating = true;
-	init_scene_state();
 }
 
 export function uponEnter(){
 	console.log("upon enter")
+	if (!engine.stateManager)
+		engine.stateManager = stateManager
 	if (engine.stateManager.currentState == null)
 		engine.stateManager.changeState(0, true, 1);
 	window.addEventListener('popstate', popstate);
 	window.addEventListener("wheel", wheel_scroll_animations);
 	window.addEventListener('resize', onResize);
 	window.addEventListener('click', onClick);
+	console.log(engine.camera.position)
+	engine.resize()
 	animate();
+	engine.resize()
 }
 
 export function animate() {
 	if (!isAnimating) return ;
+	//console.log("animate");
 	requestAnimationFrame(animate);
 	engine.animate();
 }
@@ -89,24 +96,21 @@ function onClick(event) {
 
 function init_scene_state(){
 	console.log("init scene...")
-	const urlParams = new URLSearchParams(window.location.search);
-	let stateFromURL = urlParams.get("state");
-	if (stateFromURL == null || stateFromURL == "home")
-	{
-		stateFromURL = 0;
-		stateManager.currentState = null;
-		engine.camera.position.copy(stateManager.states[0].get_camera_position());
-		engine.camera.position.z += 5;
-	}
-	else{
+	let stateFromURL = window.location.pathname;
+	console.log("state from url", stateFromURL)
+	if (stateFromURL && stateFromURL != "/lobby"){ 
+		const path = stateFromURL.slice(1); // "lobby"
 		for (let i = 0; i < stateManager.states.length; i++)
 		{
-			if (stateManager.states[i].name == stateFromURL)
+			if (stateManager.states[i].name == path)
 			{
-				stateFromURL = i;
-				break;
+				console.log("switching to state ", i)
+				stateManager.changeState(i, true, -1);
+				return;
 			}
 		}
- 		stateManager.changeState(stateFromURL, true, -1);
 	}
+	stateManager.currentState = null;
+	engine.camera.position.copy(stateManager.states[0].get_camera_position());
+	engine.camera.position.z += 5;
 }

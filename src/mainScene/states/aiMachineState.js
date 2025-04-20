@@ -101,7 +101,7 @@ const endScreen = new CssSubState(
 )
 
 const aiMachineState = new State(
-	"ai game screen", 
+	"ai-duel", 
 	{
 		pos: true,
 		duration: 2,
