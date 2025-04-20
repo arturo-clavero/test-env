@@ -123,6 +123,9 @@ function	playing(){
 
 function completed(msg){
 	state = "completed";
+	ball.hide();
+	paddles.hide();
+	middleBars.hide();
 	if (msg)
 	{
 		content_body.new("game over", "thick", 0, 0.15, 0, 15, 1.5, engine);
@@ -133,10 +136,14 @@ function completed(msg){
 	{
 		content_body.new("game over", "thick", 0, 0, 0, 15, 1.5, engine);
 	}
-	clean();
 	console.log("fame end ... mode", mode)
+	clean();
 	if (mode == "local" || mode == "AI")
 		new StateManager().currentState.changeSubstate();
+	// 	setTimeout(()=>{
+	// 		clean();
+	// 		new StateManager().currentState.changeSubstate();
+	// }, 4000)
 }
 
 

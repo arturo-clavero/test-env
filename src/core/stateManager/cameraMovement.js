@@ -27,12 +27,11 @@ export function wheel_scroll_animations(event){
 	}
 }
 
-function moveCamera(data, targetObject, targetNormal, targetPadding, onComplete) {
+function moveCamera(data, newPosition, onComplete) {
 	isAnimating = true;
 	const tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
-	const newPosition = fitCameraToObject(targetObject, targetNormal, targetPadding);
 	const engine = new MainEngine()
 	if ("pos" in data) {
 		tl.to(engine.camera.position, { 
@@ -66,9 +65,7 @@ function moveCamera(data, targetObject, targetNormal, targetPadding, onComplete)
 		isAnimating = false;
 		new StateManager().resize();
 		onComplete();
-		engine.camera.position.x = newPosition.x;
-		engine.camera.position.y = newPosition.y;
-		engine.camera.position.z = newPosition.z;
+		engine.camera.position.copy(newPosition);
 		//fitCameraToObject()
 	});
 }

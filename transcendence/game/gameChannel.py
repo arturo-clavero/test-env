@@ -21,7 +21,7 @@ class GameManager:
 
 	def get_game(self, game_id=None):
 		for game in self._active_games:
-			if game.id == game_id:
+			if game.game_id == game_id:
 				return game
 		return None
 

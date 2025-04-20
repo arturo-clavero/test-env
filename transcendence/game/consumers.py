@@ -30,19 +30,22 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if self.user_data :
 			print("retrieving consumer", self.user_data)
 			self.tournament = TournamentManager().get_tournament(self.user_data.get("tournament"))
+			self.dimensions = self.user_data.get("dimensions")
 			self.game = GameManager().get_game(self.user_data.get("game"))
 			for room in self.user_data.get("rooms"):
 				print("adding room: ", room)
 				await self.join_channel(room, False)
+			
 		else :
 			self.game = None
 			self.tournament = None
-			self.user_data = {"rooms":[], "tournament":None}
+			self.dimensions = None
+			self.tournament = None
+			self.user_data = {"rooms":[], "tournament":None, "game": None, "dimensions" : None}
 			cache.set(f"consumer_{self.user_id}", self.user_data)
 			await self.join_channel(f"{self.user_id}")
-			self.dimensions = None
 		await self.join_channel("all")
-		await self.update_tournament_display()
+		await self.enter_scene()
 
 	async def exit_live(self):
 		global max_reconnection_time
@@ -81,6 +84,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			print("data received: ", data)
 			if "boundaries" in data:
 				self.dimensions = data["boundaries"]
+				self.update_user_data({"action":"set", "key":"dimensions", "value":self.dimensions})
 			if data["request"] == "start game":
 				print("request to start game")
 				print(data)
@@ -127,6 +131,11 @@ class MainConsumer(AsyncWebsocketConsumer):
 					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
 					await pending_tournament.confirm_payment(self)
+
+	async def enter_scene(self):
+		await self.send_self({ "type" : "ready"
+		})
+		await self.update_tournament_display()
 
 	async def update_tournament_display(self):
 		pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))

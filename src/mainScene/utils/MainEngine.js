@@ -104,9 +104,12 @@ class MainEngine {
 			let state = this.stateManager.currentState;
 			// this.camera.position.set(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
 			// let camera_pos =  
-			this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
-			// console.log("pos ", camera_pos);)
-			this.stateManager.resize();
+			if (state)
+			{
+				this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+				this.stateManager.resize();
+			}
+				// console.log("pos ", camera_pos);)
 		}
 
 	}

@@ -6,7 +6,7 @@ class StateManager {
 		if (StateManager.instance)
 			return StateManager.instance;
         this.states = states;
-		if (this.states.length > 0) this.changeState(0, true, true);
+		this.currentState = null;
 		this.forcedRedirect = false;
         new MainEngine().container.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		StateManager.instance = this;
@@ -19,7 +19,7 @@ class StateManager {
 		}
 		return -1;
 	}
-    changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = false) {
+    changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = 0) {
         if (this.currentStateIndex == index || index < 0)
 			return;
 		this.scheduledStateIndex = index;
@@ -30,7 +30,11 @@ class StateManager {
         this.currentStateIndex = index;
         this.currentState = this.states[this.currentStateIndex];
 		if (shouldPushHistory)
-			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
+		{
+			const url = new URL(window.location.href);
+			url.searchParams.set("state", this.currentState.name); // or use a string name
+			window.history.pushState({ num: this.currentStateIndex }, '', url);
+		}
 		this.setAllowedDirection();
         this.currentState.enter(slow);
     }

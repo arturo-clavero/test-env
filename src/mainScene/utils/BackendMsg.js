@@ -5,8 +5,9 @@ import { matchmake } from '../overlays/divs/tour_matchamake';
 import { create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { join } from '../overlays/divs/tour_join';
 import { State } from '../../core/stateManager/States';
+import { MainEngine } from './MainEngine';
 
-export function msgRouter(event){
+export function msgRouter(event, socket){
 	const data = JSON.parse(event.data);
 	// console.log("data: ", data);
 	if (!data)
@@ -34,6 +35,13 @@ export function msgRouter(event){
 					break;
 			}
 		}
+	}
+	else if (data.type == "ready"){
+		console.log("ready!")
+		//logic here 
+		socket.ready = true;
+		if (socket.firstLoad)
+			socket.switch_pages()
 	}
 }
 

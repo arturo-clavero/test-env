@@ -33,7 +33,8 @@ document.addEventListener('keydown', (event) => {
 
 
 // enterScene is called in mounted() or onMounted().
-export function enterScene(app_container){
+export function preEnterScene(app_container){
+	console.log("pre enter")
 	engine.addContainerWrapper(app_container);
 	if (!engine.sceneInitialized) {	
 		engine.add(backBox, false);
@@ -42,16 +43,20 @@ export function enterScene(app_container){
 		engine.sceneInitialized = true;
 	}
 	new Socket();
+	isAnimating = true;
+	init_scene_state();
+}
+
+export function uponEnter(){
+	console.log("upon enter")
+	if (engine.stateManager.currentState == null)
+		engine.stateManager.changeState(0, true, 1);
 	window.addEventListener('popstate', popstate);
 	window.addEventListener("wheel", wheel_scroll_animations);
 	window.addEventListener('resize', onResize);
 	window.addEventListener('click', onClick);
-
-	isAnimating = true;
 	animate();
 }
-
-
 
 export function animate() {
 	if (!isAnimating) return ;
@@ -82,4 +87,26 @@ function onClick(event) {
 	engine.click(event);
 }
 
-
+function init_scene_state(){
+	console.log("init scene...")
+	const urlParams = new URLSearchParams(window.location.search);
+	let stateFromURL = urlParams.get("state");
+	if (stateFromURL == null || stateFromURL == "home")
+	{
+		stateFromURL = 0;
+		stateManager.currentState = null;
+		engine.camera.position.copy(stateManager.states[0].get_camera_position());
+		engine.camera.position.z += 5;
+	}
+	else{
+		for (let i = 0; i < stateManager.states.length; i++)
+		{
+			if (stateManager.states[i].name == stateFromURL)
+			{
+				stateFromURL = i;
+				break;
+			}
+		}
+ 		stateManager.changeState(stateFromURL, true, -1);
+	}
+}

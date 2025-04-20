@@ -48,19 +48,27 @@ class State {
 		if (postCam)
 			this.currentSubstate.postCamEnter();
     }
+	get_camera_position(){
+		return fitCameraToObject(this.targetObject, this.targetNormal, this.targetPadding);
+	}
 	enter(slow) {
 		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
-		if (slow && this.slowCameraMovement)
-			moveCamera(this.slowCameraMovement, this.targetObject, this.targetNormal, this.targetPadding,
+		if (slow  == 1 && this.slowCameraMovement)
+			moveCamera(this.slowCameraMovement, this.get_camera_position(),
 			() =>{
 				this.currentSubstate.postCamEnter();
 			})
-		else if (this.cameraMovement)
-			moveCamera(this.cameraMovement,this.targetObject, this.targetNormal, this.targetPadding, 
+		else if (slow == 0 && this.cameraMovement)
+			moveCamera(this.cameraMovement,this.get_camera_position(), 
 			() =>{
 				this.currentSubstate.postCamEnter();
 			})
+		else if (slow == -1)
+		{
+			new MainEngine().camera.position.copy(this.get_camera_position());
+			this.currentSubstate.postCamEnter();
+		}
 	}
 	exit() {
 		if (this.exitState() == "cancelled" || this.changeSubstate(this.startIndex, false) == "cancelled")
