@@ -54,9 +54,26 @@ export class OnLoad{
 		//RAINBOW:
 		//this.firstLoad = true;
 		//TEST ENV:
-		console.log("SWITCH PAGES!")
-		document.getElementById("loading-screen").style.display = "none";
-		document.getElementById("app-container").style.display = "block";
-		uponEnter();
+	const loadingScreen = document.getElementById("loading-screen");
+	loadingScreen.style.display = "flex";
+	loadingScreen.style.opacity = 1;
+	document.getElementById("app-container").style.display = "none";
+	setTimeout(() => {
+		gsap.to(loadingScreen, {
+			duration: 1,
+			opacity: 0,
+			onComplete: () => {
+				loadingScreen.style.display = "none";
+				const appContainer = document.getElementById("app-container");
+				appContainer.style.opacity = 0;
+				appContainer.style.display = "block";
+				uponEnter();
+				gsap.to(appContainer, {
+					duration: 1,
+					opacity: 1
+				});
+			}
+		});
+	}, 1000);
 	}
 }

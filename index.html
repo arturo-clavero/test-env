@@ -1,44 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeHub</title>
-    <style>
-        body { margin: 0; overflow: hidden;  }
-		/* <!-- 'Press Start 2P' --> */
-		* {
-            font-family: 'Press Start 2P', sans-serif; /* Ensures that all elements inherit the font */
-        }
-
-        canvas { display: block; }
-
-    </style>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ArcadeHub</title>
 	<link rel="icon" type="image/png" href="/src/assets/icons/a2.png" id="dynamic-favicon" />
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-	<!-- <link rel="stylesheet" href="styles.css"> -->
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			background: black;
+			font-family: 'Press Start 2P', sans-serif;
+		}
+		canvas {
+			display: block;
+		}
+		#app-container {
+			width: 100vw;
+			height: 100vh;
+			position: relative;
+			z-index: 1;
+		}
+		#loading-screen {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: rgba(0, 0, 0, 0.8);
+			border: 2px solid #00ffcc;
+			border-radius: 12px;
+			color: #00ffcc;
+			padding: 1.5rem 2.5rem;
+			font-size: 1rem;
+			text-align: center;
+			box-shadow: 0 0 12px #00ffcc;
+			z-index: 1000;
+			pointer-events: none;
+		}
+		#loading-dots::after {
+			content: '';
+			display: inline-block;
+			width: 1ch;
+			text-align: left;
+			animation: dots 1.5s steps(3, end) infinite;
+		}
+		@keyframes dots {
+			0% { content: ''; }
+			33% { content: '.'; }
+			66% { content: '..'; }
+			100% { content: '...'; }
+		}
+	</style>
 </head>
 <body>
-	<div id="loading-screen">Loading...</div>
-	<div id="app-container" style="width: 100vw; height: 100vh; position: relative;"></div>
-	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+	<div id="loading-screen">
+		<div>LOADING<span id="loading-dots"></span></div>
+	</div>
+	<div id="app-container"></div>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.0/gsap.min.js"></script>
 	<script src="init.js" type="module"></script>
-	
 </body>
-<style>
-	#loading-screen {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: black;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  z-index: 2;
-  pointer-events: none;
-}
-</style>
 </html>
