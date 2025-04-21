@@ -32,10 +32,12 @@ function moveCamera(data, newPosition, onComplete) {
 	if (tl){
 		tl.kill()
 	}
+	const engine = new MainEngine()
+	if (newPosition == engine.camera.position)
+		return;
 	tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
-	const engine = new MainEngine()
 	const tempPosition = {
 		x: engine.camera.position.x,
 		y: engine.camera.position.y,
@@ -45,13 +47,14 @@ function moveCamera(data, newPosition, onComplete) {
 	console.log("current position: ", engine.camera.position)
 	console.log("data duration ", data.duration)
 	if ("pos" in data) {
+		console.log("requested camera move")
 		tl.to(tempPosition,{ 
 			x: newPosition.x, 
 			y: newPosition.y, 
 			z: newPosition.z, 
 			onUpdate: () =>{ 
 				engine.camera.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
-				console.log("cam era moving: ", engine.camera.position)
+				// console.log("cam era moving: ", engine.camera.position)
 				new StateManager().resize();
 			},
 			overwrite: "auto",
@@ -79,6 +82,7 @@ function moveCamera(data, newPosition, onComplete) {
 		isCamMoving= false;
 		onComplete();
 		tl = null;
+		new StateManager().resize();
 		// engine.camera.position.copy(newPosition);
 		// new StateManager().resize();
 		//fitCameraToObject()

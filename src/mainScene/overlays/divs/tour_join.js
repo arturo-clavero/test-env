@@ -123,7 +123,7 @@ function updateTimer() {
 	if (remaining == 0)
 	{
 		clearInterval(interval);
-		setInterval(move_on ,2000)
+		move_on()
 	}
 	else if (remaining < 0)
 	{

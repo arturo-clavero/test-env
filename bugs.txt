@@ -1,17 +1,21 @@
-NEW BACKEND
-player exits early live
-player disconnects max time live
 
 TOURNAMENT
-add controls at the beginning before first matchmake
-get alais in front end at joing game...
 enter touranment upon disconnection
+	player exits early live
+	player disconnects max time live
 
 FRONTEND
 buttons enter keyboard
 buttons switch
-loading page
+alert
+
+RELOAD
+loading pg taking too log on reload
+
+MATERIAL 
+make it match the screen surface ... 
 
 GAME
 end game space // display results ... 
 when moving paddle change material
+

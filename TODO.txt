@@ -1,7 +1,4 @@
 
-2ND RENDERER 
-for game screen instead of texture
-
 ARCADE MACHINE 
 add textures 
 add borders

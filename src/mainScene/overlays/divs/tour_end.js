@@ -65,14 +65,15 @@ const container = new Overlay([
 					}),
 					new FlexBox({
 						dir: "row",
-						mainAxis: "space between",
+						mainAxis: "space-between",
+						width: "100%",
 						children: [
 							new Button({
 								id: "back-button",
 								fontSize: 0.55,
-								content: "tst",
+								content: "BACK",
 								onClick: ()=>{
-									if (container.getElementById("button").element.textContent == "BACK")
+									if (container.getElementById("exit-button").element.textContent == "EXIT")
 										{
 											let stateManager = new StateManager();
 											stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
@@ -84,7 +85,7 @@ const container = new Overlay([
 								fontSize: 0.55,
 								content: "tst",
 								onClick: ()=>{
-									if (container.getElementById("button").element.textContent == "EXIT")
+									if (container.getElementById("exit-button").element.textContent == "EXIT")
 										{
 											new StateManager().changeState(0);
 										}	
@@ -101,12 +102,14 @@ function dynamic_content(data){
 
 	if (data.button == "exit") 
 	{
-		container.getElementById("button").element.textContent = "EXIT";
+		container.getElementById("back-button").element.style.visibility = "visible";
+		container.getElementById("exit-button").element.textContent = "EXIT";
 		new AlertManager().remove_latest_alert("exit alert");
 	}
 	else if (data.button == "wait")
 	{
-		container.getElementById("button").element.textContent = "loading next round...";
+		container.getElementById("back-button").element.style.visibility = "hidden";
+		container.getElementById("exit-button").element.textContent = "loading next round...";
 		setTimeout(() => {
 			if (new StateManager().currentState.currentSubstateIndex == 10)
 				new StateManager().currentState.changeSubstate(11);
@@ -149,16 +152,17 @@ function dynamic_content(data){
 }
 
 function show_buttons(){
-	container.getElementById("button").element.style.visibility = "visible";
+	container.getElementById("exit-button").element.style.visibility = "visible";
 
 }
 
 function hide_buttons(){
-	container.getElementById("button").element.style.visibility = "hidden";
+	container.getElementById("exit-button").element.style.visibility = "hidden";
+	container.getElementById("back-button").element.style.visibility = "hidden";
 }
 
 function show_div(){
-	//container.element.style.visibility = "visible";
+	container.element.style.visibility = "visible";
 }
 
 function hide_div(){
@@ -169,10 +173,10 @@ function hide_div(){
 function can_exit(){
 	console.log("can_exit ft");
 	if (new StateManager().currentState.currentSubstateIndex == 10 &&
-	container.getElementById("button").element.textContent == "EXIT")
+	container.getElementById("exit-button").element.textContent == "EXIT")
 	{
 		console.log("curr state", new StateManager().currentState.currentSubstateIndex);
-		console.log("cutton: ", container.getElementById("button").element.textContent);
+		console.log("cutton: ", container.getElementById("exit-button").element.textContent);
 		return true;
 	}
 	console.log("should create alert")

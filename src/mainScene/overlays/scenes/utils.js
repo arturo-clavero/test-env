@@ -27,11 +27,6 @@ function createRenderTarget(){
 function createScreenMaterial(renderTarget){
 	const renderMaterial = new THREE.MeshBasicMaterial({
 		map: renderTarget.texture,
-		// emissive: new THREE.Color(1, 1, 1),
-		// emissiveMap: renderTarget.texture,
-		// emissiveIntensity: 50,
-		roughness: 0.5,
-		metalness: 0.5,
 	});
 	return renderMaterial;
 }

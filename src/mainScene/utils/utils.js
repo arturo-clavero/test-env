@@ -124,7 +124,7 @@ function mapToCenter(pointsLeft, pointsRight)
 }
 
 async function getUserID() {
-	return 1
+	return Date.now()
 }
 
 export { order_path, mapToCenter, update_min_max, dispose_object, getUserID};

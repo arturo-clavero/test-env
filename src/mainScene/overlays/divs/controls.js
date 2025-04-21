@@ -7,7 +7,7 @@ import { Socket } from '../../utils/Socket'
 const container = new Overlay([
 			new FlexBox({
 				dir:"column",
-				mainAxis: "space between",
+				mainAxis: "space-between",
 				flex: 1,
 				width: "100%",
 				marginTop: "10%",
@@ -77,7 +77,7 @@ function get_controls_tab(title, up, down){
 			new Text({
 				content: title,
 				fontSize: 1.2,
-				marginBottom: "23%",
+				marginBottom: "10%",
 			}),
 			new FlexBox({
 				dir: "row",
@@ -130,6 +130,7 @@ function get_controls_tab(title, up, down){
 
 let new_controls, interval;
 function enter(type){
+	console.log("enter controls ... type: ", type)
 	if (type == "local")
 	{
 		new_controls = new FlexBox({
@@ -147,7 +148,7 @@ function enter(type){
 		new_controls = new FlexBox({
 			flex: 1,
 			dir: "column",
-			mainAxis: "center",
+			//mainAxis: "center",
 			children: [
 				get_controls_tab( "Player (left)", "arrow up", "arrow down"),
 			]
@@ -157,9 +158,9 @@ function enter(type){
 		new_controls = new FlexBox({
 			flex: 1,
 			dir: "column",
-			mainAxis: "center",
+			//mainAxis: "center",
 			children: [
-				get_controls_tab( "Player (left or right)", "arrow up", "arrow down"),
+				get_controls_tab( "(left or right)", "arrow up", "arrow down"),
 			]
 		});	
 	}

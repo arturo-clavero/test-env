@@ -9,9 +9,12 @@ from django.core.cache import cache
 waitTime = 15
 notificationTime = 5
 fadeOutTime = 0.5
+controlsTime = 1
+matchmakeTime = 1
 entry_price = 100
 max_players = 1024
 min_players = 2
+
 
 _token = object()
 
@@ -82,10 +85,10 @@ class TournamentChannel():
 			await get_channel_layer().group_send("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "full"})
 	
-	async def confirm_payment(self, consumer):
+	async def confirm_payment(self, consumer, alias):
 		global entry_price, max_players
 
-		self.registered[consumer.user_id] = consumer
+		self.registered[consumer.user_id] = {"user" : consumer, "alias":alias}
 		self.prize_pool += entry_price * 0.95
 		await consumer.send_self({ "type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "subscribed", "id":self.tour_id})
@@ -108,8 +111,6 @@ class TournamentChannel():
 				"notification" : "start"})
 		await get_channel_layer().group_send("all", {"type" : "tour.updates",
 			"update_tour_registration" : "join", "button" : "locked"})
-		await get_channel_layer().group_send("all", {"type" : "tour.updates",
-			"update_tour_registration" : "create", "button" : "create"})
 
 	async def fade_out_notification(self):
 		global waitTime, fadeOutTime
@@ -121,7 +122,7 @@ class TournamentChannel():
 				"notification" : "fadeOut", "length" : fadeOutTime})
 
 	async def start(self):
-		global waitTime, min_players, _token
+		global waitTime, min_players, _token, controlsTime
 
 		await asyncio.sleep(waitTime)
 		
@@ -137,12 +138,10 @@ class TournamentChannel():
 		if active_users == None:
 			active_users = []
 		for user_id in self.registered:
-			user = self.registered[user_id]
+			user = self.registered[user_id]["user"]
 			await user.remove_channel(self.registeredRoom)
 			if user_id in active_users:
-				self.players[user_id] = user
-				alias = await get_alias(user.user_id)
-				self.players[user_id].alias = alias
+				self.players[user_id] = self.registered[user_id]
 				self.now_waiting.append(user.user_id)
 				await user.join_channel(self.playersRoom)
 
@@ -162,19 +161,28 @@ class TournamentChannel():
 		#start tournament
 		print("start torunament")
 		self.status = "active"
+		await get_channel_layer().group_send(f"{self.playersRoom}", {
+			"type": "tour.updates",
+			"update_display" : "controls",
+		})
+		print("start controls")
+		await asyncio.sleep(controlsTime)
+		print("end controls")
 		random.shuffle(self.now_waiting)
 		self.current_round = 0
 		await self.matchmake()
 	
 
 	async def matchmake(self):
+		global matchmakeTime
+
 		print("mathmake")
 		self.status = "matchmake"
 
 		#send next round plan
 		self.current_round += 1
 		self.total_matches = len(self.now_waiting) // 2
-		names = [self.players[user_id].alias for user_id in self.now_waiting]
+		names = [self.players[user_id]["alias"] for user_id in self.now_waiting]
 		await get_channel_layer().group_send(f"{self.playersRoom}", {
 			"type" : "tour.updates",
 			"update_display" : "matchmaking rounds",
@@ -184,7 +192,7 @@ class TournamentChannel():
 		})
 
 		#wait for display
-		await asyncio.sleep(7)
+		await asyncio.sleep(matchmakeTime)
 		print("end matchmake")
 
 		#send players to their matches in groups of 2
@@ -197,7 +205,7 @@ class TournamentChannel():
 			print("loner should wait... ")
 			if await self.tournament_winner(self.now_waiting[0]) == False :
 				print("waiting...")
-				await self.players[self.now_waiting[0]].send_self({
+				await self.players[self.now_waiting[0]]["user"].send_self({
 					"type": "tour.updates",
 					"update_display" : 'waiting'
 				})
@@ -206,7 +214,7 @@ class TournamentChannel():
 
 
 	async def start_remote_game(self, player1_id, player2_id):
-		from .playLog import new_game
+		from .registration import new_game
 
 		# add to now_playing array
 		self.now_playing.append(player1_id)
@@ -219,6 +227,8 @@ class TournamentChannel():
 				"type": "remote", 
 				"userID1": player1_id,
 				"userID2": player2_id,
+				"alias1" : self.players[player1_id]["alias"],
+				"alias2" : self.players[player2_id]["alias"],
 				"tour_id": self.tour_id,
 			})
 		elif len(self.players) == 0:
@@ -241,7 +251,7 @@ class TournamentChannel():
 
 		if player_id not in self.players:
 			return
-		consumer = self.players[player_id]
+		consumer = self.players[player_id]["user"]
 		await consumer.remove_channel(self.playersRoom)
 		consumer.update_user_data({"action":"set", "key":"tournament", "value": None})
 		del self.players[player_id]
@@ -256,7 +266,7 @@ class TournamentChannel():
 		print("match looser")
 		#send end message
 		if player_id in self.players:
-			await self.players[player_id].send_self({
+			await self.players[player_id]["user"].send_self({
 				"type":"tour.updates",
 				"update_display":"end game",
 				"title":f"You have lost round {self.current_round}",
@@ -275,7 +285,7 @@ class TournamentChannel():
 		if player_id in self.players:
 			self.now_waiting.append(player_id)
 			#send winning message
-			await self.players[player_id].send_self({
+			await self.players[player_id]["user"].send_self({
 				"type":"tour.updates",
 				"update_display":"end game",
 				"title":f"You have won round {self.current_round}",
@@ -294,7 +304,7 @@ class TournamentChannel():
 			return False
 		#send winning message
 		if player_id in self.players:
-			await self.players[player_id].send_self({
+			await self.players[player_id]["user"].send_self({
 				"type":"tour.updates",
 				"update_display":"end game",
 				"title":"CHAMPION!",

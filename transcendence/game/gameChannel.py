@@ -10,32 +10,46 @@ class GameManager:
 	def __new__(cls):
 		if cls._instance is None:
 			cls._instance = super(GameManager, cls).__new__(cls)
+			cls._instance._all_games = {}
 			cls._instance._active_games = []
 			cls._instance._finished_games = []
 			cls._instance._new_games = []
 			cls._instance._new_games_lock = asyncio.Lock()
 			cls._instance._finished_games_lock = asyncio.Lock()
-			asyncio.create_task(cls._instance._routine())
+			cls._routine_start = False
 			print("start task routine")
 		return cls._instance
 
 	def get_game(self, game_id=None):
-		for game in self._active_games:
-			if game.game_id == game_id:
-				return game
+		if game_id == None:
+			return None
+		if game_id in self._all_games:
+			return self._all_games[game_id]
 		return None
 
-	async def add_game(self, game):
+	def add_game(self, game):
+		if game.game_id in self._all_games:
+			return
+		self._all_games[game.game_id] = game
+	
+	async def add_routine_game(self, game_id):
 		async with self._new_games_lock:
-			self._new_games.append(game)
+			self._new_games.append(game_id)
+		if self._routine_start == False:
+			await asyncio.create_task(self._routine())
+			self._routine_start = True
 
-	async def delete_game(self, game):
+	async def delete_game(self, game_id):
 		async with self._finished_games_lock:
-			self._finished_games.append(game)
+			self._finished_games.append(game_id)
+		if game_id in self._all_games:
+			del self._all_games[game_id]
 		print("deleted game!")
 
 	async def _routine(self):
+		print("")
 		print("start routine")
+		print("")
 		while True:
 			try:
 				async with self._new_games_lock:
@@ -46,20 +60,23 @@ class GameManager:
 
 				async with self._finished_games_lock:
 					# remove finished games from active
-					for game in self._finished_games:
+					for game_id in self._finished_games:
 						print("attempt to delete")
-						if game in self._active_games:
+						if game_id in self._active_games:
 							print("Delete!")
-							self._active_games.remove(game)
+							self._active_games.remove(game_id)
 					self._finished_games.clear()
 
-
 				# check active
-				for game in self._active_games:
-					if game.status == "pending":
-						await game.check_pending()
-					elif game.status == "active":
+				for game_id in self._active_games:
+					if game_id not in self._all_games:
+						print("no game id?")
+						return
+					game = self._all_games[game_id]
+					if game.status == "active":
 						await game.logic_updates()
+					elif game.status == "pending":
+						await game.check_pending()
 
 				await asyncio.sleep(0.016) #breathing room 
 
@@ -69,6 +86,7 @@ class GameManager:
 
 class GameChannel():
 	def __init__(self, consumer, game_id):
+		print("CREATING NEW GAME CHANNEL")
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
 		self.active_players = []
@@ -90,37 +108,51 @@ class GameChannel():
 			print("wrogn user id")			
 			return False
 		print("can join")
-		#get start time for pending tracking:
-		if self.start_time == None:
-			self.start_time = time.time()
+		if self.status != "pending":
+			print("error wrong status: ", self.status)
+			return False
 		#add player:
 		if consumer.user_id in self.active_players:
+			print("player reconnecting")
 			return True
-
-		self.active_players.append(consumer.user_id)
+		print("adding new player")
 		await consumer.join_channel(self.room)
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
+		print(consumer.user_id, " joining channel ", self.room)
+		print(consumer.user_data)
+		await get_channel_layer().group_send(self.room, {"type" : "test.hello", "connected" : consumer.user_id})
 		#check to start game
-		if len(self.active_players) == len(self.expected_players_id) and self.status == "pending":
+		self.active_players.append(consumer.user_id)
+		if len(self.active_players) == len(self.expected_players_id):
 			await self.start_game()
+		else:
+			print("can not start game")
+			print("expcted players: ", len(self.expected_players_id))
+			print("current players: ", len(self.active_players))
 		return True
 	
 	async def check_pending(self):
-		global max_pending_time
+		from .consumers import max_reconnection_time
 
-		if self.start_time - time.time() > max_pending_time:
+		if self.start_time - time.time() > max_reconnection_time:
 			self.error_end("player did not join")
+
+		elif len(self.active_players) == len(self.expected_players_id):
+			await self.start_game()
 	
 	async def start_game(self):
-		self.status = "active"
+		self.status = "starting"
+		# print("start game....")
+		# await GameManager().add_active_game(self.game_id)
 		await get_channel_layer().group_send(self.room, {"type": "game.updates", 
 			"state" : "player names", 
 			"name1" : self.names[0], 
 			"name2" : self.names[1],
+			"total_players" : len(self.expected_players_id),
 		})
 		self.logic = GameLogic(self.game_id)
-		print("cehck?")
-		await GameManager().add_game(self)
+		self.status = "test"
+		#print("cehck?")
 
 	async def logic_updates(self):
 		updates = self.logic.update_state()
@@ -130,7 +162,7 @@ class GameChannel():
 			"updates" : updates})
 			if updates["state"] == "game end":
 				print("GAME END")
-				store_game_results({
+				await store_game_results({
 					"score1":updates["score1"],
 					"score2":updates["score2"],
 					"start_time" : self.logic.start_time,
@@ -145,7 +177,7 @@ class GameChannel():
 			print("already finished in finsih...")
 			return
 		self.status = "finished"
-		await GameManager().delete_game(self)
+		await GameManager().delete_game(self.game_id)
 		await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 		"action" : "delete game"})
 	
@@ -163,10 +195,14 @@ class GameChannel():
 		if self.status == "finished":
 			print("already finished in error")
 			return
-		store_game_results({
+		if self.logic:
+			start_time = self.logic.start_time
+		else:
+			start_time = self.start_time
+		await store_game_results({
 				"error": error,
 				"gameID" : self.game_id,
-				"start_time" : self.logic.start_time,
+				"start_time" : start_time,
 				"looser" : self.disconnected_players[0],
 				"score1" : "",
 				"score2" : "",
@@ -181,10 +217,14 @@ class GameChannel():
 async def get_or_create_game_channel(consumer, game_id):
 	game = GameManager().get_game(game_id)
 	if game:
+		print("joining game channel")
 		if await game.join(consumer):
 			return game 
 		return None
 	new_game = GameChannel(consumer, game_id)
+	GameManager().add_game(new_game)
 	if await new_game.join(consumer):
+		new_game.start_time = time.time()
+		await GameManager().add_routine_game(game_id)
 		return new_game
 	return None

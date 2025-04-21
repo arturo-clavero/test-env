@@ -11,19 +11,27 @@ import { stateManager } from '../states/mainMenuState';
 
 export function msgRouter(event, socket){
 	const data = JSON.parse(event.data);
-	// console.log("data: ", data);
+	console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "game.updates")
 	{
 		if ("update_display" in data && data["update_display"] == "start game")
 		{
+			console.log("start game backend msg received ...")
 			pongGame["new-round"](data["gameID"], data["game-type"]);
-			if (new StateManager().currentState.name == "tournament")
-				new StateManager().currentState.changeSubstate(9);
+			if (new StateManager().currentStateIndex == 3)
+				new StateManager().currentState.changeSubstate(10);
+			return;
 		}
-		else
-			pongGame["receive"](data);
+		if ("state" in data && data["state"] == "player names" && data["total_players"] == 2)
+		{
+			let stateManager = new StateManager()
+			if (stateManager.currentStateIndex == 3
+				&& stateManager.currentState.currentSubstateIndex != 11)
+				stateManager.currentState.changeSubstate(11)
+		}
+		pongGame["receive"](data);
 	}
 	else if (data.type == "tour.updates" || data.type == "consumer.updates")
 	{
@@ -59,37 +67,52 @@ const tourActions = {
 		const state = new StateManager().states[3];
 		const actions = {
 			"pay": () => {
-				if (new StateManager().currentState == state)
+				if (new StateManager().currentStateIndex == 3)
 				{
-					state.changeSubstate();
+					state.changeSubstate(6);
 					state.currentSubstate.data["tour_id"] = data["tour_id"];
 				}
 			},
 			"refund": ()=> {
 				console.log("refunding ...");
-				new StateManager().changeState(3);
+				new StateManager().changeState(3); //redirect or not?
 				state.changeSubstate(7);
 
 			},
-			"matchmaking rounds": () => {
-				if (new StateManager().currentState == state)
+			"controls": ()=>{
+				if (new StateManager().currentStateIndex == 3)
 				{
-					matchmake["dynamic-content"](data);
+					console.log("switch to controls")
 					state.changeSubstate(8);
 				}
 			},
-			"end game": () => {
-				if (new StateManager().currentState == state)
+			"matchmaking rounds": () => {
+				if (new StateManager().currentStateIndex == 3)
 				{
-					end["dynamic-content"](data);
-					state.changeSubstate(10);
+					matchmake["dynamic-content"](data);
+					state.changeSubstate(9);
 				}
 			},
 			"waiting": () => {
-				if (new StateManager().currentState == state)
+				if (new StateManager().currentStateIndex == 3)
 				{
 					console.log("update waiting...")
+					state.changeSubstate(10)
+				}
+			},
+			"start game": () => {
+				if (new StateManager().currentStateIndex == 3)
+				{
+					console.log("update game...")
 					state.changeSubstate(11)
+				}
+			},
+			"end game": () => {
+				if (new StateManager().currentStateIndex == 3)
+				{
+					console.log("request to end touranment screen")
+					end["dynamic-content"](data);
+					state.changeSubstate(12);
 				}
 			},
 		};
@@ -128,7 +151,7 @@ function update_tour_registration_conditions(){
 	if (join['get-button-type']() == "Subscribed")
 		return false;
 	if (new StateManager().currentStateIndex == 3 &&
-	new StateManager().currentState.currentSubstateIndx >= 6)
+	new StateManager().currentState.currentSubstateIndex >= 7)
 		return false;
 	return true;
 }

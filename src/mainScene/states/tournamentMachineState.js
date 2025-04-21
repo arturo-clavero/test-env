@@ -207,7 +207,7 @@ const screenControls = new CssSubState(
 	0,
 	()=>{
 		divControls['hide-buttons']();
-		divControls["enter"]("local");
+		divControls["enter"]("remote");
 	},
 	null,
 	()=>{
@@ -294,22 +294,22 @@ const tourMachineState = new State(
 	[
 		restScreen, 
 		startScreen,//1
-		restScreenCreate,
+		restScreenCreate,//2
 		startScreenCreate,//3
-		restScreenJoin,
+		restScreenJoin,//4
 		startScreenJoin,//5
 		screenPay,//6
-		screenEnd,//7
-		screenRefund,
+		screenRefund,//7
+		screenControls,//8
 		screenMatchmake,//9
 		screenWaiting, //10
 		screenGame, //11
-		screenControls,
+		screenEnd,//12
 	],
 	null,
 	()=>{
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
-		if (curr_sub >= new StateManager().get_index_for("game"))
+		if (curr_sub >= 9)
 		{
 			console.log("exit warning maybe...", curr_sub)
 			if (divEnd["can-exit"]() == false)

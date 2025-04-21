@@ -12,9 +12,9 @@ import { createRenderTarget, createScreenMaterial } from '../utils';
 import { OnLoad } from '../../../utils/OnLoad';
 import * as THREE from 'three';
 import { Socket } from '../../../utils/Socket';
-
-//STATES: waiting, playing, error, completed
-
+//OPTION RAINBOW
+// import axios from 'axios';
+	let end = false;
 	let state = "0";
 	//shoudl send the wndow to engine really ? THINK
 	let engine = new Engine(window);
@@ -25,7 +25,6 @@ import { Socket } from '../../../utils/Socket';
 	let key = new KeyControls(paddles, socket);
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
-	let end = false;
 	let mode, num;
 
 export	function startPongGame(type = "local"){
@@ -33,10 +32,18 @@ export	function startPongGame(type = "local"){
 	console.log("new png game... ");
 	if ( new OnLoad().reconnecting == false)
 	{
+		// OPTION RAINBOW
+		// const response = await axios.get('api/profiles/me/')
+		// let alias1 = response.data.display_name
+		// OPTION TEST
+		let alias1 = "alias0";
+		let alias2 = type == "AI" ? "computer" : alias1 != "oponent" ? "oponent" : "player_2" ;
 		new Socket().send({
 			"channel" : "log",
 			"type" : type,
 			"userID1" : socket.socket.userID,
+			"alias1" : alias1,
+			"alias2" : alias2,
 		})
 	}
 	else

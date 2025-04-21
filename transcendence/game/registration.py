@@ -11,8 +11,8 @@ async def new_game(data):
 	log = create_new_log()
 	log['type'] = data.get('type')
 	log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
-	log['players']['1'] = create_new_player(data, data.get('userID1'), 1)				
-	log['players']['2'] = create_new_player(data, data.get('userID2', 'userID1'), 2)
+	log['players']['1'] = create_new_player(data, data.get('userID1'), data.get('alias1'), 1)				
+	log['players']['2'] = create_new_player(data, data.get('userID2', 'userID1'), data.get('alias2'), 2)
 	player_mode = log["type"]
 	if log["type"] == 'remote':
 		log["tour_id"] = data.get('tour_id')
@@ -38,11 +38,14 @@ async def new_game(data):
 		})
 
 async def store_game_results(results):
+	print("store game results ft registration")
 	log = cache.get(f"game_log:{results['gameID']}")
 	if log == None:
+		print("log not found")
 		return
 
-	if "error" in results:
+	if "error" in results and results["error"] != "":
+		print("error in results")
 		log["error"] = results["error"]
 		log["start_time"] = results["start_time"]
 		if "winner" in results:
@@ -72,6 +75,7 @@ async def store_game_results(results):
 			log["players"]["2"]["score"] = results["score2"]
 
 	else:	
+		print("no error results")
 		log['start_time'] = results["start_time"]
 		log['players']['1']['score'] = results["score1"]
 		log['players']['2']['score'] = results["score2"]
@@ -84,9 +88,7 @@ async def store_game_results(results):
 		else:
 			log['players']['1']["result"] = "draw"
 			log['players']['2']["result"] = "draw"
-	# print("results: ", results)
-	# print("log: ", log)
-	print("store game results")
+
 	if log["type"] == "remote":
 		tour = TournamentManager().get_tournament(log["tour_id"])
 		if tour :
@@ -113,7 +115,7 @@ def create_new_log():
 		"full" : False,
 	}
 
-def create_new_player(data, userID, n):
+def create_new_player(data, userID, alias, n):
 	player={
 		"id": "", 
 		"username": "",
@@ -123,13 +125,7 @@ def create_new_player(data, userID, n):
 	}
 	player["id"] = userID
 	player["username"] = data.get("username")
-	if n == 2 and data.get('type') == "AI":
-		player["alias"] = "Computer"
-	elif n == 2 and data.get('type') == "local":
-		player["alias"] = "Oponent"
-	else:
-		#TODO! fetch actual alias
-		player["alias"] = "alias0"
+	player["alias"] =  alias
 	return player
 
 def	get_expected_players(gameID, key):

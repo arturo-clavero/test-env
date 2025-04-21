@@ -14,7 +14,7 @@ def isUserOnline(user_id):
 	return True
 
 #static global
-max_reconnection_time = 3
+max_reconnection_time = 10
 
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -81,15 +81,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		if data["channel"] == "log":
 			await new_game(data)
-	
 		if data["channel"] == "game":
-			print("data received: ", data)
 			if "boundaries" in data:
 				self.dimensions = data["boundaries"]
 				self.update_user_data({"action":"set", "key":"dimensions", "value":self.dimensions})
 			if "request" in data and data["request"] == "start game":
 				print("request to start game")
-				print(data)
 				self.game = await get_or_create_game_channel(self, data["game_id"])
 			elif self.game and "request" in data and data["request"] == "update paddles":
 				self.game.logic.update_paddles(data)
@@ -131,7 +128,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			elif data["action"] == "join" and pending_tournament != None:
 					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
-					await pending_tournament.confirm_payment(self)
+					await pending_tournament.confirm_payment(self, data["alias"])
 
 	async def enter_scene(self):
 		state = None
@@ -214,6 +211,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	def update_user_data(self, data):
 		user_data = cache.get(f"consumer_{self.user_id}")
+		if user_data == None:
+			user_data = {"tournament":None, "game":None, "rooms":[], "dimensions":None}
 		# print("current user data: ", user_data)
 		# print("have to add : ", data)
 		if data.get("action") == "set":
@@ -233,11 +232,13 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 
 	async def join_channel(self, room, update = True):
+		print(self.user_id, " joins channel ", room)
 		await self.channel_layer.group_add(room, self.channel_name)
 		if update:
 			self.update_user_data({"action":"append", "key":"rooms", "value":room})
-
+	
 	async def remove_channel(self, room):
+		print(self.user_id, " leaves channel ", room)
 		await self.channel_layer.group_discard(room, self.channel_name)
 		self.update_user_data({"action":"remove", "key":"rooms", "value": room})
 
@@ -251,7 +252,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
-		# print("event: ", event)
+		print("event: ", event)
 		if "action" in event and event["action"] == "delete game":
 			await self.remove_channel(self.game.room)
 			self.update_user_data({"action":"set", "key":"game", "value": None})
@@ -294,6 +295,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps({"type": "game.updates", "updates":updates}))
 		else :
 			await self.send(text_data=json.dumps(event))
+	
+	async def test_hello(self, event):
+		print("this is a test, connecteed:", event["connected"])
+		print("test received by ", self.user_id)
 
 def nested_value_in(data, keys, value=None):
 	current = data

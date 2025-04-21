@@ -3,7 +3,8 @@ import { State } from "../../../core/stateManager/States";
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
-
+//OPTION RAINBOW
+// import axios from 'axios';
 const container = new Overlay([
 			new FlexBox({
 				dir: "column",
@@ -23,13 +24,13 @@ const container = new Overlay([
 				}),
 			new FlexBox({
 				dir: "row",
-				mainAxis: "space around",
+				mainAxis: "space-around",
 				children: [
 					new Button({
 						id: "button-test-1",
 						content: "(test)accept",
 						fontSize: 0.85,
-						onClick: ()=>{payment_successful()}
+						onClick: async()=>{await payment_successful()}
 					}),
 					new Button({
 						id: "button-test-2",
@@ -76,11 +77,17 @@ function fadeOut(){
 	//TODO 
 }
 
-function payment_successful(){
+async function payment_successful(){
+	// OPTION RAINBOW
+	// const response = await axios.get('api/profiles/me/')
+	// let alias = response.data.display_name
+	// OPTION TEST
+	let alias = "alias0";
 	new Socket().send({
 		"channel" : "tournament",
 		"action": "succesfull payment",
 		"tour_id": 	new StateManager().currentState.currentSubstate.data["tour_id"],
+		"alias" : alias,
 	})
 	container.getElementById("pay-message").element.textContent = "Payment Successful";
 	let stateManager = new StateManager();
