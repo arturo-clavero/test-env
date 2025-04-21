@@ -49,18 +49,19 @@ export	function startPongGame(type = "local"){
 	else
 	{
 		mode = type;
-		document.addEventListener("keydown", key.handleKeyDown);
-		document.addEventListener("keyup", key.handleKeyUp);
+		// console.log("ADDING KEY LISTENERS...")
+		// document.addEventListener("keydown", key.handleKeyDown);
+		// document.addEventListener("keyup", key.handleKeyUp);
 	}
-	    
-	
 }
 
 	function	new_round(gameID, player_mode)
 	{
-		console.log("new round");
-		document.addEventListener("keydown", key.handleKeyDown);
-		document.addEventListener("keyup", key.handleKeyUp);
+		// print("player.mode. ", player_mode)
+		// console.log("new round");
+		// console.log("ADDING KEY LISTENERS...")
+		// document.addEventListener("keydown", key.handleKeyDown);
+		// document.addEventListener("keyup", key.handleKeyUp);
 		mode = player_mode;
 		console.log('sending to game back end');
 		socket.socket.send({
@@ -166,8 +167,8 @@ function completed(msg){
 
 function	clean(){
 		console.log("clean");
-		document.removeEventListener("keydown", key.handleKeyDown);
-		document.removeEventListener("keyup", key.handleKeyUp);
+		// window.removeEventListener("keydown", key.handleKeyDown);
+		// window.removeEventListener("keyup", key.handleKeyUp);
 		ball.hide();
 		paddles.hide();
 		middleBars.hide();
@@ -202,6 +203,8 @@ function exit(){
 	//if (end == false){
 		//const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
 		// if (userConfirmed)
+		window.removeEventListener("keydown", key.handleKeyDown);
+		window.removeEventListener("keyup", key.handleKeyUp);
 		console.log("exit sending to socket ")
 		clean();
 		new Socket().send({
@@ -224,5 +227,11 @@ export	const pongGame = {
 		"resize":resize,
 		"exit": exit,
 		"receive" : (event)=>{updatesFromBackend(event);},
-		"new-round" : new_round 
+		"new-round" : new_round,
+		"enter" : ()=>{
+			console.log("")
+			console.log("ADDING EVENT LISTENERES...")
+			window.addEventListener("keydown", key.handleKeyDown);
+			window.addEventListener("keyup", key.handleKeyUp);
+		}
 	}

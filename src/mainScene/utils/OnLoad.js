@@ -58,9 +58,9 @@ export class OnLoad{
 	loadingScreen.style.display = "flex";
 	loadingScreen.style.opacity = 1;
 	document.getElementById("app-container").style.display = "none";
-	setTimeout(() => {
+	// setTimeout(() => {
 		gsap.to(loadingScreen, {
-			duration: 1,
+			duration: 0.5,
 			opacity: 0,
 			onComplete: () => {
 				loadingScreen.style.display = "none";
@@ -74,6 +74,6 @@ export class OnLoad{
 				});
 			}
 		});
-	}, 1000);
+	// }, 1000);
 	}
 }

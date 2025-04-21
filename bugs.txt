@@ -1,7 +1,3 @@
-FRONTEND
-buttons enter keyboard
-buttons switch
-alert
 
 FRONTEND 
 resize screen target render 

@@ -50,8 +50,9 @@ function enter(){
 		if (favicon)
 			favicon.href = icons[favicon_index];
 	  }, 500)
-
-	  interval_display = setInterval(() => {
+	doublePump(redirection_alert.div);
+	doublePump(redirection_alert.div);
+	interval_display = setInterval(() => {
 		  doublePump(redirection_alert.div);
 		  doublePump(redirection_alert.div);
 

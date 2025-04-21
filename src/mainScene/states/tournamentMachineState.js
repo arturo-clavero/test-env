@@ -248,8 +248,8 @@ const screenGame = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	null,
-	null,
+	()=>{pongGame["enter"]()},
+	()=>{pongGame["exit"]()},
 )
 
 const divEnd = end;
@@ -261,17 +261,16 @@ const screenEnd = new CssSubState(
 	divEnd['div'],
 	0,
 	()=>{
-		divEnd['show-div']();
-		divEnd['show-buttons']();
+		divEnd['enter']();
 	},
 	null,
 	()=>{
-		divEnd['hide-div']();
+		divEnd['exit']();
 	},
 	()=>{
 		divEnd["resize"]();
 	},
-	null,
+	(event)=>{return divEnd["keyHandler"](event)},
 	null,
 )
 
@@ -312,7 +311,7 @@ const tourMachineState = new State(
 		if (curr_sub >= 9)
 		{
 			console.log("exit warning maybe...", curr_sub)
-			if (divEnd["can-exit"]() == false)
+			if (curr_sub != 12 || divEnd["can-exit"]() == false)
 			{
 				console.log("should warn", curr_sub);
 				if (create_exit_alert() == "cancelled")

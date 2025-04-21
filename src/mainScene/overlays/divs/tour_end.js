@@ -4,7 +4,7 @@ import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { Ball } from "../scenes/pong-game/objects/Ball";
 import { AlertManager } from "../alerts/Alerts";
-
+import { SwitchButtons } from "../../../core/UIFactory/SwitchButtons";
 //you won round x | you lost round x | you won the tournament!
 //you earned
 //loading next round | exit
@@ -97,17 +97,22 @@ const container = new Overlay([
 			})
 		])
 
+let keyHandlerSwitchButtons = null;
+let switchButtons = new SwitchButtons(container.getElementsOfType(Button));
+
 function dynamic_content(data){
 	container.element.style.visibility = "visible";
 
 	if (data.button == "exit") 
 	{
+		keyHandlerSwitchButtons = switchButtons;
 		container.getElementById("back-button").element.style.visibility = "visible";
 		container.getElementById("exit-button").element.textContent = "EXIT";
 		new AlertManager().remove_latest_alert("exit alert");
 	}
 	else if (data.button == "wait")
 	{
+		keyHandlerSwitchButtons = null;
 		container.getElementById("back-button").element.style.visibility = "hidden";
 		container.getElementById("exit-button").element.textContent = "loading next round...";
 		setTimeout(() => {
@@ -171,27 +176,34 @@ function hide_div(){
 }
 
 function can_exit(){
-	console.log("can_exit ft");
-	if (new StateManager().currentState.currentSubstateIndex == 10 &&
-	container.getElementById("exit-button").element.textContent == "EXIT")
-	{
-		console.log("curr state", new StateManager().currentState.currentSubstateIndex);
-		console.log("cutton: ", container.getElementById("exit-button").element.textContent);
+	if (container.getElementById("exit-button").element.textContent == "EXIT")
 		return true;
-	}
-	console.log("should create alert")
 	return false;
+}
+
+function enter(){
+	show_div();
+	show_buttons();
+	keyHandlerSwitchButtons.switch("prev");
+}
+
+function exit(){
+	hide_div();
+	hide_buttons();
 }
 
 const end = {
 	"div" : container.element,
-	"show-buttons" : show_buttons,
-	"hide-buttons" : hide_buttons,
-	"show-div" : show_div,
-	"hide-div" : hide_div,
+	"enter" : enter,
+	"exit" : exit,
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
 	"can-exit" : can_exit,
+	"keyHandler": (event)=>{
+		if (keyHandlerSwitchButtons)
+			keyHandlerSwitchButtons.keyHandler(event);
+		event.preventDefault();
+	}
 }
 
 export {end}
