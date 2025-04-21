@@ -69,11 +69,6 @@ class GameManager:
 
 class GameChannel():
 	def __init__(self, consumer, game_id):
-		game_exists = GameManager().get_game(game_id)
-		if game_exists:
-			if game_exists.join(consumer):
-				return game_exists
-			return None
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
 		self.active_players = []
@@ -99,6 +94,9 @@ class GameChannel():
 		if self.start_time == None:
 			self.start_time = time.time()
 		#add player:
+		if consumer.user_id in self.active_players:
+			return True
+
 		self.active_players.append(consumer.user_id)
 		await consumer.join_channel(self.room)
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
@@ -178,3 +176,13 @@ class GameChannel():
 		await self.finish()
 
 
+async def get_or_create_game_channel(consumer, game_id):
+	game = GameManager().get_game(game_id)
+	if game:
+		if await game.join(consumer):
+			return game 
+		return None
+	new_game = GameChannel(consumer, game_id)
+	if await new_game.join(consumer):
+		return new_game
+	return None

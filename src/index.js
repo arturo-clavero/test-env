@@ -56,6 +56,7 @@ export function uponEnter(){
 	window.addEventListener("wheel", wheel_scroll_animations);
 	window.addEventListener('resize', onResize);
 	window.addEventListener('click', onClick);
+	document.body.addEventListener('keydown', key_events);
 	console.log(engine.camera.position)
 	//engine.resize()
 	isAnimating = true;
@@ -92,6 +93,7 @@ function exitScene(){
 	window.removeEventListener("wheel", wheel_scroll_animations);
 	window.removeEventListener('resize', onResize);
 	window.removeEventListener('click', onClick);
+	document.body.removeEventListener("keydown", key_events)
 }
 
 function popstate(event){
@@ -105,6 +107,11 @@ function onResize() {
 
 function onClick(event) {
 	engine.click(event);
+}
+
+function key_events(event){
+	console.log("clicked key!")
+	stateManager.handleKeyPress(event)
 }
 
 function init_scene_state(){

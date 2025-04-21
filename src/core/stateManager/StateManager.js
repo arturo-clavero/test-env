@@ -8,7 +8,6 @@ class StateManager {
         this.states = states;
 		this.currentState = null;
 		this.forcedRedirect = false;
-        new MainEngine().container.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		StateManager.instance = this;
 	}
 	get_index_for(name){

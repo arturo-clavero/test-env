@@ -215,7 +215,7 @@ const screenControls = new CssSubState(
 		divControls["exit"]()
 	},
 	()=>{divControls["resize"]()},
-	()=>{divControls["keyHandler"]()},
+	(event)=>{return divControls["keyHandler"](event)},
 	null
 )
 

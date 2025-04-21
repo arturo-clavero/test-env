@@ -29,7 +29,7 @@ const restScreen = new CssSubState(
 	null,
 	null,
 	()=>{ divStart.resize();},
-	(event)=> { return divStart.keyHandler(event);},
+	null,
 	null,
 )
 
@@ -68,7 +68,7 @@ const controlScreen = new CssSubState(
 		divControls["exit"]()
 	},
 	()=>{divControls["resize"]()},
-	()=>{divControls["keyHandler"]()},
+	(event)=>{return divControls["keyHandler"](event)},
 	null
 )
 
