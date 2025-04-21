@@ -1,6 +1,6 @@
 import json, asyncio, numpy as np
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .gameChannel import get_or_create_game_channel, GameManager
+from .gameChannel import join_game_channel, GameManager
 from .tournamentChannel import TournamentChannel, TournamentManager
 from .registration import new_game
 from django.utils import timezone
@@ -87,7 +87,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				self.update_user_data({"action":"set", "key":"dimensions", "value":self.dimensions})
 			if "request" in data and data["request"] == "start game":
 				print("request to start game")
-				self.game = await get_or_create_game_channel(self, data["game_id"])
+				self.game = await join_game_channel(self, data["game_id"])
 			elif self.game and "request" in data and data["request"] == "update paddles":
 				self.game.logic.update_paddles(data)
 			elif self.game and "request" in data and data["request"] == "game end":

@@ -36,7 +36,7 @@ class GameManager:
 		async with self._new_games_lock:
 			self._new_games.append(game_id)
 		if self._routine_start == False:
-			await asyncio.create_task(self._routine())
+			asyncio.create_task(self._routine())
 			self._routine_start = True
 
 	async def delete_game(self, game_id):
@@ -85,7 +85,7 @@ class GameManager:
 				break
 
 class GameChannel():
-	def __init__(self, consumer, game_id):
+	def __init__(self, game_id):
 		print("CREATING NEW GAME CHANNEL")
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
@@ -151,7 +151,7 @@ class GameChannel():
 			"total_players" : len(self.expected_players_id),
 		})
 		self.logic = GameLogic(self.game_id)
-		self.status = "test"
+		self.status = "active"
 		#print("cehck?")
 
 	async def logic_updates(self):
@@ -214,17 +214,14 @@ class GameChannel():
 		await self.finish()
 
 
-async def get_or_create_game_channel(consumer, game_id):
+async def join_game_channel(consumer, game_id):
 	game = GameManager().get_game(game_id)
 	if game:
-		print("joining game channel")
-		if await game.join(consumer):
-			return game 
-		return None
-	new_game = GameChannel(consumer, game_id)
+		await game.join(consumer)
+
+
+async def create_game_channel(game_id):
+	new_game = GameChannel(game_id)
 	GameManager().add_game(new_game)
-	if await new_game.join(consumer):
-		new_game.start_time = time.time()
-		await GameManager().add_routine_game(game_id)
-		return new_game
-	return None
+	new_game.start_time = time.time()
+	await GameManager().add_routine_game(game_id)

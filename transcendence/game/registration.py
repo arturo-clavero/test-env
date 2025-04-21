@@ -7,6 +7,8 @@ from .tournamentChannel import TournamentManager
 from channels.layers import get_channel_layer
 
 async def new_game(data):
+	from .gameChannel import create_game_channel
+
 	print("new game log")
 	log = create_new_log()
 	log['type'] = data.get('type')
@@ -20,6 +22,7 @@ async def new_game(data):
 	cache.set(f"game_log:{log['gameID']}", log)
 	print("game id: ", log["gameID"])
 	print("first player...")
+	await create_game_channel(log["gameID"])
 	await get_channel_layer().group_send(f"{data.get('userID1')}", {
 		"type" : "game.updates",
 		"update_display" : "start game",
