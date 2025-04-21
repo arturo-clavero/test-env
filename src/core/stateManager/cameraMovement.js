@@ -9,18 +9,18 @@ import * as THREE from 'three';
 
 let scrollDelta = 0;
 const scrollThreshold = 400;
-let isAnimating = false;
+let isCamMoving = false;
 export function get_camera_animation(){
-	return isAnimating;
+	return isCamMoving;
 }
 export function wheel_scroll_animations(event){
 	const stateManager = new StateManager();
-	if (isAnimating || event.deltaY * 100 * stateManager.allowedDirection < 0)
+	if (isCamMoving || event.deltaY * 100 * stateManager.allowedDirection < 0)
 		return ;
 	scrollDelta += event.deltaY;
 	new MainEngine().camera.position.z += event.deltaY * 0.00001;
 	if (Math.abs(scrollDelta) > scrollThreshold) {
-		isAnimating = true;
+		isCamMoving = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
 		scrollDelta = 0;
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
@@ -28,17 +28,27 @@ export function wheel_scroll_animations(event){
 }
 
 function moveCamera(data, newPosition, onComplete) {
-	isAnimating = true;
+	isCamMoving = true;
 	const tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
 	const engine = new MainEngine()
+	const tempPosition = {
+		x: engine.camera.position.x,
+		y: engine.camera.position.y,
+		z: engine.camera.position.z
+	};
+	console.log("new position: ", newPosition);
+	console.log("current position: ", engine.camera.position)
+	console.log("data duration ", data.duration)
 	if ("pos" in data) {
-		tl.to(engine.camera.position, { 
+		tl.to(tempPosition,{ 
 			x: newPosition.x, 
 			y: newPosition.y, 
-			z: newPosition.z,
-			onUpdate: () =>{ new StateManager().resize()
+			z: newPosition.z, 
+			onUpdate: () =>{ 
+				engine.camera.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
+				console.log("cam era moving: ", engine.camera.position)
 			},
 			overwrite: "auto",
 		}, 0);
@@ -62,10 +72,10 @@ function moveCamera(data, newPosition, onComplete) {
 		}, 0);
 	}
 	tl.eventCallback("onComplete", () => {
-		isAnimating = false;
+		isCamMoving= false;
 		new StateManager().resize();
 		onComplete();
-		engine.camera.position.copy(newPosition);
+		//engine.camera.position.copy(newPosition);
 		//fitCameraToObject()
 	});
 }

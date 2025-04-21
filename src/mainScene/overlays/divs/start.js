@@ -3,7 +3,7 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
 
 class StartScreen{
-	constructor(color = "black", title = "START GAME", fontSize=1.8){
+	constructor(color = "black", title = "PONG GAME", fontSize=1.8){
 		this.overlay = new Overlay([
 					new FlexBox({
 						flex: 1,
@@ -34,6 +34,7 @@ class StartScreen{
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
+				console.log("enter changing substate ... ")
 				return {change : "substate"};
 		}
 		return undefined;

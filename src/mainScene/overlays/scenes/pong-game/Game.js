@@ -55,7 +55,6 @@ export	function startPongGame(type = "local"){
 		document.addEventListener("keydown", key.handleKeyDown);
 		document.addEventListener("keyup", key.handleKeyUp);
 		mode = player_mode;
-		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		console.log('sending to game back end');
 		socket.socket.send({
 			"channel": "game",

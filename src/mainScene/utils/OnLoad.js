@@ -1,4 +1,5 @@
 import { uponEnter } from "../..";
+import { StateManager } from "../../core/stateManager/StateManager";
 
 export class OnLoad{
 	constructor(){
@@ -47,6 +48,7 @@ export class OnLoad{
 			console.log("switched already ...")
 			return;
 		}
+		this.switched_already = true;
 			//  || this.firstLoad == null || this.textures_ready == false || this.switched_already == true)
 			// return;
 		//RAINBOW:
@@ -56,6 +58,5 @@ export class OnLoad{
 		document.getElementById("loading-screen").style.display = "none";
 		document.getElementById("app-container").style.display = "block";
 		uponEnter();
-		this.switched_already = true;
 	}
 }

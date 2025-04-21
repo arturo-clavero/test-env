@@ -55,17 +55,24 @@ class State {
 		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
 		if (slow  == 1 && this.slowCameraMovement)
+		{
+			console.log("slow camera movement...")
 			moveCamera(this.slowCameraMovement, this.get_camera_position(),
 			() =>{
 				this.currentSubstate.postCamEnter();
 			})
+		}
 		else if (slow == 0 && this.cameraMovement)
+		{
+			console.log("fast camaera movement")
 			moveCamera(this.cameraMovement,this.get_camera_position(), 
 			() =>{
 				this.currentSubstate.postCamEnter();
 			})
+		}
 		else if (slow == -1)
 		{
+			console.log("no camera movement")
 			new MainEngine().camera.position.copy(this.get_camera_position());
 			this.currentSubstate.postCamEnter();
 		}

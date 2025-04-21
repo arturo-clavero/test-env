@@ -51,8 +51,7 @@ export function preEnterScene(app_container){
 
 export function uponEnter(){
 	console.log("upon enter")
-	if (engine.stateManager.currentState == null)
-		engine.stateManager.changeState(0, true, 1);
+	
 	window.addEventListener('popstate', popstate);
 	window.addEventListener("wheel", wheel_scroll_animations);
 	window.addEventListener('resize', onResize);
@@ -62,9 +61,20 @@ export function uponEnter(){
 	isAnimating = true;
 	animate();
 	window.dispatchEvent(new Event("resize"));
-	document.body.focus()
-	engine.container.focus()
-	engine.container.parentElement.focus()
+	if (engine.stateManager.currentState == null)
+		{
+			console.log(engine.camera.position)
+			console.log("entering main state")
+			engine.stateManager.changeState(0, true, 1);
+			console.log(engine.camera.position)
+	
+	
+		}
+	window.dispatchEvent(new Event("resize"));
+
+	// document.body.focus()
+	// engine.container.focus()
+	// engine.container.parentElement.focus()
 }
 
 export function animate() {
@@ -101,9 +111,9 @@ function init_scene_state(){
 	console.log("init scene...")
 	let stateFromURL = window.location.pathname;
 	console.log("state from url", stateFromURL)
-	if (stateFromURL && stateFromURL != "/lobby"){ 
+	if (stateFromURL){ 
 		const path = stateFromURL.slice(1); // "lobby"
-		for (let i = 0; i < stateManager.states.length; i++)
+		for (let i = 1; i < stateManager.states.length; i++)
 		{
 			if (stateManager.states[i].name == path)
 			{
@@ -115,5 +125,5 @@ function init_scene_state(){
 	}
 	stateManager.currentState = null;
 	engine.camera.position.copy(stateManager.states[0].get_camera_position());
-	engine.camera.position.z += 5;
+	engine.camera.position.z += 20;
 }

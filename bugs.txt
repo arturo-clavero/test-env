@@ -6,12 +6,12 @@ player disconnects and reconnects live
 TOURNAMENT
 add controls at the beginning before first matchmake
 get alais in front end at joing game...
+enter touranment upon disconnection
 
-NEW GAME - State
-enter game / touranment upon disconnection
-
+FRONTEND
 buttons enter keyboard
 buttons switch
+loading page
 
 GAME
 end game space // display results ... 

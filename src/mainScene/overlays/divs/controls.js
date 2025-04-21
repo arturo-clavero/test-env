@@ -23,7 +23,7 @@ const container = new Overlay([
 							new Button({
 								width: "100%",
 								id: "button",
-								content: "READY",
+								content: "PLAY",
 								fontSize : 0.55,
 								onClick: ()=>{
 									new StateManager().currentState.changeSubstate();
@@ -209,6 +209,7 @@ const controls = {
 	"exit" : exit,
 	"keyHandler" : (event)=>{
 		if (event.key === 'Enter') {
+			    console.log("enter changing substate ... ")
 				event.preventDefault();
 				return {change : "substate"};
 		}
