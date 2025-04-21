@@ -45,6 +45,7 @@ class MainEngine {
 		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
 		this.renderer.shadowMap.enabled = true;
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		this.renderer.outputEncoding = THREE.sRGBEncoding;
 		this.container.appendChild(this.renderer.domElement);
 
 		this.css3DRenderer = new CSS3DRenderer();

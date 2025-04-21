@@ -9,36 +9,27 @@ function createRenderTarget(){
 		type: THREE.UnsignedByteType,
 		samples: 8,
 	  });
-	
+	renderTarget.texture.encoding = THREE.sRGBEncoding;
 	renderTarget.texture.anisotropy = engine.renderer.capabilities.getMaxAnisotropy();
 	renderTarget.texture.generateMipmaps = true;
 	renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
-	renderTarget.depthTexture = new THREE.DepthTexture();
-	renderTarget.depthTexture.format = THREE.DepthFormat;
+	renderTarget.depthTexture = new THREE.DepthTexture(2048, 2048);
 	renderTarget.depthTexture.type = THREE.UnsignedShortType;
+	renderTarget.depthTexture.format = THREE.DepthFormat;
 	
-	renderTarget.texture.minFilter = THREE.LinearFilter;
 	renderTarget.texture.magFilter = THREE.LinearFilter;
 	const texture = renderTarget.texture;
 	texture.wrapS = THREE.ClampToEdgeWrapping;
 	texture.wrapT = THREE.ClampToEdgeWrapping;
-	const renderMaterial = new THREE.MeshStandardMaterial({
-		map: texture,
-		emissive: new THREE.Color(1, 1, 1),
-		emissiveMap: texture,
-		emissiveIntensity: 10,
-		roughness: 0.5,
-		metalness: 0.5,
-	});
 	return renderTarget;
 }
 
 function createScreenMaterial(renderTarget){
-	const renderMaterial = new THREE.MeshStandardMaterial({
+	const renderMaterial = new THREE.MeshBasicMaterial({
 		map: renderTarget.texture,
-		emissive: new THREE.Color(1, 1, 1),
-		emissiveMap: renderTarget.texture,
-		emissiveIntensity: 10,
+		// emissive: new THREE.Color(1, 1, 1),
+		// emissiveMap: renderTarget.texture,
+		// emissiveIntensity: 50,
 		roughness: 0.5,
 		metalness: 0.5,
 	});

@@ -18,11 +18,22 @@ export class Engine {
 		this.boundaryX = this.boundaryY * this.camera.aspect;
 	}
 	setUpLights(){
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 		this.scene.add(ambientLight);
-		const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-		pointLight.position.set(0, 5, 10);
-		this.scene.add(pointLight);
+		const light = new THREE.DirectionalLight(0xffffff, 5);
+		light.position.set(0, 0, 5);
+		light.castShadow = true;
+		this.scene.add(light);
+		const lightRight = new THREE.DirectionalLight(0xffffff, 0.5);
+		lightRight.position.set(5, 0, 0);
+		lightRight.castShadow = true;
+		this.scene.add(lightRight);
+		const lightLeft = new THREE.DirectionalLight(0xffffff, 0.25);
+		lightLeft.position.set(-5, 0, 0);
+		lightLeft.castShadow = true;
+		this.scene.add(lightLeft);
+
+
 	}
 }
 
