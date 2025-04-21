@@ -62,6 +62,9 @@ export function uponEnter(){
 	isAnimating = true;
 	animate();
 	window.dispatchEvent(new Event("resize"));
+	document.body.focus()
+	engine.container.focus()
+	engine.container.parentElement.focus()
 }
 
 export function animate() {

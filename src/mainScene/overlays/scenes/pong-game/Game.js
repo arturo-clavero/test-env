@@ -26,7 +26,7 @@ import { Socket } from '../../../utils/Socket';
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
 	let end = false;
-	let gameID, mode, num;
+	let mode, num;
 
 export	function startPongGame(type = "local"){
 	clean();
@@ -42,17 +42,18 @@ export	function startPongGame(type = "local"){
 	else
 	{
 		mode = type;
+		document.addEventListener("keydown", key.handleKeyDown);
+		document.addEventListener("keyup", key.handleKeyUp);
 	}
 	    
 	
 }
 
-	function	new_round(gameID_input, player_mode)
+	function	new_round(gameID, player_mode)
 	{
 		console.log("new round");
 		document.addEventListener("keydown", key.handleKeyDown);
 		document.addEventListener("keyup", key.handleKeyUp);
-		gameID = gameID_input;
 		mode = player_mode;
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
 		console.log('sending to game back end');
