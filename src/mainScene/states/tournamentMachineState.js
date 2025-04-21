@@ -248,7 +248,7 @@ const screenGame = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	()=>{pongGame["enter"]()},
+	()=>{pongGame["enter"](1)},
 	()=>{pongGame["exit"]()},
 )
 

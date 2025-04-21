@@ -180,12 +180,10 @@ function	clean(){
 	}
 
 
-function	resize(e) {
+function	resize(object_aspect) {
 	content_body.initPositions(engine);
 	//MAYBE HSOULD BE SCREEN ? THINK!
-	engine.camera.aspect = window.innerWidth / window.innerHeight;
-	engine.camera.updateProjectionMatrix();
-	engine.setRendererSize(window); //THINK
+	engine.setRendererSize(object_aspect); //THINK
 	ball.initPositions(engine);
 	paddles.initPositions(engine);
 	header.initPositions(engine);
@@ -224,11 +222,12 @@ export	const pongGame = {
 		"renderTarget" : renderTarget,
 		"scene" : engine.scene,
 		"camera" : engine.camera,
-		"resize":resize,
 		"exit": exit,
 		"receive" : (event)=>{updatesFromBackend(event);},
 		"new-round" : new_round,
-		"enter" : ()=>{
+		"enter" : (object_aspect)=>{
+			console.log("ENTER");
+			resize(object_aspect);
 			console.log("")
 			console.log("ADDING EVENT LISTENERES...")
 			window.addEventListener("keydown", key.handleKeyDown);

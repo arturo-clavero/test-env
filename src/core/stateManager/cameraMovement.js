@@ -129,7 +129,8 @@ function shakeCameraWithRotation(camera, intensity = 0.1, duration = 5000, rotat
     update();
 }
 
-export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3(0, 0, -1), offset = 1.25) {
+
+export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3(0, 0, -1), offset = 1.25, aspect = null) {
 	let engine = new MainEngine();
 	let container = engine.container;
 	let camera = engine.camera;
@@ -137,14 +138,16 @@ export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
 
-	let aspect;
-	if (container.clientWidth != 0 && container.clientHeight != 0)
-		aspect = container.clientWidth / container.clientHeight;
-	else
+	if (aspect == null)
 	{
-		console.log("CONTIANER NO VALID CLIENTWIDTH! CLENTHEITGHT!")
-		aspect = window.innerWidth / window.innerHeight;
-	}
+		if (container.clientWidth != 0 && container.clientHeight != 0)
+			aspect = container.clientWidth / container.clientHeight;
+		else
+		{
+			console.log("CONTIANER NO VALID CLIENTWIDTH! CLENTHEITGHT!")
+			aspect = window.innerWidth / window.innerHeight;
+		}
+	}	
     const fov = THREE.MathUtils.degToRad(camera.fov);
 
     const height = size.y;

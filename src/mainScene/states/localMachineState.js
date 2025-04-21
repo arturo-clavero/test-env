@@ -78,7 +78,7 @@ const gameScreen = new MeshSubState(
 	pongGame,
 	1,
 	()=>{startPongGame("local")
-		pongGame["enter"]()
+		pongGame["enter"](1)
 
 	},
 	()=>{
