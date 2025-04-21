@@ -148,6 +148,19 @@ const join = {
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
 	"get-button-type" : get_button_type,
+	"keyHandler" : (event)=>{
+		if (event.key === 'Enter'){
+			if (get_button_type() == "JOIN")
+			{
+				new Socket().send({
+					"channel":"tournament",
+					"action":"join",
+				})
+			}
+		}
+		event.preventDefault();
+		return undefined;
+	}
 }
 
 export {join}

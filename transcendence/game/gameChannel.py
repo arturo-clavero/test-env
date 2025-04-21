@@ -150,6 +150,8 @@ class GameChannel():
 		"action" : "delete game"})
 	
 	async def disconnect(self, consumer):
+		if consumer.game:
+			consumer.update_user_data({"action" : "set", "game" : None})
 		if self.status == "finished":
 			return
 		self.active_players.remove(consumer.user_id)

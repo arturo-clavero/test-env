@@ -14,7 +14,7 @@ def isUserOnline(user_id):
 	return True
 
 #static global
-max_reconnection_time = 10
+max_reconnection_time = 3
 
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -49,12 +49,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 	async def exit_live(self):
 		global max_reconnection_time
 
-		asyncio.sleep(max_reconnection_time)
+		print("crate task...")
+		await asyncio.sleep(max_reconnection_time)
+		print("exiting live?")
 		active_users = None
 		active_users = cache.get('active_users')
 		if active_users != None and self.user_id in active_users:
+			print("back online...")
 			return	
-		print("exit live")
+		print("yes, exiting live")
 		if self.game and self.game.status != "finished":
 			print("end game")
 			await self.game.disconnect(self)

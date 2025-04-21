@@ -22,7 +22,7 @@ import * as THREE from 'three';
 
 const divStart = start;
 const restScreen = new CssSubState(
-	"rest create",
+	"rest no info",
 	object,
 	partIndex,
 	surfaceIndex,
@@ -42,7 +42,7 @@ const restScreen = new CssSubState(
 )
 
 const startScreen = new CssSubState(
-	"start create",
+	"start no info",
 	object,
 	partIndex,
 	surfaceIndex,
@@ -103,7 +103,7 @@ const startScreenCreate = new CssSubState(
 		divCreate['hide-div']();
 	},
 	()=>{divCreate["resize"]()},
-	null,
+	(event)=>{return divCreate["keyHandler"](event)},
 	null,
 )
 
@@ -146,7 +146,7 @@ const startScreenJoin = new CssSubState(
 		divJoin['hide-div']();
 	},
 	()=>{divJoin["resize"]()},
-	null,
+	(event)=>{return divJoin["keyHandler"](event)},
 	null,
 )
 
@@ -193,7 +193,7 @@ const screenRefund = new CssSubState(
 	()=>{
 		divRefund["resize"]();
 	},
-	null,
+	(event)=>{return divRefund["keyHandler"](event)},
 	null,
 )
 

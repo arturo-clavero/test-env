@@ -1,7 +1,6 @@
 NEW BACKEND
 player exits early live
 player disconnects max time live
-player disconnects and reconnects live
 
 TOURNAMENT
 add controls at the beginning before first matchmake

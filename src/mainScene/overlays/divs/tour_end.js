@@ -65,17 +65,28 @@ const container = new Overlay([
 					}),
 					new FlexBox({
 						dir: "row",
-						mainAxis: "end",
+						mainAxis: "space between",
 						children: [
 							new Button({
-								id: "button",
+								id: "back-button",
+								fontSize: 0.55,
+								content: "tst",
+								onClick: ()=>{
+									if (container.getElementById("button").element.textContent == "BACK")
+										{
+											let stateManager = new StateManager();
+											stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
+										}	
+								}
+							}),
+							new Button({
+								id: "exit-button",
 								fontSize: 0.55,
 								content: "tst",
 								onClick: ()=>{
 									if (container.getElementById("button").element.textContent == "EXIT")
 										{
-											let stateManager = new StateManager();
-											stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
+											new StateManager().changeState(0);
 										}	
 								}
 							})
