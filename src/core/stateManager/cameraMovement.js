@@ -158,19 +158,10 @@ export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3
     const fitWidthDistance = width / (2 * Math.tan(fov / 2)) / aspect;
     const distance = offset * Math.max(fitHeightDistance, fitWidthDistance, depth);
 
-    // const direction = new THREE.Vector3()
-    //     .subVectors(camera.position, center)
-    //     .normalize()
-    //     .multiplyScalar(distance);
-	// const  // or whatever normal you want
 	const direction = targetNormal.clone().normalize().multiplyScalar(-distance); // move opposite of normal
 
     return new THREE.Vector3().copy(center).add(direction);
-	// camera.position.copy(center).add(direction);
-    // camera.lookAt(center);
-    // camera.updateProjectionMatrix();
+
 }
-
-
 
 export {moveCamera}

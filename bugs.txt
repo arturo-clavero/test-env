@@ -1,10 +1,9 @@
 
 FRONTEND 
-resize screen target render 
 resize divs appropriately  ... 
 
-RELOAD
-loading pg taking too log on reload
+GAME
+no keys!!!???
 
 TOURNAMENT
 enter touranment upon disconnection
