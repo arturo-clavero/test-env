@@ -252,8 +252,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
-		print("event: ", event)
-		if "action" in event and event["action"] == "delete game":
+		if "action" in event and event["action"] == "delete game" and self.game:
 			await self.remove_channel(self.game.room)
 			self.update_user_data({"action":"set", "key":"game", "value": None})
 		elif nested_value_in(event, ["updates", "state"], "playing"):
