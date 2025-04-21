@@ -26,10 +26,13 @@ export function wheel_scroll_animations(event){
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
 	}
 }
-
+let tl = null;
 function moveCamera(data, newPosition, onComplete) {
 	isCamMoving = true;
-	const tl = gsap.timeline({ 
+	if (tl){
+		tl.kill()
+	}
+	tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
 	const engine = new MainEngine()
@@ -49,6 +52,7 @@ function moveCamera(data, newPosition, onComplete) {
 			onUpdate: () =>{ 
 				engine.camera.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
 				console.log("cam era moving: ", engine.camera.position)
+				new StateManager().resize();
 			},
 			overwrite: "auto",
 		}, 0);
@@ -73,9 +77,10 @@ function moveCamera(data, newPosition, onComplete) {
 	}
 	tl.eventCallback("onComplete", () => {
 		isCamMoving= false;
-		new StateManager().resize();
 		onComplete();
-		//engine.camera.position.copy(newPosition);
+		tl = null;
+		// engine.camera.position.copy(newPosition);
+		// new StateManager().resize();
 		//fitCameraToObject()
 	});
 }

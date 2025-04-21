@@ -29,7 +29,7 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "RESTART",
-						onClick : ()=> {new StateManager().currentState.changeSubstate(2);}
+						onClick : ()=> {new StateManager().currentState.changeSubstate(3);}
 					})
 				]
 			}),
