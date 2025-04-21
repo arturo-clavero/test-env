@@ -1,21 +1,22 @@
-
-TOURNAMENT
-enter touranment upon disconnection
-	player exits early live
-	player disconnects max time live
-
 FRONTEND
 buttons enter keyboard
 buttons switch
 alert
 
+FRONTEND 
+resize screen target render 
+resize divs appropriately  ... 
+
 RELOAD
 loading pg taking too log on reload
 
-MATERIAL 
-make it match the screen surface ... 
+TOURNAMENT
+enter touranment upon disconnection
+player exits early live
+player disconnects max time live
 
 GAME
 end game space // display results ... 
 when moving paddle change material
+
 
