@@ -43,9 +43,9 @@ function moveCamera(data, newPosition, onComplete) {
 		y: engine.camera.position.y,
 		z: engine.camera.position.z
 	};
-	console.log("new position: ", newPosition);
-	console.log("current position: ", engine.camera.position)
-	console.log("data duration ", data.duration)
+	// console.log("new position: ", newPosition);
+	// console.log("current position: ", engine.camera.position)
+	// console.log("data duration ", data.duration)
 	if ("pos" in data) {
 		console.log("requested camera move")
 		tl.to(tempPosition,{ 
@@ -144,7 +144,7 @@ export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3
 			aspect = container.clientWidth / container.clientHeight;
 		else
 		{
-			console.log("CONTIANER NO VALID CLIENTWIDTH! CLENTHEITGHT!")
+			// console.log("CONTIANER NO VALID CLIENTWIDTH! CLENTHEITGHT!")
 			aspect = window.innerWidth / window.innerHeight;
 		}
 	}	

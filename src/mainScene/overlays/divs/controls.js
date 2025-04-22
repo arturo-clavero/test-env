@@ -130,7 +130,7 @@ function get_controls_tab(title, up, down){
 
 let new_controls, interval;
 function enter(type){
-	console.log("enter controls ... type: ", type)
+	// console.log("enter controls ... type: ", type)
 	if (type == "local")
 	{
 		new_controls = new FlexBox({
@@ -160,7 +160,7 @@ function enter(type){
 			dir: "column",
 			//mainAxis: "center",
 			children: [
-				get_controls_tab( "(left or right)", "arrow up", "arrow down"),
+				get_controls_tab( "PADDLE CONTROLS", "arrow up", "arrow down"),
 			]
 		});	
 	}
@@ -210,7 +210,7 @@ const controls = {
 	"exit" : exit,
 	"keyHandler" : (event)=>{
 		if (event.key === 'Enter') {
-			    console.log("enter changing substate ... ")
+			    // console.log("enter changing substate ... ")
 				event.preventDefault();
 				return {change : "substate"};
 		}

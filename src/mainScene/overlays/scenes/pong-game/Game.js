@@ -49,9 +49,9 @@ export	function startPongGame(type = "local"){
 	else
 	{
 		mode = type;
-		// console.log("ADDING KEY LISTENERS...")
-		// document.addEventListener("keydown", key.handleKeyDown);
-		// document.addEventListener("keyup", key.handleKeyUp);
+		console.log("ADDING KEY LISTENERS...")
+		document.addEventListener("keydown", key.handleKeyDown);
+		document.addEventListener("keyup", key.handleKeyUp);
 	}
 }
 
@@ -59,9 +59,9 @@ export	function startPongGame(type = "local"){
 	{
 		// print("player.mode. ", player_mode)
 		// console.log("new round");
-		// console.log("ADDING KEY LISTENERS...")
-		// document.addEventListener("keydown", key.handleKeyDown);
-		// document.addEventListener("keyup", key.handleKeyUp);
+		console.log("ADDING KEY LISTENERS...")
+		document.addEventListener("keydown", key.handleKeyDown);
+		document.addEventListener("keyup", key.handleKeyUp);
 		mode = player_mode;
 		console.log('sending to game back end');
 		socket.socket.send({
@@ -201,8 +201,8 @@ function exit(){
 	//if (end == false){
 		//const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
 		// if (userConfirmed)
-		window.removeEventListener("keydown", key.handleKeyDown);
-		window.removeEventListener("keyup", key.handleKeyUp);
+		document.removeEventListener("keydown", key.handleKeyDown);
+		document.removeEventListener("keyup", key.handleKeyUp);
 		console.log("exit sending to socket ")
 		clean();
 		new Socket().send({
@@ -229,8 +229,8 @@ export	const pongGame = {
 			console.log("ENTER");
 			resize(object_aspect);
 			console.log("")
-			console.log("ADDING EVENT LISTENERES...")
-			window.addEventListener("keydown", key.handleKeyDown);
-			window.addEventListener("keyup", key.handleKeyUp);
+			// console.log("ADDING EVENT LISTENERES...")
+			// window.addEventListener("keydown", key.handleKeyDown);
+			// window.addEventListener("keyup", key.handleKeyUp);
 		}
 	}

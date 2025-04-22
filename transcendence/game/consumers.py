@@ -79,6 +79,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		print("reecived: ", data)
+		if self.game == None:
+			print("tehre is no self game ...")
 		if data["channel"] == "log":
 			await new_game(data)
 		if data["channel"] == "game":
@@ -89,6 +92,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 				print("request to start game")
 				self.game = await join_game_channel(self, data["game_id"])
 			elif self.game and "request" in data and data["request"] == "update paddles":
+				print("updating paddles...")
 				self.game.logic.update_paddles(data)
 			elif self.game and "request" in data and data["request"] == "game end":
 				print("request game end!!!")
@@ -252,8 +256,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
+		# print("sending ", event)
 		if "action" in event and event["action"] == "delete game" and self.game:
 			await self.remove_channel(self.game.room)
+			self.game = None
 			self.update_user_data({"action":"set", "key":"game", "value": None})
 		elif nested_value_in(event, ["updates", "state"], "playing"):
 			updates = {}
@@ -282,9 +288,13 @@ class MainConsumer(AsyncWebsocketConsumer):
 				}
 			paddle_left = nested_value_in(event, ["updates", "y", 1])
 			if paddle_left is not None:
+				if paddle_left != 0:
+					print("paddle_left: ", paddle_left)
 				updates["paddle_left"] = paddle_left * self.dimensions["y"]
 			paddle_right = nested_value_in(event, ["updates", "y", 2])
 			if paddle_right is not None:
+				if paddle_right != 0:
+					print("paddle right ", paddle_right)
 				updates["paddle_right"] = paddle_right * self.dimensions["y"]
 			for key in ["score1", "score2", "state"]:
 				value = nested_value_in(event, ["updates", key])

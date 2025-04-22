@@ -6,6 +6,8 @@ GAME
 no keys!!!???
 
 TOURNAMENT
+notifications not working properly after one no more
+
 enter touranment upon disconnection
 player exits early live
 player disconnects max time live

@@ -19,7 +19,7 @@ class MainEngine {
 		this.resizeObserver = new ResizeObserver(() => this.resize());
 		this.resizeObserver.observe(this.container);
 		this.resize();
-		console.log("add container wrapper")
+		// console.log("add container wrapper")
 	}
 	removeContainerWrapper(){
 		this.container?.remove();
@@ -53,7 +53,7 @@ class MainEngine {
 		this.css3DRenderer.domElement.style.position = "absolute";
 		this.css3DRenderer.domElement.style.top = 0;
 		this.container.appendChild(this.css3DRenderer.domElement);
-		console.log("engine initiliazed")
+		// console.log("engine initiliazed")
 	}
 	setUpLights(){
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -76,11 +76,11 @@ class MainEngine {
 	}
 	add(newObject, clickable){
 		if (newObject instanceof THREE.Group) {
-			console.log("adding group: ", newObject)
+			// console.log("adding group: ", newObject)
 			this.scene.add(newObject)
 			if (clickable) {
 				newObject.children.forEach(child => {
-					console.log("child: ", child)
+					// console.log("child: ", child)
 					if (child instanceof THREE.Object3D)
 						this.clickableObjects.push(child);
 					else

@@ -11,14 +11,14 @@ import { stateManager } from '../states/mainMenuState';
 
 export function msgRouter(event, socket){
 	const data = JSON.parse(event.data);
-	console.log("data: ", data);
+	// console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "game.updates")
 	{
 		if ("update_display" in data && data["update_display"] == "start game")
 		{
-			console.log("start game backend msg received ...")
+			// console.log("start game backend msg received ...")
 			pongGame["new-round"](data["gameID"], data["game-type"]);
 			if (new StateManager().currentStateIndex == 3)
 				new StateManager().currentState.changeSubstate(10);
@@ -35,7 +35,7 @@ export function msgRouter(event, socket){
 	}
 	else if (data.type == "tour.updates" || data.type == "consumer.updates")
 	{
-		console.log("received: ", data)
+		// console.log("received: ", data)
 		for (const key of Object.keys(tourActions)) {
 			if (key in data)
 			{
@@ -47,11 +47,11 @@ export function msgRouter(event, socket){
 		}
 	}
 	else if (data.type == "ready"){
-		console.log("ready!")
+		// console.log("ready!")
 		const onLoad = new OnLoad();
 		if ("state" in data && "substate" in data)
 		{
-			console.log("udating substate ... ")
+			// console.log("udating substate ... ")
 			onLoad.reconnecting = true
 			stateManager.changeState(data["state"], true, -1);
 			stateManager.currentState.changeSubstate(data["substate"])
@@ -74,7 +74,7 @@ const tourActions = {
 				}
 			},
 			"refund": ()=> {
-				console.log("refunding ...");
+				// console.log("refunding ...");
 				new StateManager().changeState(3); //redirect or not?
 				state.changeSubstate(7);
 
@@ -82,7 +82,7 @@ const tourActions = {
 			"controls": ()=>{
 				if (new StateManager().currentStateIndex == 3)
 				{
-					console.log("switch to controls")
+					// console.log("switch to controls")
 					state.changeSubstate(8);
 				}
 			},
@@ -96,21 +96,21 @@ const tourActions = {
 			"waiting": () => {
 				if (new StateManager().currentStateIndex == 3)
 				{
-					console.log("update waiting...")
+					// console.log("update waiting...")
 					state.changeSubstate(10)
 				}
 			},
 			"start game": () => {
 				if (new StateManager().currentStateIndex == 3)
 				{
-					console.log("update game...")
+					// console.log("update game...")
 					state.changeSubstate(11)
 				}
 			},
 			"end game": () => {
 				if (new StateManager().currentStateIndex == 3)
 				{
-					console.log("request to end touranment screen")
+					// console.log("request to end touranment screen")
 					end["dynamic-content"](data);
 					state.changeSubstate(12);
 				}
@@ -131,7 +131,7 @@ const tourActions = {
 				}
 			},
 			"exit redirection alert":()=>{
-				console.log("delte redirection alert")
+				// console.log("delte redirection alert")
 				delete_redirection_alert()
 			},
 		};

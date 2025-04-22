@@ -27,7 +27,7 @@ const container = new Overlay([
 ])
 
 function organize_players_array(array){
-	console.log("all players length: ", array.length)
+	// console.log("all players length: ", array.length)
 	if (array.length % 2 == 1)
 		array.push("")
 	// const index_user = array.indexOf(getAlias());

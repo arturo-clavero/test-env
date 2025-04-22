@@ -34,7 +34,7 @@ class StartScreen{
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
-				console.log("enter changing substate ... ")
+				// console.log("enter changing substate ... ")
 				return {change : "substate"};
 		}
 		return undefined;

@@ -117,6 +117,7 @@ class GameChannel():
 			return True
 		print("adding new player")
 		await consumer.join_channel(self.room)
+		consumer.game = self
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
 		print(consumer.user_id, " joining channel ", self.room)
 		print(consumer.user_data)
@@ -188,6 +189,7 @@ class GameChannel():
 			return
 		self.active_players.remove(consumer.user_id)
 		await consumer.remove_channel(self.room)
+		consumer.update_user_data({"action" : "set", "key" : "game", "value" : None})
 		self.disconnected_players.append(consumer.user_id)
 		await self.error_end("player disconnected")
 
@@ -215,10 +217,12 @@ class GameChannel():
 
 
 async def join_game_channel(consumer, game_id):
+	print("consumer ", consumer.user_id, "joining game chaneel", game_id)
 	game = GameManager().get_game(game_id)
 	if game:
-		await game.join(consumer)
-
+		if await game.join(consumer):
+			return game
+	return None
 
 async def create_game_channel(game_id):
 	new_game = GameChannel(game_id)

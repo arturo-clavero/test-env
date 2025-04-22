@@ -34,7 +34,7 @@ const children = [
 						fontSize: 0.85,
 						content: "STAY",
 						onClick: ()=>{
-							console.log("clicked stay")
+							// console.log("clicked stay")
 							new AlertManager().remove_latest_alert();
 						},
 					}),
@@ -43,10 +43,10 @@ const children = [
 						fontSize: 0.85,
 						content: "EXIT",
 						onClick: ()=>{
-							console.log("clicked exit")
+							// console.log("clicked exit")
 							new AlertManager().remove_latest_alert();
 							can_exit = true;
-							console.log("exiting request");
+							// console.log("exiting request");
 							new StateManager().changeState(new StateManager().scheduledStateIndex)
 						},
 					}),
@@ -59,26 +59,26 @@ const children = [
 ]
 let can_exit = false;
 function create_exit_alert(){
-		console.log("create exit alert!");
-		console.log("can exit is: ", can_exit)
+		// console.log("create exit alert!");
+		// console.log("can exit is: ", can_exit)
 		const alertManager = new AlertManager();
 		if (can_exit)
 		{
-			console.log("can exit is true will allow it....");
+			// console.log("can exit is true will allow it....");
 			can_exit = false;
-			console.log("can exit is: ", can_exit)
+			// console.log("can exit is: ", can_exit)
 			return ("continue");
 		}
 		if (alertManager.currentAlert && alertManager.currentAlert.id == "exit alert")
 			return("cancelled")
 		if (alertManager.add_alert(new Alert("exit alert", children, "warning", 0, enter, exit, false)) == "overrun")
 		{
-			console.log("created alert but its overrun ... so you can go");
-			console.log("can exit is: ", can_exit)
+			// console.log("created alert but its overrun ... so you can go");
+			// console.log("can exit is: ", can_exit)
 			return ("continue");
 		}
-		console.log("can exit is: ", can_exit)
-		console.log("can not continue");
+		// console.log("can exit is: ", can_exit)
+		// console.log("can not continue");
 		return ("cancelled")
 }
 
@@ -91,7 +91,7 @@ function enter(self) {
 	}, 5000);
 	
 	setTimeout(() => {
-			console.log("remove latest alert timeout")
+			// console.log("remove latest alert timeout")
 			const alertManager = new AlertManager();
 			if (alertManager.currentAlert && alertManager.currentAlert == self)
 				new AlertManager().remove_latest_alert();

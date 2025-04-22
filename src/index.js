@@ -34,11 +34,11 @@ document.addEventListener('keydown', (event) => {
 
 // enterScene is called in mounted() or onMounted().
 export function preEnterScene(app_container){
-	console.log("pre enter")
+	//console.log("pre enter")
 	new Socket();
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
-		console.log("add to engine...")
+	//	console.log("add to engine...")
 		engine.add(backBox, false);
 		engine.add(mainSceneObj, true);
 		engine.stateManager = stateManager;
@@ -50,24 +50,24 @@ export function preEnterScene(app_container){
 }
 
 export function uponEnter(){
-	console.log("upon enter")
+	//console.log("upon enter")
 	
 	window.addEventListener('popstate', popstate);
 	window.addEventListener("wheel", wheel_scroll_animations);
 	window.addEventListener('resize', onResize);
 	window.addEventListener('click', onClick);
 	document.body.addEventListener('keydown', key_events);
-	console.log(engine.camera.position)
+	//console.log(engine.camera.position)
 	//engine.resize()
 	isAnimating = true;
 	animate();
 	window.dispatchEvent(new Event("resize"));
 	if (engine.stateManager.currentState == null)
 		{
-			console.log(engine.camera.position)
-			console.log("entering main state")
+			//console.log(engine.camera.position)
+			//console.log("entering main state")
 			engine.stateManager.changeState(0, true, 1);
-			console.log(engine.camera.position)
+			//console.log(engine.camera.position)
 	
 	
 		}
@@ -115,16 +115,16 @@ function key_events(event){
 }
 
 function init_scene_state(){
-	console.log("init scene...")
+	//console.log("init scene...")
 	let stateFromURL = window.location.pathname;
-	console.log("state from url", stateFromURL)
+	//console.log("state from url", stateFromURL)
 	if (stateFromURL){ 
 		const path = stateFromURL.slice(1); // "lobby"
 		for (let i = 1; i < stateManager.states.length; i++)
 		{
 			if (stateManager.states[i].name == path)
 			{
-				console.log("switching to state ", i)
+				// console.log("switching to state ", i)
 				stateManager.changeState(i, true, -1);
 				return;
 			}

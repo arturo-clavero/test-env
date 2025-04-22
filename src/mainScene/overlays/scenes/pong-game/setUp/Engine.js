@@ -13,7 +13,7 @@ export class Engine {
 		this.setUpLights(this.scene);
 	}
 	setRendererSize(aspect){
-		console.log("set renderre sixe , ",aspect)
+		// console.log("set renderre sixe , ",aspect)
 		// this.renderer.setSize(window.innerWidth, window.innerHeight);
 		const vFOV = THREE.MathUtils.degToRad(this.camera.fov);
 		this.boundaryY = (Math.tan(vFOV / 2) * this.camera.position.z) / aspect;

@@ -5,7 +5,7 @@ export class OnLoad{
 	constructor(){
 		if (OnLoad.instance)
 			return OnLoad.instance;
-		console.log("NEW ONLAOD INSTANCE!!!!")
+		// console.log("NEW ONLAOD INSTANCE!!!!")
 		this.firstLoad = null;
 		this.socket_ready = false;
 		this.textures_ready = false;
@@ -14,38 +14,38 @@ export class OnLoad{
 		OnLoad.instance = this;
 	}
 	set_first_load(newPage){
-		console.log("FIRST LOAD")
+		// console.log("FIRST LOAD")
 		this.firstLoad = newPage;
 		this.switch_pages()
 	}
 	set_socket_ready(){
-		console.log("SOCKET READY")
+		// console.log("SOCKET READY")
 		this.socket_ready = true;
 		this.switch_pages()
 	}
 	set_texture_ready(){
-		console.log("TEXTURES READY")
+		// console.log("TEXTURES READY")
 		this.textures_ready = true;
 		this.switch_pages()
 	}
 	switch_pages(){
 		if (this.socket_ready == false)
 		{
-			console.log("sokcet not ready")
+			// console.log("sokcet not ready")
 			return
 		}
 		if (this.firstLoad == null)
 		{
-			console.log("first load nto ready")
+			// console.log("first load nto ready")
 			return;
 		}
 		if (this.textures_ready == false)
 		{
-			console.log("textures nto ready")
+			// console.log("textures nto ready")
 			return;
 		}
 		if (this.switched_already == true){
-			console.log("switched already ...")
+			// console.log("switched already ...")
 			return;
 		}
 		this.switched_already = true;

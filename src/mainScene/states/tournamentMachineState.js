@@ -310,10 +310,10 @@ const tourMachineState = new State(
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
 		if (curr_sub >= 9)
 		{
-			console.log("exit warning maybe...", curr_sub)
+			// console.log("exit warning maybe...", curr_sub)
 			if (curr_sub != 12 || divEnd["can-exit"]() == false)
 			{
-				console.log("should warn", curr_sub);
+				// console.log("should warn", curr_sub);
 				if (create_exit_alert() == "cancelled")
 					return ("cancelled")
 				new Socket().send({

@@ -30,7 +30,7 @@ class StateManager {
         this.currentState = this.states[this.currentStateIndex];
 		if (shouldPushHistory)
 		{
-			console.log("pushing to history...")
+			// console.log("pushing to history...")
 			window.history.pushState({ num: this.currentStateIndex }, '', window.location.origin + `/${this.currentState.name}`);
 		}
 		this.setAllowedDirection();
