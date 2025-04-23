@@ -6,6 +6,24 @@ from django.core.cache import cache
 from .tournamentChannel import TournamentManager
 from channels.layers import get_channel_layer
 
+async def can_user_log_game(consumer, data):
+	print("can user log game?")
+	playing_users = cache.get(f"playing_users")
+	if playing_users == None:
+		playing_users = []
+	print(data)
+	if consumer.user_id in playing_users:
+		print("no..")
+		await consumer.send_self({"type" : "game.updates",
+		"update_display" : "already_in_game",
+		})
+	else:
+		print("yes!")
+		await consumer.send_self({"type" : "game.updates",
+		"update_display" : "controls",
+		"state" : data["state"]
+		})
+
 async def new_game(data):
 	from .gameChannel import create_game_channel
 
@@ -21,20 +39,16 @@ async def new_game(data):
 		log["tour_id"] = data.get('tour_id')
 
 	#check if user is already in game?
-	playing_users = cache.get(f"playing_users")
-	if playing_users == None:
-		playing_users = []
-	if data.get('userID1') in playing_users:
-		await cancel_game(data) 
-		return
-	if data.get('type') not in ['local', 'AI']:
-		if data.get('userID2') in playing_users:
-			await cancel_game(data)
+	if log['type'] in ['local', 'AI']:
+		playing_users = cache.get(f"playing_users")
+		if playing_users == None:
+			playing_users = []
+		if data['userID1'] in playing_users:
+			await cancel_game(data) 
 			return
-		playing_users.append(data.get('userID2'))
-	playing_users.append(data.get('userID1'))
-	cache.set("playing_users", playing_users)
-	cache.set(f"game_log:{log['gameID']}", log)
+		playing_users.append(data.get('userID1'))
+		cache.set("playing_users", playing_users)
+		cache.set(f"game_log:{log['gameID']}", log)
 
 	#create game and inform user...
 	await create_game_channel(log["gameID"], data.get("type"))
@@ -54,6 +68,7 @@ async def new_game(data):
 			"userID" : data["userID2"],
 			"game-type" : "player2",
 		})
+
 async def cancel_game(data):
 	message = {
 		"type" : "game.updates",
@@ -74,8 +89,6 @@ async def store_game_results(results):
 	if playing_users:
 		if log["players"]["1"]["id"] in playing_users:
 			playing_users.remove(log["players"]["1"]["id"])
-		if log["players"]["2"]["id"] in playing_users:
-			playing_users.remove(log["players"]["2"]["id"])
 		cache.set("playing_users", playing_users)
 	if "error" in results and results["error"] != "":
 		print("error in results")

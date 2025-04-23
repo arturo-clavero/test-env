@@ -212,6 +212,7 @@ function log_game(){
 		let alias2 = type == "AI" ? "computer" : alias1 != "oponent" ? "oponent" : "player_2" ;
 		new Socket().send({
 			"channel" : "log",
+			"action" : "new_game",
 			"type" : type,
 			"userID1" : new Socket().userID,
 			"alias1" : alias1,

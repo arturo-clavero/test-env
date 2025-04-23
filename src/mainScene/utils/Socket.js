@@ -30,7 +30,7 @@ export class Socket {
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
-			this.socket.onmessage = (event) => msgRouter(event, this);
+			this.socket.onmessage = (event) => msgRouter(event);
 		}
 		catch(err){
 			this.myError(err)

@@ -1,6 +1,7 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
+import { stateManager } from '../../states/mainMenuState';
 import { OnLoad } from '../../utils/OnLoad';
 import { Socket } from '../../utils/Socket';
 class StartScreen{
@@ -24,8 +25,7 @@ class StartScreen{
 								content: "ENTER",
 								id: "enter-button",
 								onClick: ()=>{
-									//placeholder
-									new StateManager().currentState.changeSubstate();
+									can_user_log_game()
 								}
 							}),
 						]
@@ -38,7 +38,7 @@ class StartScreen{
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
-				return {change : "substate"};
+				can_user_log_game();
 		}
 		return undefined;
 	}
@@ -56,6 +56,13 @@ class StartScreen{
 	resize(){this.overlay.resize();}
 }
 
+export function can_user_log_game(){
+	console.log("can user log game...")
+	new Socket().send({"channel" : "log",
+		"action":"can_user_log_game",
+		'state' : new StateManager().currentStateIndex,
+	})
+}
 
 
 export { StartScreen};

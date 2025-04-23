@@ -9,9 +9,9 @@ import { MainEngine } from './MainEngine';
 import { OnLoad } from './OnLoad';
 import { stateManager } from '../states/mainMenuState';
 
-export function msgRouter(event, socket){
+export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	// console.log("data: ", data);
+	console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "switch tabs")
@@ -38,6 +38,18 @@ export function msgRouter(event, socket){
 					stateManager.currentState.changeSubstate();
 				}
 				return;
+			}
+			if (data["update_display"] == "controls")
+			{
+				console.log("now in ", stateManager.currentStateIndex , "request to: ", data["state"])
+				if (stateManager.currentStateIndex != data["state"])
+					stateManager.changeState(data["state"])
+				stateManager.currentState.changeSubstate(2)
+
+			}
+			if (data["update_display"] == "already_in_game")
+			{
+				console.log("already in game, can not register")
 			}
 		}
 		if ("state" in data && data["state"] == "player names" && data["total_players"] == 2)

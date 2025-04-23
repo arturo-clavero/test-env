@@ -2,7 +2,7 @@ import json, asyncio, numpy as np
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .gameChannel import join_game_channel, GameManager
 from .tournamentChannel import TournamentChannel, TournamentManager
-from .registration import new_game
+from .registration import new_game, can_user_log_game
 from django.utils import timezone
 from django.core.cache import cache
 
@@ -94,11 +94,17 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		print("reecived: ", data)
 		if self.game == None:
 			print("tehre is no self game ...")
 		if data["channel"] == "log":
-			await new_game(data)
+			print("check0")
+			if "action" in data:
+				print('check1')
+				if data["action"] == "can_user_log_game":
+					print("check2")
+					await can_user_log_game(self, data)
+				if data["action"] == "new_game":
+					await new_game(data)
 		if data["channel"] == "game":
 			if "boundaries" in data:
 				self.dimensions = data["boundaries"]

@@ -3,7 +3,7 @@ import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { MainEngine } from '../../utils/MainEngine';
-
+import { can_user_log_game } from './start';
 class End{
 	constructor(color="white"){
 		this.overlay = new Overlay([
@@ -29,7 +29,7 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "RESTART",
-						onClick : ()=> {new StateManager().currentState.changeSubstate(3);}
+						onClick : ()=> {can_user_log_game()}
 					})
 				]
 			}),
