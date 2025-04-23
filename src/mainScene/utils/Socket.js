@@ -11,6 +11,7 @@ export class Socket {
 			return Socket.instance
 		this.msgQueue = [];
 		this.init();
+		this.userID = null;
 		Socket.instance = this;
 	}
 	async init(){

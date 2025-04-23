@@ -15,7 +15,7 @@ def isUserOnline(user_id):
 
 #static global
 max_reconnection_time = 10
-
+all_consumers = {}
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		print("websocket connected!")
@@ -44,9 +44,18 @@ class MainConsumer(AsyncWebsocketConsumer):
 			cache.set(f"consumer_{self.user_id}", self.user_data)
 			await self.join_channel(f"{self.user_id}")
 		await self.join_channel("all")
+		prev_consumer = None
 		await self.enter_scene()
+		# if self.user_id in all_consumers:
+		# 	print("switch tab!!!")
+		# 	prev_consumer = all_consumers[self.user_id]
+		# 	prev_consumer.close()
+		# 	await prev_consumer.send_self({"type" : "switch tabs"})
+		# all_consumers[self.user_id] = self
+			# await prev_consumer.exit_live()
 
-	async def exit_live(self):
+
+	async def should_exit_live(self):
 		global max_reconnection_time
 
 		print("crate task...")
@@ -57,6 +66,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if active_users != None and self.user_id in active_users:
 			print("back online...")
 			return	
+		await self.exit_live()
+	
+	async def exit_live(self):
 		print("yes, exiting live")
 		if self.game and self.game.status != "finished":
 			print("end game")
@@ -64,17 +76,20 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if self.tournament :
 			print("end tournament")
 			await self.tournament.remove_player(self.user_id)
+		if self.user_id in all_consumers and all_consumers[self.user_id] == self:
+			del all_consumers[self.user_id]
 
 	async def disconnect(self, code=None):
 		
-		asyncio.create_task(self.exit_live())
+		asyncio.create_task(self.should_exit_live())
 		await self.remove_channel("all")
 		active_users = None
 		active_users = cache.get('active_users')
 		if active_users == None:
 			active_users = []
-		active_users.remove(self.user_id)
-		cache.set('active_users', active_users)
+		if self.user_id in active_users:
+			active_users.remove(self.user_id)
+			cache.set('active_users', active_users)
 		print("WEBOSCKET DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
@@ -102,7 +117,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 			if data["action"] == "exit live":
 				print("exit live")
-				await self.exit_live()
+				await self.should_exit_live()
 
 			elif data["action"] == "create":
 				if pending_tournament == None:
@@ -288,13 +303,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 				}
 			paddle_left = nested_value_in(event, ["updates", "y", 1])
 			if paddle_left is not None:
-				if paddle_left != 0:
-					print("paddle_left: ", paddle_left)
 				updates["paddle_left"] = paddle_left * self.dimensions["y"]
 			paddle_right = nested_value_in(event, ["updates", "y", 2])
 			if paddle_right is not None:
-				if paddle_right != 0:
-					print("paddle right ", paddle_right)
 				updates["paddle_right"] = paddle_right * self.dimensions["y"]
 			for key in ["score1", "score2", "state"]:
 				value = nested_value_in(event, ["updates", key])

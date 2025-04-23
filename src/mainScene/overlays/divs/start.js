@@ -1,7 +1,8 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
-
+import { OnLoad } from '../../utils/OnLoad';
+import { Socket } from '../../utils/Socket';
 class StartScreen{
 	constructor(color = "black", title = "PONG GAME", fontSize=1.8){
 		this.overlay = new Overlay([
@@ -22,8 +23,11 @@ class StartScreen{
 								color: color,
 								content: "ENTER",
 								id: "enter-button",
-								onClick: ()=>{new StateManager().currentState.changeSubstate();},
-							})
+								onClick: ()=>{
+									//placeholder
+									new StateManager().currentState.changeSubstate();
+								}
+							}),
 						]
 					}),
 		]);
@@ -34,7 +38,6 @@ class StartScreen{
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
-				// console.log("enter changing substate ... ")
 				return {change : "substate"};
 		}
 		return undefined;
@@ -42,14 +45,17 @@ class StartScreen{
 	enter(){
 		this.div.style.visibility = "visible";
 		this.enterButton.element.style.color = this.color;
+		this.enterButton.element.style = "visible"
 	}
 	exit(){
-		this.enterButton.element.style.color = "transparent";
+		this.enterButton.element.style = "hidden"
 		this.div.style.visibility = "hidden";
 
 	}
 	animate(){this.enterButton.animate();}
 	resize(){this.overlay.resize();}
 }
+
+
 
 export { StartScreen};

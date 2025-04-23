@@ -3,7 +3,7 @@ import { State } from "../../../core/stateManager/States";
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
-
+import { OnLoad } from "../../utils/OnLoad";
 const container = new Overlay([
 			new FlexBox({
 				dir:"column",
@@ -26,7 +26,7 @@ const container = new Overlay([
 								content: "PLAY",
 								fontSize : 0.55,
 								onClick: ()=>{
-									new StateManager().currentState.changeSubstate();
+									log_game();
 								}
 							})
 						]
@@ -201,6 +201,24 @@ function exit(){
 
 container.element.style.visibility = "hidden";
 
+function log_game(){
+	console.log("log game")
+	let stateManager = new StateManager()
+	let type = stateManager.currentStateIndex == 1 ? "local" : stateManager.currentStateIndex == 2 ? "AI" : stateManager.currentStateIndex == 3 ? "remote" : "unkown";
+	if ( new OnLoad().reconnecting == false)
+	{
+		console.log("sending to socket log game request")
+		let alias1 = "alias0";
+		let alias2 = type == "AI" ? "computer" : alias1 != "oponent" ? "oponent" : "player_2" ;
+		new Socket().send({
+			"channel" : "log",
+			"type" : type,
+			"userID1" : new Socket().userID,
+			"alias1" : alias1,
+			"alias2" : alias2,
+		})
+	}
+}
 const controls = {
 	"div" : container.element,
 	"show-buttons": show_buttons,
@@ -212,7 +230,7 @@ const controls = {
 		if (event.key === 'Enter') {
 			    // console.log("enter changing substate ... ")
 				event.preventDefault();
-				return {change : "substate"};
+				log_game();
 		}
 		return undefined;
 	}

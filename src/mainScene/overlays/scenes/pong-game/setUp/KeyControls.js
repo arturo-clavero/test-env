@@ -1,10 +1,9 @@
 import { Socket } from "../../../../utils/Socket";
 
 export class KeyControls{
-	constructor(paddles, socket){
+	constructor(paddles){
 		this.paddleLeft = paddles.paddles[0];
 		this.paddleRight = paddles.paddles[1];
-		this.socket = socket;
 		this.keyStates = {};
 		this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -54,7 +53,7 @@ export class KeyControls{
 		}
 		else
 			console.log("is not pressed")
-		console.log("sending to socket")
+		console.log("sending to socket paddle")
 		new Socket().send({
 			"channel": "game",
 			request: "update paddles",

@@ -14,15 +14,31 @@ export function msgRouter(event, socket){
 	// console.log("data: ", data);
 	if (!data)
 		return ;
+	if (data.type == "switch tabs")
+	{
+		console.log("SWITCH TABS")
+	}
 	if (data.type == "game.updates")
 	{
-		if ("update_display" in data && data["update_display"] == "start game")
+		if ("update_display" in data)
 		{
-			// console.log("start game backend msg received ...")
-			pongGame["new-round"](data["gameID"], data["game-type"]);
-			if (new StateManager().currentStateIndex == 3)
-				new StateManager().currentState.changeSubstate(10);
-			return;
+			let stateManager = new StateManager()
+			if (data["update_display"] == "start game")
+			{
+				console.log("start game backend msg received ...")
+				pongGame["start_game"](data["gameID"]);
+				if (stateManager.currentStateIndex == 3)
+				{
+					//touranments go directly to game...
+					stateManager.currentState.changeSubstate(10);
+				}
+				else
+				{
+					//non remote wait for after controls to join... 
+					stateManager.currentState.changeSubstate();
+				}
+				return;
+			}
 		}
 		if ("state" in data && data["state"] == "player names" && data["total_players"] == 2)
 		{

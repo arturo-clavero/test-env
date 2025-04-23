@@ -3,7 +3,6 @@ import { MiddleBars } from "./objects/MiddleBars";
 import { PaddleGroup } from './objects/Paddle';
 import { Ball } from './objects/Ball';
 import { Header } from './objects/Header';
-import { GameSocket } from './setUp/GameSocket';
 import { KeyControls } from './setUp/KeyControls';
 import { Font } from '../../../../core/objectFactory/customFont3d';
 import { dispose_object } from '../../../utils/utils';
@@ -21,61 +20,25 @@ import { Socket } from '../../../utils/Socket';
 	let middleBars = new MiddleBars(false, engine);
 	let ball = new Ball(false, engine);
 	let paddles = new PaddleGroup(false, engine);
-	let socket = new GameSocket();
-	let key = new KeyControls(paddles, socket);
+	let key = new KeyControls(paddles);
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
 	let mode, num;
 
-export	function startPongGame(type = "local"){
-	clean();
-	console.log("new png game... ");
-	if ( new OnLoad().reconnecting == false)
-	{
-		// OPTION RAINBOW
-		// const response = await axios.get('api/profiles/me/')
-		// let alias1 = response.data.display_name
-		// OPTION TEST
-		let alias1 = "alias0";
-		let alias2 = type == "AI" ? "computer" : alias1 != "oponent" ? "oponent" : "player_2" ;
-		new Socket().send({
-			"channel" : "log",
-			"type" : type,
-			"userID1" : socket.socket.userID,
-			"alias1" : alias1,
-			"alias2" : alias2,
-		})
-	}
-	else
-	{
-		mode = type;
-		console.log("ADDING KEY LISTENERS...")
-		document.addEventListener("keydown", key.handleKeyDown);
-		document.addEventListener("keyup", key.handleKeyUp);
-	}
-}
 
-	function	new_round(gameID, player_mode)
-	{
-		// print("player.mode. ", player_mode)
-		// console.log("new round");
-		console.log("ADDING KEY LISTENERS...")
-		document.addEventListener("keydown", key.handleKeyDown);
-		document.addEventListener("keyup", key.handleKeyUp);
-		mode = player_mode;
-		console.log('sending to game back end');
-		socket.socket.send({
-			"channel": "game",
-			request: "start game",
-			game_id: gameID,
-			boundaries: { x: paddles.collisionPos(ball), y: engine.boundaryY },
-			left_paddle_type: mode === "AI" ? "local" : (mode === "player2" ? "X" : mode),
-			right_paddle_type: mode === "player1" ? "X" : mode,
-			paddle_half_len: paddles.paddles[0].halfLen,
-		});
-		// if (mode == "player1" || mode == "player2")
-			// waiting();
-	}
+function	start_game(game_id)
+{
+	console.log("sending to socket start of game")
+	new Socket().send({
+		"channel": "game",
+		request: "start game",
+		game_id: game_id,
+		boundaries: { x: paddles.collisionPos(ball), y: engine.boundaryY },
+		left_paddle_type: mode === "AI" ? "local" : (mode === "player2" ? "X" : mode),
+		right_paddle_type: mode === "player1" ? "X" : mode,
+		paddle_half_len: paddles.paddles[0].halfLen,
+	});
+}
 	
 function	updatesFromBackend(msg){
 	const data = msg.updates|| msg;
@@ -158,36 +121,28 @@ function completed(msg){
 	clean();
 	if (mode == "local" || mode == "AI")
 		new StateManager().currentState.changeSubstate();
-	// 	setTimeout(()=>{
-	// 		clean();
-	// 		new StateManager().currentState.changeSubstate();
-	// }, 4000)
 }
 
 
 function	clean(){
-		console.log("clean");
-		// window.removeEventListener("keydown", key.handleKeyDown);
-		// window.removeEventListener("keyup", key.handleKeyUp);
 		ball.hide();
 		paddles.hide();
 		middleBars.hide();
 		content_body.hide();
 		header.hide();
 		state = "0";
-		// socket.socket.socket.close();
 		end = true;
 	}
 
 
 function	resize(object_aspect) {
 	content_body.initPositions(engine);
-	//MAYBE HSOULD BE SCREEN ? THINK!
-	engine.setRendererSize(object_aspect); //THINK
+	engine.setRendererSize(object_aspect);
 	ball.initPositions(engine);
 	paddles.initPositions(engine);
 	header.initPositions(engine);
-	socket.socket.send({
+	console.log("sedning to socket boundaries")
+	new Socket().send({
 		"channel": "game",
 		"boundaries" : {
 			"x" : paddles.collisionPos(ball),
@@ -196,22 +151,26 @@ function	resize(object_aspect) {
 	})
 }
 
+function enter(object_aspect){
+		console.log("enter game state");
+		clean();
+		resize(object_aspect);
+		let stateManager = new StateManager()
+		mode = stateManager.currentStateIndex == 1 ? "local" : stateManager.currentStateIndex == 2 ? "AI" : stateManager.currentStateIndex == 3? "remote" : "unkown";
+		document.addEventListener("keydown", key.handleKeyDown);
+		document.addEventListener("keyup", key.handleKeyUp);
+}
 
 function exit(){
-	//if (end == false){
-		//const userConfirmed = confirm("Game is running!\n Are you sure you want to exit? \nYou will automatically lose...");
-		// if (userConfirmed)
+	console.log("exit game state")
 		document.removeEventListener("keydown", key.handleKeyDown);
 		document.removeEventListener("keyup", key.handleKeyUp);
-		console.log("exit sending to socket ")
 		clean();
+		console.log("sending to socket end game")
 		new Socket().send({
 			"channel": "game",
 			"request": "game end",
 		})
-		// else
-		// 	return "forbidden";
-	//}
 }
 
 const renderTarget = createRenderTarget();
@@ -224,13 +183,6 @@ export	const pongGame = {
 		"camera" : engine.camera,
 		"exit": exit,
 		"receive" : (event)=>{updatesFromBackend(event);},
-		"new-round" : new_round,
-		"enter" : (object_aspect)=>{
-			console.log("ENTER");
-			resize(object_aspect);
-			console.log("")
-			// console.log("ADDING EVENT LISTENERES...")
-			// window.addEventListener("keydown", key.handleKeyDown);
-			// window.addEventListener("keyup", key.handleKeyUp);
-		}
+		"start_game" : start_game,
+		"enter" : enter, 
 	}

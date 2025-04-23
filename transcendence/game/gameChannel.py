@@ -85,8 +85,9 @@ class GameManager:
 				break
 
 class GameChannel():
-	def __init__(self, game_id):
+	def __init__(self, game_id, game_mode):
 		print("CREATING NEW GAME CHANNEL")
+		self.game_mode = game_mode
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
 		self.active_players = []
@@ -224,8 +225,8 @@ async def join_game_channel(consumer, game_id):
 			return game
 	return None
 
-async def create_game_channel(game_id):
-	new_game = GameChannel(game_id)
+async def create_game_channel(game_id, game_mode):
+	new_game = GameChannel(game_id, game_mode)
 	GameManager().add_game(new_game)
 	new_game.start_time = time.time()
 	await GameManager().add_routine_game(game_id)

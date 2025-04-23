@@ -6,7 +6,7 @@ import { screenMaterial } from '../objects/simpleAssets';
 import { screenSurface, center, object, partIndex, surfaceIndex, aiMachineObj } from '../objects/machines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+import { pongGame } from '../overlays/scenes/pong-game/Game';		
 import { AlertManager } from '../overlays/alerts/Alerts';
 import { StateManager } from '../../core/stateManager/StateManager';
 import * as THREE from 'three';
@@ -78,7 +78,7 @@ const gameScreen = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	()=>{startPongGame("AI"); pongGame["enter"](2)},
+	()=>{pongGame["enter"](2)},
 	()=>{
 		new AlertManager().remove_latest_alert("exit alert");
 	},

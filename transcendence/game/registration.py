@@ -10,6 +10,7 @@ async def new_game(data):
 	from .gameChannel import create_game_channel
 
 	print("new game log")
+	print(data)
 	log = create_new_log()
 	log['type'] = data.get('type')
 	log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
@@ -19,10 +20,24 @@ async def new_game(data):
 	if log["type"] == 'remote':
 		log["tour_id"] = data.get('tour_id')
 
+	#check if user is already in game?
+	playing_users = cache.get(f"playing_users")
+	if playing_users == None:
+		playing_users = []
+	if data.get('userID1') in playing_users:
+		await cancel_game(data) 
+		return
+	if data.get('type') not in ['local', 'AI']:
+		if data.get('userID2') in playing_users:
+			await cancel_game(data)
+			return
+		playing_users.append(data.get('userID2'))
+	playing_users.append(data.get('userID1'))
+	cache.set("playing_users", playing_users)
 	cache.set(f"game_log:{log['gameID']}", log)
-	print("game id: ", log["gameID"])
-	print("first player...")
-	await create_game_channel(log["gameID"])
+
+	#create game and inform user...
+	await create_game_channel(log["gameID"], data.get("type"))
 	await get_channel_layer().group_send(f"{data.get('userID1')}", {
 		"type" : "game.updates",
 		"update_display" : "start game",
@@ -39,6 +54,15 @@ async def new_game(data):
 			"userID" : data["userID2"],
 			"game-type" : "player2",
 		})
+async def cancel_game(data):
+	message = {
+		"type" : "game.updates",
+		"update_display" : "cancel game",
+		"reason" : "already playing a game",
+	}
+	await get_channel_layer().group_send(f"{data.get("userID1")}", message)
+	if data.get('type') not in ["local", "AI"]:
+		await get_channel_layer().group_send(f"{data.get("userID2")}", message)
 
 async def store_game_results(results):
 	print("store game results ft registration")
@@ -46,7 +70,13 @@ async def store_game_results(results):
 	if log == None:
 		print("log not found")
 		return
-
+	playing_users = cache.get("playing_users")
+	if playing_users:
+		if log["players"]["1"]["id"] in playing_users:
+			playing_users.remove(log["players"]["1"]["id"])
+		if log["players"]["2"]["id"] in playing_users:
+			playing_users.remove(log["players"]["2"]["id"])
+		cache.set("playing_users", playing_users)
 	if "error" in results and results["error"] != "":
 		print("error in results")
 		log["error"] = results["error"]
