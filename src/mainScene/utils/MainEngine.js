@@ -11,6 +11,7 @@ class MainEngine {
 		this.setUpScene();
 		this.setUpRenderer();
 		this.setUpLights();
+		this.blockRaycast = false;
 		this.stateManager = null;
 		MainEngine.instance = this;
 	}
@@ -119,7 +120,7 @@ class MainEngine {
 		// 	console.log("NO STATE MANAGER")
 
 	}
-	blockRaycast(){
+	blockRaycast_to_true(){
 		this.blockRaycast = true;
 	}
 	click(event){

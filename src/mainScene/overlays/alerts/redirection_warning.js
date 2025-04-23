@@ -32,12 +32,14 @@ const children = [
 let prev_title, prev_icon, favicon;
 let interval_favicon, interval_display;
 let length;
+
 function create_redirection_alert(inputlength){
+	console.log("create redirection alert");
 	length = inputlength;
-	new AlertManager().add_alert(redirection_alert);
+	new AlertManager().add_alert(new Alert("redirection_alert", children, "urgent", 100, enter, exit, false));
 }
 
-function enter(){
+function enter(self){
 	const icons = ["/src/assets/icons/Empty.png", "/src/assets/icons/a5.png"];
     let favicon_index = 0;
 	prev_title  = document.title;
@@ -50,11 +52,11 @@ function enter(){
 		if (favicon)
 			favicon.href = icons[favicon_index];
 	  }, 500)
-	doublePump(redirection_alert.div);
-	doublePump(redirection_alert.div);
+	doublePump(self.div);
+	doublePump(self.div);
 	interval_display = setInterval(() => {
-		  doublePump(redirection_alert.div);
-		  doublePump(redirection_alert.div);
+		  doublePump(self.div);
+		  doublePump(self.div);
 
 	  }, 5000);
 }
@@ -63,7 +65,7 @@ function exit(){
 }
 
 function delete_redirection_alert(){
-	new AlertManager().remove_latest_alert(redirection_alert.id);
+	new AlertManager().remove_latest_alert("redirection_alert");
 	clearInterval(interval_display);
 	clearInterval(interval_favicon);
 	document.title = prev_title;
@@ -72,9 +74,9 @@ function delete_redirection_alert(){
 }
 
 function fadeout_redirection_alert(length_in_s){
-	fadeout(redirection_alert.div, length_in_s)
+	fadeout(new AlertManager().currentAlert.div, length_in_s)
 }
 
-const redirection_alert = new Alert("redirection_alert", children, "urgent", 100, enter, exit, false);
+
 
 export {create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert}

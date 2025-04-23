@@ -23,7 +23,7 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "EXIT",
-						onClick : ()=> {new MainEngine().blockRaycast(); new StateManager().changeState(0); }
+						onClick : ()=> {new MainEngine().blockRaycast_to_true(); new StateManager().changeState(0); }
 					}),
 					new Button({
 						color: color,
