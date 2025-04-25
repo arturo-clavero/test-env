@@ -54,6 +54,7 @@ class CssSubState extends SubState {
 		const scaleX = pixelWidth / worldSize.x;
 		const scaleY = pixelHeight / worldSize.y;
 		const scaleFactor = 1 / Math.min(scaleX, scaleY);
+		this.div.style.border = "2px solid red"; // or any color you like
 		this.div.style.width = `${pixelWidth}px`;
 		this.div.style.height = `${pixelHeight}px`;
 		this.divObject.scale.set(scaleFactor, scaleFactor, scaleFactor);

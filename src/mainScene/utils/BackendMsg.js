@@ -8,6 +8,8 @@ import { State } from '../../core/stateManager/States';
 import { MainEngine } from './MainEngine';
 import { OnLoad } from './OnLoad';
 import { stateManager } from '../states/mainMenuState';
+import { AlertManager } from '../overlays/alerts/Alerts';
+import { create_info_alert } from '../overlays/alerts/info_alert';
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
@@ -17,6 +19,15 @@ export function msgRouter(event){
 	if (data.type == "switch tabs")
 	{
 		console.log("SWITCH TABS")
+	}
+	if ("error" in data && data["error"] == "player disconnected" && (stateManager.currentStateIndex == 1 || stateManager.currentStateIndex == 2))
+	{
+		let stateManager = new StateManager()
+		stateManager.forcedRedirect = true;
+		console.log("you exited the game");
+		create_info_alert("you exited on another tab")
+		stateManager.changeState(0);
+		stateManager.forcedRedirect = false;
 	}
 	if (data.type == "game.updates")
 	{
@@ -103,8 +114,10 @@ const tourActions = {
 			},
 			"refund": ()=> {
 				// console.log("refunding ...");
-				new StateManager().changeState(3); //redirect or not?
-				state.changeSubstate(7);
+				if (new StateManager().currentStateIndex != 3)
+					create_info_alert("Tournament was cancelled. You will be refunded", 5)
+				else
+					state.changeSubstate(7);
 
 			},
 			"controls": ()=>{

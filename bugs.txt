@@ -1,6 +1,4 @@
 TOURNAMENT
-notifications not working properly after one no more
-
 enter touranment upon disconnection
 player exits early live
 player disconnects max time live
@@ -13,3 +11,7 @@ end game space // display results ...
 when moving paddle change material
 
 
+ALERT
+info alret not working properly :
+REFUND, 
+WHEN EXITING AND MULTIPLE TABS OPENED

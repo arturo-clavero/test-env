@@ -28,7 +28,7 @@ const container = new Overlay([
 							new Text({
 								id: "title",
 								fontSize : 1,
-								marginBot: "8%"
+								marginBot: "1%, auto"
 							}),
 							new Text({
 								id : "error",
@@ -38,8 +38,8 @@ const container = new Overlay([
 							dir: "column",
 							mainAxis: "space-between",
 							id: "prize-announcement",
-							marginBottom: "12%",
-							marginTop: "8%",
+							marginBottom: "2%, auto",
+							marginTop: "1%, auto",
 							children: [
 								new Text({
 									id: "subtitle",

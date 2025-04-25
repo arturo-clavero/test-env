@@ -189,10 +189,12 @@ class GameChannel():
 		if self.status == "finished":
 			return
 		self.active_players.remove(consumer.user_id)
-		await consumer.remove_channel(self.room)
-		consumer.update_user_data({"action" : "set", "key" : "game", "value" : None})
 		self.disconnected_players.append(consumer.user_id)
 		await self.error_end("player disconnected")
+		#moved below before it was above error end
+		await consumer.remove_channel(self.room)
+		consumer.update_user_data({"action" : "set", "key" : "game", "value" : None})
+	
 
 	async def error_end(self, error):
 		if self.status == "finished":

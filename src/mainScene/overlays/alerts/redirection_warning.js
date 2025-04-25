@@ -17,7 +17,7 @@ const children = [
 			new Text({
 				content: "TOURNAMENT STARTS SOON",
 				fontSize: 0.75,
-				marginBot: "8%",
+				marginBot: "8%, auto",
 
 			}),
 			new Text({
@@ -70,7 +70,10 @@ function delete_redirection_alert(){
 	clearInterval(interval_favicon);
 	document.title = prev_title;
 	favicon.href = prev_icon;
-	new StateManager().changeState(3);
+	let stateManager = new StateManager()
+	stateManager.forcedRedirect = true
+	stateManager.changeState(3);
+	stateManager.forcedRedirect = false
 }
 
 function fadeout_redirection_alert(length_in_s){

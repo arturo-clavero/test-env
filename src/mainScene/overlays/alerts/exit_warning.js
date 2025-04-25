@@ -7,6 +7,7 @@ import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
 import { fadeout } from '../../../core/UIFactory/effects';
+import { stateManager } from '../../states/mainMenuState';
 
 const children = [
 	new FlexBox({
@@ -17,12 +18,12 @@ const children = [
 			new Text({
 				content: "ARE YOU SURE ?",
 				fontSize: 1,
-				marginBot: "4%",
+				marginBot: "4%, auto",
 			}),
 			new Text({
 				content: "You will loose all progress",
 				fontSize: 0.55,
-				marginBot: "4%",
+				marginBot: "4%, auto",
 			}),
 			new FlexBox({
 				dir: "row",
@@ -61,6 +62,11 @@ let can_exit = false;
 function create_exit_alert(){
 		// console.log("create exit alert!");
 		// console.log("can exit is: ", can_exit)
+		if (new StateManager().forcedRedirect == true)
+		{
+			console.log("dorced redirect!")
+			return ("continue")
+		}
 		const alertManager = new AlertManager();
 		if (can_exit)
 		{

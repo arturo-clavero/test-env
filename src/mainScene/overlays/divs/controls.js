@@ -10,7 +10,8 @@ const container = new Overlay([
 				mainAxis: "space-between",
 				flex: 1,
 				width: "100%",
-				marginTop: "10%",
+				height: "100%",
+				marginTop: "5%, auto",
 				children: [
 					new FlexBox({
 						id: "controls"
@@ -35,13 +36,13 @@ const container = new Overlay([
 			})
 		])
 function box_style(element){
-	element.style.display = "inline-flex";
+	element.style.display = "flex";
 	element.style.aspectRatio = 1;
 	element.style.justifyContent = "center";
 	element.style.alignItems = "center";
 	// element.style.width = "100%";
 	element.style.height = "70%";
-	element.style.margin = "20%";
+	element.style.margin = "5%, auto";
 	element.style.border = "2px solid #ccc";
 	element.style.borderRadius = "8px";
 	element.style.background = "#f9f9f9";
@@ -71,41 +72,44 @@ function get_controls_tab(title, up, down){
 		down = "\u2193";
 	let controls = new FlexBox({
 		flex: 1,
+		width: "100%",
 		dir: "column",
-		marginBottom: "20%",
+		mainAxis: "space-around",
+		marginBottom: "2% auto%",
 		children: [
 			new Text({
 				content: title,
-				fontSize: 1.2,
-				marginBottom: "10%",
+				fontSize: 1,
+				marginBottom: "2%, auto",
 			}),
 			new FlexBox({
 				dir: "row",
-				marginBottom: "5%",
+				marginBottom: "1%, auto",
 				crossAxis: "center",
-				mainAxis: "center",
-				marginTop: "10%",
+				width: "100%",
+				mainAxis: "space-around",
+				marginTop: "2%, auto",
 				children: [
 					new Text({
 						content: "Up",
-						fontSize: 0.95,
+						fontSize: 0.85,
 					}),
 					new FlexBox({
 						id: "up-box",
-						marginBottom : "10%",
+						marginBottom : "2%, auto",
 						children: [
 							new Text({
 								color: "black",
 								content: up,
-								fontSize: "2rem",
-								marginLR: "6%",
+								fontSize: 0.55,
+								marginLR: "2%, auto",
 							}),
 						]
 					}),
 					new Text({
 						content: "Down",
-						fontSize: 0.95,
-						marginLR: "6%",
+						fontSize: 0.85,
+						marginLR: "2%, auto",
 					}),
 					new FlexBox({
 						id: "down-box",
@@ -113,7 +117,7 @@ function get_controls_tab(title, up, down){
 							new Text({
 								color: "black",
 								content: down,
-								fontSize: "2rem",
+								fontSize: 0.55,
 							}),
 						]
 					})
@@ -158,13 +162,16 @@ function enter(type){
 		new_controls = new FlexBox({
 			flex: 1,
 			dir: "column",
+			id: "controls",
 			//mainAxis: "center",
 			children: [
 				get_controls_tab( "PADDLE CONTROLS", "arrow up", "arrow down"),
 			]
 		});	
 	}
-	container.getElementById("controls").element.replaceWith(new_controls.element);
+	container.getElementById("controls").replaceWith(new_controls)	
+	 // update reference
+	//container.getElementById("controls").children = new_controls.children;
 	show_div();
 	let stable_i = 0, i =0;
 	interval = setInterval(()=>{

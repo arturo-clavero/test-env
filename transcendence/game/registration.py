@@ -14,12 +14,12 @@ async def can_user_log_game(consumer, data):
 	print(data)
 	if consumer.user_id in playing_users:
 		print("no..")
-		await consumer.send_self({"type" : "game.updates",
+		await get_channel_layer().group_send(f"{consumer.user_id}" ,{"type" : "game.updates",
 		"update_display" : "already_in_game",
 		})
 	else:
 		print("yes!")
-		await consumer.send_self({"type" : "game.updates",
+		await get_channel_layer().group_send(f"{consumer.user_id}" ,{"type" : "game.updates",
 		"update_display" : "controls",
 		"state" : data["state"]
 		})

@@ -43,7 +43,7 @@ function dynamic_content(data){
 	container.getElementById("title").element.textContent=`Round ${data["current round"]}`;
 	container.getElementById("subtitle").element.textContent=`${data["players"].length} players`;
 	new_matches = createTextGrid(organize_players_array(data["players"]));
-	container.getElementById("matches").element.replaceWith(new_matches.element);
+	container.getElementById("matches").replaceWith(new_matches);
 }
 
 function getStringMatch(i, players){
