@@ -50,14 +50,8 @@ class Shape {
 			}
 			if (this.z != 0)
 				this.z /= points.length
-			//this.z = points[0][2];
 		}
-
-		// if (isAbstract)
-		// {
-			console.log("this z : ", this.z);
-			console.log("points: ", points);
-		// }
+			
 		this.vertex3d = [];
 		this.vertex3d = points;
 		this.vertex2d = [];

@@ -41,7 +41,7 @@ function scale_points(points, wFactor, hFactor) {
 
 const part_test = new Part(
 	scale_points(points, 3, 6), 
-	1,
+	3,
 	[
 		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
 		new THREE.MeshStandardMaterial({ color: 0xff7f00, side: THREE.DoubleSide }), // Orange
@@ -121,7 +121,7 @@ export function uponEnter(){
 }
 
 export function animate() {
-	test.self.rotation.x += 0.01;
+	test.self.rotation.y += 0.01;
 	if (!isAnimating) return ;
 	//console.log("animate");
 	requestAnimationFrame(animate);

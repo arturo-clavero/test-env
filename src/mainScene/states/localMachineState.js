@@ -14,6 +14,9 @@ import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
+console.log("")
+console.log("LOCAL MACHINE!!!")
+console.log("")
 
 const restScreen = new CssSubState(
 	"rest",
@@ -140,4 +143,7 @@ const localMachineState = new State(
 	1.5
 )
 
+console.log("")
+console.log("LOCAL MACHINE END!!!")
+console.log("")
 export {localMachineState}
