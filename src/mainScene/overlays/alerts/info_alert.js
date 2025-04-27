@@ -11,16 +11,19 @@ import { fadeout, doublePump } from '../../../core/UIFactory/effects';
 const flexBox = new FlexBox({
 	dir: "column",
 	mainAxis: "spaced-out",
+	marginBottom: '4%',
+	marginTop: "4%",
 	children:
 	[
 		new Text({
 			content: "INFO",
 			fontSize: 0.75,
-			marginBot: "8%, auto",
+			marginBot: "8%",
 
 		}),
 		new Text({
 			id : "info",
+			textContent : "hello",
 			fontSize: 0.55,
 		}),
 	]
@@ -28,7 +31,7 @@ const flexBox = new FlexBox({
 
 let length;
 
-export function create_info_alert(info, inputlength = 10000){
+export function create_info_alert(info, inputlength = 20000){
 	console.log("create info alert");
 	length = inputlength > 2000 ? inputlength : 2000;
 	console.log(flexBox.getElementById("info").element.style.textContent)
@@ -44,8 +47,9 @@ function enter(self){
 	doublePump(self.div);
 	doublePump(self.div);
 	setTimeout(() => {
+		console.log("faDING!!!")
 		fadeout(self.div, 1)
-	}, (length / 1000) - 1);
+	}, length - 1000);
 	console.log("length: ", length)
 	setTimeout(() => {
 			console.log("removing alert info");

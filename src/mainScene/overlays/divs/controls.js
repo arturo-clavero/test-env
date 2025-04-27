@@ -74,41 +74,38 @@ function get_controls_tab(title, up, down){
 		flex: 1,
 		width: "100%",
 		dir: "column",
-		mainAxis: "space-around",
-		marginBottom: "2% auto%",
+		mainAxis: "center",
+		marginBottom: "2%, auto%",
 		children: [
 			new Text({
 				content: title,
-				fontSize: 1,
-				marginBottom: "2%, auto",
+				fontSize: 0.85,
+				marginBottom: "1%, auto",
 			}),
 			new FlexBox({
 				dir: "row",
-				marginBottom: "1%, auto",
 				crossAxis: "center",
 				width: "100%",
 				mainAxis: "space-around",
-				marginTop: "2%, auto",
 				children: [
 					new Text({
 						content: "Up",
-						fontSize: 0.85,
+						fontSize: 0.65,
 					}),
 					new FlexBox({
 						id: "up-box",
-						marginBottom : "2%, auto",
 						children: [
 							new Text({
 								color: "black",
 								content: up,
-								fontSize: 0.55,
+								fontSize: 0.45,
 								marginLR: "2%, auto",
 							}),
 						]
 					}),
 					new Text({
 						content: "Down",
-						fontSize: 0.85,
+						fontSize: 0.65,
 						marginLR: "2%, auto",
 					}),
 					new FlexBox({
@@ -117,7 +114,7 @@ function get_controls_tab(title, up, down){
 							new Text({
 								color: "black",
 								content: down,
-								fontSize: 0.55,
+								fontSize: 0.45,
 							}),
 						]
 					})
@@ -140,8 +137,11 @@ function enter(type){
 		new_controls = new FlexBox({
 			flex: 1,
 			dir: "column",
+			id: "controls",
+			marginTop: "8%, auto",
+			marginBottom: "8%, auto",
 			// crossAxis: "center",
-			// mainAxis: "space-evenly",
+			mainAxis: "center",
 			children: [
 				get_controls_tab( "Left Player", "W", "S"),
 				get_controls_tab( "Right Player", "arrow up", "arrow down")
@@ -152,6 +152,7 @@ function enter(type){
 		new_controls = new FlexBox({
 			flex: 1,
 			dir: "column",
+			id: "controls",
 			//mainAxis: "center",
 			children: [
 				get_controls_tab( "Player (left)", "arrow up", "arrow down"),

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { InstanceNode } from 'three/webgpu';
-import { fitCameraToObject } from '../../core/stateManager/cameraMovement';
+import { fitCameraToObject, onResizeCamMove } from '../../core/stateManager/cameraMovement';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -13,6 +13,8 @@ class MainEngine {
 		this.setUpLights();
 		this.blockRaycast = false;
 		this.stateManager = null;
+		this.isCamMoving = false;
+		this.camera_target = new THREE.Vector3();
 		MainEngine.instance = this;
 	}
 	addContainerWrapper(wrapper){
@@ -110,7 +112,10 @@ class MainEngine {
 			// let camera_pos =  
 			if (state)
 			{
-				this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+				if (this.isCamMoving)
+					onResizeCamMove(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+				else
+					this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
 				this.stateManager.resize();
 			}
 			// else console.log("NO STATE")

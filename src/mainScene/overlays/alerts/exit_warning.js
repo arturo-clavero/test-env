@@ -11,6 +11,8 @@ import { stateManager } from '../../states/mainMenuState';
 
 const children = [
 	new FlexBox({
+		marginTop: "4%",
+		marginBottom: "4%",
 		dir: "column",
 		mainAxis: "spaced-out",
 		children:
@@ -18,12 +20,12 @@ const children = [
 			new Text({
 				content: "ARE YOU SURE ?",
 				fontSize: 1,
-				marginBot: "4%, auto",
+				marginBot: "8%",
 			}),
 			new Text({
 				content: "You will loose all progress",
 				fontSize: 0.55,
-				marginBot: "4%, auto",
+				marginBot: "8%",
 			}),
 			new FlexBox({
 				dir: "row",
@@ -60,7 +62,7 @@ const children = [
 ]
 let can_exit = false;
 function create_exit_alert(){
-		// console.log("create exit alert!");
+		console.log("create exit alert!");
 		// console.log("can exit is: ", can_exit)
 		if (new StateManager().forcedRedirect == true)
 		{
@@ -70,7 +72,7 @@ function create_exit_alert(){
 		const alertManager = new AlertManager();
 		if (can_exit)
 		{
-			// console.log("can exit is true will allow it....");
+			 console.log("can exit is true will allow it....");
 			can_exit = false;
 			// console.log("can exit is: ", can_exit)
 			return ("continue");
@@ -79,12 +81,12 @@ function create_exit_alert(){
 			return("cancelled")
 		if (alertManager.add_alert(new Alert("exit alert", children, "warning", 0, enter, exit, false)) == "overrun")
 		{
-			// console.log("created alert but its overrun ... so you can go");
+			console.log("created alert but its overrun ... so you can go");
 			// console.log("can exit is: ", can_exit)
 			return ("continue");
 		}
 		// console.log("can exit is: ", can_exit)
-		// console.log("can not continue");
+		console.log("can not continue");
 		return ("cancelled")
 }
 

@@ -18,7 +18,7 @@ class Overlay extends BaseDivElement{
 		this.getElementsWith("text").forEach(element => { element.element.style.color = color;});
 	}
 	resize(){
-		console.log("resizing overlay...")
+		//console.log("resizing overlay...")
 		const w = this.element.offsetWidth;
 		const h = this.element.offsetHeight;
 		this.getElementsWith("size").forEach(element => { element.extensions.size.updateSize(w, h);});

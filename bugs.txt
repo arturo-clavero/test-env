@@ -3,13 +3,9 @@ enter touranment upon disconnection
 player exits early live
 player disconnects max time live
 
-FRONTEND 
-resize divs appropriately  ... 
-
 GAME
 end game space // display results ... 
 when moving paddle change material
-
 
 ALERT
 info alret not working properly :

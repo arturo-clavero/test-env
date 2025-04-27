@@ -10,13 +10,13 @@ export class KeyControls{
 
 	}
 	handleKeyDown(event) {
-		console.log("key down!")
+		//console.log("key down!")
 		if (!this.keyStates[event.key]) {
 			this.keyStates[event.key] = true;
 			this.userPaddleInput(event.key, true);
 		}
-		else
-			console.log("no key states")
+		//else
+			//console.log("no key states")
 	}
 	handleKeyUp(event) {
 		// console.log("key up!")
@@ -28,7 +28,7 @@ export class KeyControls{
 		// 	console.log("no key states")
 	}
 	userPaddleInput(key, isPressed) {
-		console.log("user paddle input...");
+		//console.log("user paddle input...");
 		const mappings = {
 			[this.paddleLeft.keyUp]: { side: -1, direction: 1 },
 			[this.paddleLeft.keyDown]: { side: -1, direction: -1 },
@@ -38,12 +38,12 @@ export class KeyControls{
 		const movement = mappings[key];
 		if (!movement) 
 		{
-			console.log("no movement");
+		//	console.log("no movement");
 			return;
 		}
-		console.log("movement: ", movement)
+		//console.log("movement: ", movement)
 		if (isPressed) {
-			console.log("is pressed")
+			//console.log("is pressed")
 			const oppositeKey =
 				key === this.paddleLeft.keyUp ? this.paddleLeft.keyDown :
 				key === this.paddleLeft.keyDown ? this.paddleLeft.keyUp :
@@ -51,9 +51,9 @@ export class KeyControls{
 				this.paddleRight.keyUp;
 			this.keyStates[oppositeKey] = false;
 		}
-		else
-			console.log("is not pressed")
-		console.log("sending to socket paddle")
+		//else
+			//console.log("is not pressed")
+		//console.log("sending to socket paddle")
 		new Socket().send({
 			"channel": "game",
 			request: "update paddles",

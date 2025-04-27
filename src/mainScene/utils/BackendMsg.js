@@ -13,18 +13,18 @@ import { create_info_alert } from '../overlays/alerts/info_alert';
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	console.log("data: ", data);
+	//console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "switch tabs")
 	{
-		console.log("SWITCH TABS")
+		//console.log("SWITCH TABS")
 	}
 	if ("error" in data && data["error"] == "player disconnected" && (stateManager.currentStateIndex == 1 || stateManager.currentStateIndex == 2))
 	{
 		let stateManager = new StateManager()
 		stateManager.forcedRedirect = true;
-		console.log("you exited the game");
+		//console.log("you exited the game");
 		create_info_alert("you exited on another tab")
 		stateManager.changeState(0);
 		stateManager.forcedRedirect = false;
@@ -36,7 +36,7 @@ export function msgRouter(event){
 			let stateManager = new StateManager()
 			if (data["update_display"] == "start game")
 			{
-				console.log("start game backend msg received ...")
+				//console.log("start game backend msg received ...")
 				pongGame["start_game"](data["gameID"]);
 				if (stateManager.currentStateIndex == 3)
 				{
@@ -52,7 +52,7 @@ export function msgRouter(event){
 			}
 			if (data["update_display"] == "controls")
 			{
-				console.log("now in ", stateManager.currentStateIndex , "request to: ", data["state"])
+				//console.log("now in ", stateManager.currentStateIndex , "request to: ", data["state"])
 				if (stateManager.currentStateIndex != data["state"])
 					stateManager.changeState(data["state"])
 				stateManager.currentState.changeSubstate(2)
@@ -60,7 +60,7 @@ export function msgRouter(event){
 			}
 			if (data["update_display"] == "already_in_game")
 			{
-				console.log("already in game, can not register")
+				// console.log("already in game, can not register")
 			}
 		}
 		if ("state" in data && data["state"] == "player names" && data["total_players"] == 2)

@@ -9,30 +9,41 @@ import * as THREE from 'three';
 
 let scrollDelta = 0;
 const scrollThreshold = 400;
-let isCamMoving = false;
 export function get_camera_animation(){
-	return isCamMoving;
+	return new MainEngine().isCamMoving;
 }
 export function wheel_scroll_animations(event){
 	const stateManager = new StateManager();
-	if (isCamMoving || event.deltaY * 100 * stateManager.allowedDirection < 0)
+	const engine = new MainEngine();
+	if (engine.isCamMoving || event.deltaY * 100 * stateManager.allowedDirection < 0)
 		return ;
 	scrollDelta += event.deltaY;
 	new MainEngine().camera.position.z += event.deltaY * 0.00001;
 	if (Math.abs(scrollDelta) > scrollThreshold) {
-		isCamMoving = true;
+		engine.isCamMoving = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
 		scrollDelta = 0;
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
 	}
 }
 let tl = null;
-function moveCamera(data, newPosition, onComplete) {
-	isCamMoving = true;
+let tweenStartTime = null;
+let totalDuration = null;
+let tempPosition = null;
+let newPosition = null;
+
+function moveCamera(data, targetPosition, onComplete) {
+	totalDuration = data.duration || 2;
+	tweenStartTime = Date.now(); // capture when tween starts
+	newPosition = targetPosition.clone();
+	const engine = new MainEngine()
+	engine.isCamMoving = true;
+	engine.camera_target.copy(newPosition);
+	console.log("ne poiton: ", newPosition);
+	console.log("cam target: ", engine.camera_target)
 	if (tl){
 		tl.kill()
 	}
-	const engine = new MainEngine()
 	if (newPosition == engine.camera.position)
 		return;
 	tl = gsap.timeline({ 
@@ -49,13 +60,16 @@ function moveCamera(data, newPosition, onComplete) {
 	if ("pos" in data) {
 		console.log("requested camera move")
 		tl.to(tempPosition,{ 
-			x: newPosition.x, 
-			y: newPosition.y, 
-			z: newPosition.z, 
+			x: engine.camera_target.x, 
+			y: engine.camera_target.y, 
+			z: engine.camera_target.z, 
+
+			// y: newPosition.y, 
+			// z: newPosition.z, 
 			onUpdate: () =>{ 
 				engine.camera.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
 				// console.log("cam era moving: ", engine.camera.position)
-				new StateManager().resize();
+				engine.resize();
 			},
 			overwrite: "auto",
 		}, 0);
@@ -79,14 +93,51 @@ function moveCamera(data, newPosition, onComplete) {
 		}, 0);
 	}
 	tl.eventCallback("onComplete", () => {
-		isCamMoving= false;
+		console.log("on complete")
+		engine.isCamMoving= false;
 		onComplete();
 		tl = null;
-		new StateManager().resize();
+		engine.resize();
 		// engine.camera.position.copy(newPosition);
 		// new StateManager().resize();
 		//fitCameraToObject()
 	});
+}
+
+export function onResizeCamMove(updatedTarget) {
+    const engine = new MainEngine();
+
+    if (!tl) return;
+
+    const elapsed = (Date.now() - tweenStartTime) / 1000; // seconds
+    const remaining = Math.max(0.01, totalDuration - elapsed); // protect against negative or 0
+
+    const currentPos = { 
+        x: engine.camera.position.x,
+        y: engine.camera.position.y,
+        z: engine.camera.position.z
+    };
+
+    if (tl) tl.kill(); // kill old tween
+
+    tweenStartTime = Date.now(); // new start time
+    totalDuration = remaining; // update to remaining
+
+    tempPosition = { ...currentPos }; // update tempPosition
+    newPosition = updatedTarget.clone();
+
+    tl = gsap.to(tempPosition, {
+        x: newPosition.x,
+        y: newPosition.y,
+        z: newPosition.z,
+        duration: totalDuration,
+        ease: "power2.out",
+        onUpdate: () => {
+            engine.camera.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
+			engine.resize();
+		},
+        overwrite: "auto",
+    });
 }
 function shakeCamera(camera, intensity = 0, duration = 2000) {
     let startTime = performance.now();
