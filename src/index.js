@@ -12,10 +12,31 @@ import { Socket } from './mainScene/utils/Socket';
 
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
-
+import { Object } from './core/objectFactory/Object';
+import { Part } from './core/objectFactory/Part';
 const engine = new MainEngine();
 
 let isAnimating = false;
+
+console.log("TEST PART");
+const part_test = new Part(
+	[[0, 0], [0, 1], [1, 2], [2, 1], [2, 0]], 
+	1,
+	[
+		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
+		new THREE.MeshStandardMaterial({ color: 0xff7f00, side: THREE.DoubleSide }), // Orange
+		new THREE.MeshStandardMaterial({ color: 0xffff00, side: THREE.DoubleSide }), // Yellow
+		new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide }), // Green
+		new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), // Blue
+		new THREE.MeshStandardMaterial({ color: 0x800080, side: THREE.DoubleSide }), // Purple
+		new THREE.MeshStandardMaterial({ color: 0xff1493, side: THREE.DoubleSide }), // Pink
+		new THREE.MeshStandardMaterial({ color: 0x000000, side: THREE.DoubleSide }), // Black
+	  ]
+	  );
+const test = new Object(part_test);
+test.self.position.x = 0;
+test.self.position.y = 2;
+test.self.position.z = 8;
 
 //developent:
 document.addEventListener('keydown', (event) => {
@@ -39,6 +60,7 @@ export function preEnterScene(app_container){
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
+		engine.add(test, false);
 		engine.add(backBox, false);
 		engine.add(mainSceneObj, true);
 		engine.stateManager = stateManager;
@@ -79,6 +101,7 @@ export function uponEnter(){
 }
 
 export function animate() {
+	test.self.rotation.y += 0.001;
 	if (!isAnimating) return ;
 	//console.log("animate");
 	requestAnimationFrame(animate);
