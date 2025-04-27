@@ -31,8 +31,10 @@ let tweenStartTime = null;
 let totalDuration = null;
 let tempPosition = null;
 let newPosition = null;
+let latest_onComplete = null;
 
 function moveCamera(data, targetPosition, onComplete) {
+	latest_onComplete = onComplete;
 	totalDuration = data.duration || 2;
 	tweenStartTime = Date.now(); // capture when tween starts
 	newPosition = targetPosition.clone();
@@ -93,11 +95,12 @@ function moveCamera(data, targetPosition, onComplete) {
 		}, 0);
 	}
 	tl.eventCallback("onComplete", () => {
-		console.log("on complete")
+		console.log("on complete 0")
 		engine.isCamMoving= false;
 		onComplete();
 		tl = null;
 		engine.resize();
+		latest_onComplete = null;
 		// engine.camera.position.copy(newPosition);
 		// new StateManager().resize();
 		//fitCameraToObject()
@@ -135,6 +138,15 @@ export function onResizeCamMove(updatedTarget) {
         onUpdate: () => {
             engine.camera.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
 			engine.resize();
+		},
+		onComplete: () => {
+			console.log("oncompelte X")
+			engine.isCamMoving = false; // or whatever you want when done
+			if (latest_onComplete)
+			{
+				latest_onComplete();
+				latest_onComplete = null;
+			}
 		},
         overwrite: "auto",
     });
