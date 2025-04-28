@@ -75,9 +75,9 @@ async def cancel_game(data):
 		"update_display" : "cancel game",
 		"reason" : "already playing a game",
 	}
-	await get_channel_layer().group_send(f"{data.get("userID1")}", message)
+	await get_channel_layer().group_send(f"{data.get('userID1')}", message)
 	if data.get('type') not in ["local", "AI"]:
-		await get_channel_layer().group_send(f"{data.get("userID2")}", message)
+		await get_channel_layer().group_send(f"{data.get('userID2')}", message)
 
 async def store_game_results(results):
 	print("store game results ft registration")

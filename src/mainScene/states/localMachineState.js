@@ -75,13 +75,27 @@ const controlScreen = new CssSubState(
 	null
 )
 
+console.log("screen surface: ", screenSurface.vertex2d)
+let min_x = Math.min(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
+let max_x = Math.max(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
+let width = max_x - min_x;
+let min_y = Math.min(screenSurface.vertex2d[0].y, screenSurface.vertex2d[1].y, screenSurface.vertex2d[2].y, screenSurface.vertex2d[3].y)
+let max_y = Math.max(screenSurface.vertex2d[0].y, screenSurface.vertex2d[1].y, screenSurface.vertex2d[2].y, screenSurface.vertex2d[3].y)
+let height = max_y - min_y;
+// const xs = screenSurface.vertex2d.map(v => v.x);
+// const ys = screenSurface.vertex2d.map(v => v.y);
+
+// const width = Math.max(...xs) - Math.min(...xs);
+// const height = Math.max(...ys) - Math.min(...ys);
+let aspect = width / height;
+console.log("aspect is : ", aspect)
 const gameScreen = new MeshSubState(
 	"game", 
 	screenSurface,
 	pongGame,
 	1,
 	()=>{
-		pongGame["enter"](1)
+		pongGame["enter"](aspect)
 
 	},
 	()=>{
@@ -138,7 +152,7 @@ const localMachineState = new State(
 		pongGame.renderMaterial,
 	],
 	// null,
-	localMachineObj.self,
+	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5
 )

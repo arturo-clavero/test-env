@@ -17,6 +17,7 @@ aiMachineObj.add_onclick(()=>{new StateManager().changeState(2);})
 const partIndex = 0;
 const surfaceIndex = 0;
 const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
+console.log("control: ", screenSurface)
 screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;

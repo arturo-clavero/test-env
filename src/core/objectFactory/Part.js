@@ -188,7 +188,6 @@ class Part {
 			);
 	
 		// Add object to scene and tracking
-		
 		this.self.add(object);
 		this.joined_parts.push(object);
 	}

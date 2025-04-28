@@ -20,7 +20,7 @@ const part_test = new Part(
 		new THREE.MeshStandardMaterial({ color: 0xff1493, side: THREE.DoubleSide }), // Pink
 		new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }), // Black
 	  ]
- );
+);
 
 const object = new Object(part_test);
 object.self.position.z = 3;
@@ -37,5 +37,7 @@ const screenSurface = object.self.children[partIndex].children[surfaceIndex].use
 screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;
+
+console.log("scren surface: ", screenSurface)
 
 export {localMachineObj, screenSurface, center, object, partIndex, surfaceIndex}

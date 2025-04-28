@@ -93,14 +93,28 @@ class Shape {
 			return clean_vector(v);
 		});
 		const limits = update_min_max(this.vertex2d);
-		const min = limits.min[0] < limits.min[1] ? limits.min[0] : limits.min[1];
-		const max = limits.max[0] > limits.max[1] ? limits.max[0] : limits.max[1];
-		const uvs =[];
+		const minX = limits.min[0]
+		const minY = limits.min[1]
+		const maxX = limits.max[0]
+		const maxY = limits.max[1]
+		let uvs =[];
 		this.vertex2d.forEach((v)=>{
-			uvs.push((v.x - min) / (max - min));
-			uvs.push((v.y - min) / (max - min));
+			uvs.push((v.x - minX) / (maxX - minX));
+			uvs.push((v.y - minY) / (maxY - minY));
+			// const u = (v.x - minX) / (maxX - minX);
+			// const v_ = 1 - (v.y - minY) / (maxY - minY); // <-- flipped Y
+			// uvs.push(u, v_);
 		});
+		// console.log("uvs: ", uvs);
+		uvs = [
+			0, 0,  // top-left
+			0, 1,  // top-right
+			1, 1,  // bottom-right
+			1, 0,  // bottom-left
+		];
 		this.geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
+		// console.log("geo: ", this.geometry)
+
 	}
 	add_material(material)
 	{
