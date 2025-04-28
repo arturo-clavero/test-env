@@ -95,7 +95,7 @@ const gameScreen = new MeshSubState(
 	pongGame,
 	1,
 	()=>{
-		pongGame["enter"](aspect)
+		pongGame["enter"](1)
 
 	},
 	()=>{

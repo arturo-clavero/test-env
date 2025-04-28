@@ -31,10 +31,13 @@ const engine = new MainEngine();
 // 	return renderMaterial;
 // }
 
+//NearestFilter
+//LinearFilter
+//LinearMipmapLinearFilter
 function createRenderTarget() {
     const renderTarget = new THREE.WebGLRenderTarget(2048, 2048, {
-        minFilter: THREE.NearestFilter, // Change minFilter to NearestFilter
-        magFilter: THREE.NearestFilter, // Change magFilter to NearestFilter
+        minFilter: THREE.LinearFilter, // Change minFilter to NearestFilter
+        magFilter: THREE.LinearFilter, // Change magFilter to NearestFilter
         format: THREE.RGBAFormat,
         type: THREE.UnsignedByteType,
         samples: 8,
@@ -43,12 +46,10 @@ function createRenderTarget() {
     renderTarget.texture.encoding = THREE.sRGBEncoding;
     renderTarget.texture.anisotropy = engine.renderer.capabilities.getMaxAnisotropy();
     renderTarget.texture.generateMipmaps = false; // Disable mipmaps
-    renderTarget.texture.minFilter = THREE.NearestFilter; // Ensure minFilter stays as NearestFilter
     renderTarget.depthTexture = new THREE.DepthTexture(2048, 2048);
     renderTarget.depthTexture.type = THREE.UnsignedShortType;
     renderTarget.depthTexture.format = THREE.DepthFormat;
 
-    renderTarget.texture.magFilter = THREE.NearestFilter; // Ensure magFilter stays as NearestFilter
 
     const texture = renderTarget.texture;
     texture.wrapS = THREE.ClampToEdgeWrapping;

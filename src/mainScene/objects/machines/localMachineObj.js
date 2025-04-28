@@ -38,6 +38,4 @@ screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;
 
-console.log("scren surface: ", screenSurface)
-
 export {localMachineObj, screenSurface, center, object, partIndex, surfaceIndex}

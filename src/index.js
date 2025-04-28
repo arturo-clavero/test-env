@@ -80,7 +80,7 @@ export function preEnterScene(app_container){
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
-		engine.add(test, false);
+		//engine.add(test, false);
 		engine.add(backBox, false);
 		engine.add(mainSceneObj, true);
 		engine.stateManager = stateManager;
