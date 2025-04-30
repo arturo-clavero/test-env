@@ -14,10 +14,10 @@ class Object {
 		this.self.receiveShadow = true;
 		this.self.castShadow = true;
 	}
-	add_part(Xpercent, Ypercent, indexObject, indexFace, part, axis = [0, 1, 0]){
+	add_part(Xpercent, Ypercent, indexObject, indexFace, part, axisUp = [0, 1, 0], axisForward = 1){
 		const object = (part instanceof THREE.Object3D) ? part : part.self;
 		const obj_height = (part instanceof CSS3DObject) ? false : true;
-		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, obj_height, axis)
+		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, obj_height, axisUp, axisForward)
 		// if (!(part instanceof CSS3DObject))
 		// 	this.self.add(object)
 	}

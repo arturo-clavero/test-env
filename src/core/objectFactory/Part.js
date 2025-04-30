@@ -58,8 +58,8 @@ class Part {
 		this.pointsRight = newPoints.right;
 		this.pointsRight = order_path(this.pointsRight);
 		this.pointsLeft = order_path(this.pointsLeft);
-		this.shapes[0] =  new Shape(this.pointsRight, true);
-		this.shapes[1] = new Shape(this.pointsLeft, true);
+		this.shapes[0] =  new Shape(this.pointsRight, true, new THREE.Vector3(0, 0, 1));
+		this.shapes[1] = new Shape(this.pointsLeft, true, new THREE.Vector3(0, 0, 1));
 		for (let i = 0; i < this.pointsRight.length; i++){
 			const currRight = this.pointsRight[i];
 			const nextRight = i + 1 < this.pointsRight.length ? this.pointsRight[i + 1] : this.pointsRight[0];	
@@ -162,31 +162,71 @@ class Part {
 	// 	this.self.add(object);
 	// 	this.joined_parts.push(object);
 	// }
-	add_object(xPercent, yPercent, index, object, obj_height, obj_up) {
+	add_object(xPercent, yPercent, index, object, obj_height, obj_up, obj_forward) {
 		const surface = this.shapes[index];
+		console.log("")
+		console.log("surface: ", surface);
 		const point = surface.get_points(xPercent, yPercent);
+		console.log("point of interection on surfae: ", point);
 		const forward = surface.get_normal(point, this.self).normalize();
+		console.log("normal of surface: ", forward)
+		console.log("")
+		
 		const up = new THREE.Vector3(obj_up[0], obj_up[1], obj_up[2]);
 		const right = new THREE.Vector3().crossVectors(up, forward).normalize();
 		const adjustedUp = new THREE.Vector3().crossVectors(forward, right).normalize();
-	
+		console.log("up: ", up);
+		console.log("right", right);
+		console.log("new up", adjustedUp)
+		
 		// Apply quaternion to object based on forward, up, right
 		const matrix = new THREE.Matrix4();
 		matrix.makeBasis(right, adjustedUp, forward);
 		object.quaternion.setFromRotationMatrix(matrix);
 		object.updateMatrixWorld(true);
 	
+	
 		// Get object's bounding box size
 		const bbox = new THREE.Box3().setFromObject(object);
-		let object_half_len = obj_height ? (bbox.max.y - bbox.min.y) * 0.5 : 0;
-	
-
+		let object_half_len;
+		if (obj_height == false)
+			object_half_len = 0;
+		else {
+			const center = new THREE.Vector3();
+			bbox.getCenter(center);
+			const points = [
+			new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.min.z),
+			new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.max.z),
+			new THREE.Vector3(bbox.min.x, bbox.max.y, bbox.min.z),
+			new THREE.Vector3(bbox.min.x, bbox.max.y, bbox.max.z),
+			new THREE.Vector3(bbox.max.x, bbox.min.y, bbox.min.z),
+			new THREE.Vector3(bbox.max.x, bbox.min.y, bbox.max.z),
+			new THREE.Vector3(bbox.max.x, bbox.max.y, bbox.min.z),
+			new THREE.Vector3(bbox.max.x, bbox.max.y, bbox.max.z),
+			];
+			// forward.applyQuaternion(object.quaternion);
+			// forward.normalize();
+			let maxDot = -Infinity;
+			points.forEach(p => {
+			const dir = new THREE.Vector3().subVectors(p, center).normalize();
+			const dot = dir.dot(forward);
+			if (dot > maxDot) {
+				maxDot = dot;
+			}
+			});
+			const size = new THREE.Vector3();
+			bbox.getSize(size);
+			const radius = size.length() / 2;
+			object_half_len = radius * maxDot;
+			console.log("object half len: ", object_half_len)
+		}
+		console.log("point: ", point);
 			object.position.set(
-				point[0] + (forward.x * object_half_len),
-				point[1] + (forward.y * object_half_len),
-				point[2] + (forward.z * object_half_len)
+				point[0] + (forward.x * object_half_len * obj_forward),
+				point[1] + (forward.y * object_half_len * obj_forward),
+				point[2] + (forward.z * object_half_len * obj_forward)
 			);
-	
+		console.log("new positon: ", object.position)
 		// Add object to scene and tracking
 		this.self.add(object);
 		this.joined_parts.push(object);

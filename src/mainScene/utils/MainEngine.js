@@ -67,11 +67,18 @@ class MainEngine {
 		topLight.castShadow = true;
 		this.scene.add(topLight);
 
-		const spotLight = new THREE.SpotLight(0xd34dee, 50);
-		spotLight.position.set(0, 2, 5);
-		// spotLight.position.set(0, 0, 3.5);
-		spotLight.castShadow = true;
-		this.scene.add(spotLight);
+		const spotLight1 = new THREE.SpotLight(0xd34dee, 50);
+		spotLight1.position.set(-5, 5, 7);
+		spotLight1.castShadow = true;
+		this.scene.add(spotLight1);
+		const spotLight2 = new THREE.SpotLight(0xd34dee, 50);
+		spotLight2.position.set(0, 5, 7);
+		spotLight2.castShadow = true;
+		this.scene.add(spotLight2);
+		const spotLight3 = new THREE.SpotLight(0xd34dee, 50);
+		spotLight3.position.set(5, 5, 7);
+		spotLight3.castShadow = true;
+		this.scene.add(spotLight3);
 	}
 	animate(){
 		this.renderer.render(this.scene, this.camera);
