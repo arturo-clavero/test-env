@@ -164,20 +164,20 @@ class Part {
 	// }
 	add_object(xPercent, yPercent, index, object, obj_height, obj_up, obj_forward) {
 		const surface = this.shapes[index];
-		console.log("")
-		console.log("surface: ", surface);
+		// console.log("")
+		// console.log("surface: ", surface);
 		const point = surface.get_points(xPercent, yPercent);
-		console.log("point of interection on surfae: ", point);
+		// console.log("point of interection on surfae: ", point);
 		const forward = surface.get_normal(point, this.self).normalize();
-		console.log("normal of surface: ", forward)
-		console.log("")
+		// console.log("normal of surface: ", forward)
+		// console.log("")
 		
 		const up = new THREE.Vector3(obj_up[0], obj_up[1], obj_up[2]);
 		const right = new THREE.Vector3().crossVectors(up, forward).normalize();
 		const adjustedUp = new THREE.Vector3().crossVectors(forward, right).normalize();
-		console.log("up: ", up);
-		console.log("right", right);
-		console.log("new up", adjustedUp)
+		// console.log("up: ", up);
+		// console.log("right", right);
+		// console.log("new up", adjustedUp)
 		
 		// Apply quaternion to object based on forward, up, right
 		const matrix = new THREE.Matrix4();
@@ -218,15 +218,15 @@ class Part {
 			bbox.getSize(size);
 			const radius = size.length() / 2;
 			object_half_len = radius * maxDot;
-			console.log("object half len: ", object_half_len)
+			// console.log("object half len: ", object_half_len)
 		}
-		console.log("point: ", point);
+		// console.log("point: ", point);
 			object.position.set(
 				point[0] + (forward.x * object_half_len * obj_forward),
 				point[1] + (forward.y * object_half_len * obj_forward),
 				point[2] + (forward.z * object_half_len * obj_forward)
 			);
-		console.log("new positon: ", object.position)
+		// console.log("new positon: ", object.position)
 		// Add object to scene and tracking
 		this.self.add(object);
 		this.joined_parts.push(object);

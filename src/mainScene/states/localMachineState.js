@@ -3,7 +3,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
+import { screenSurface, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 	import { pongGame } from '../overlays/scenes/pong-game/Game';		
@@ -20,7 +20,7 @@ console.log("")
 
 const restScreen = new CssSubState(
 	"rest",
-	object,
+	localMachineObj,
 	partIndex,
 	surfaceIndex,
 	divStart.div,
@@ -38,7 +38,7 @@ const restScreen = new CssSubState(
 
 const startScreen = new CssSubState(
 	"start",
-	object,
+	localMachineObj,
 	partIndex,
 	surfaceIndex,
 	divStart.div,
@@ -56,7 +56,7 @@ const startScreen = new CssSubState(
 const divControls = controls;
 const controlScreen = new CssSubState(
 	"controls", 
-	object,
+	localMachineObj,
 	partIndex,
 	surfaceIndex,
 	divControls.div,
@@ -107,7 +107,7 @@ const gameScreen = new MeshSubState(
 const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
-	object,
+	localMachineObj,
 	partIndex,
 	surfaceIndex,
 	divEnd.div,
@@ -151,7 +151,6 @@ const localMachineState = new State(
 		screenMaterial,
 		pongGame.renderMaterial,
 	],
-	// null,
 	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5

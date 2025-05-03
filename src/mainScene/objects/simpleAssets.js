@@ -32,7 +32,7 @@ const textureLoader = new THREE.TextureLoader(loadingManager);
 const texture = textureLoader.load('../../../assets/image1.jpg');
 texture.colorSpace = THREE.SRGBColorSpace;
 
-const noiseTexture = textureLoader.load('../../../assets/noise3.jpg');
+export const noiseTexture = textureLoader.load('../../../assets/noise3.jpg');
 // noiseTexture.wrapS = THREE.RepeatWrapping;
 // noiseTexture.wrapT = THREE.RepeatWrapping;
 // noiseTexture.repeat.set(3, 3); // Adjust the repetition of the texture

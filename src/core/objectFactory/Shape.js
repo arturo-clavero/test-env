@@ -164,13 +164,13 @@ class Shape {
 
 	get_points(xPercent, yPercent){
 		let limits = update_min_max(this.vertex2d);
-		console.log("limits: ", limits);
+		// console.log("limits: ", limits);
 		let x = limits.min[0] + ((limits.max[0]- limits.min[0]) * xPercent);
 		let y = limits.min[1] + ((limits.max[1]- limits.min[1]) * yPercent);
 		let z = limits.min[2];
 		const curr = new THREE.Vector3(0, 0, 1);
 		const target = get_geometry_normal_vector(this.geometry);
-		console.log("target: ", target)
+		// console.log("target: ", target)
 		if (curr.x == target.x && curr.y == target.y && curr.z == target.z)
 			return [x, y, this.vertex3d[0][2]];
 		let point = new THREE.Vector3(x, y, z);
