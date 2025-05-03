@@ -11,7 +11,8 @@ class CssSubState extends SubState {
 		this.div = element;
 		this.divObject = new CSS3DObject(this.div);
 		this.divObject.position.set(0, 0, 0);
-		object.add_part(0.5, 0.5, partIndex, surfaceIndex, this.divObject, [0, 1, 0]);
+		console.log("adding css3d div to obj...")
+		object.add_object(0.5, 0.5, [0, 5], this.divObject, [0, 1, 0]);
 		this.screenSurface =  object.self.children[partIndex].children[surfaceIndex];
 	}
 	enter() 

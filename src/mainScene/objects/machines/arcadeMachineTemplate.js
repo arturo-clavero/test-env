@@ -72,36 +72,38 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 			screenBorderThick,
 			material
 		);
-		obj.add_part(0.5, 0.5, 0, 0, sideLpart, [0, 1, 0])
-		obj.add_part(0.5, 0.5, 0, 1, sideRpart, [0, 1, 0], -1)
+		console.log("adding part to obj")
+		obj.add_object(0.5, 0.5, [0, 0], sideLpart, [0, 1, 0])
+		console.log("adding part to obj")
+		obj.add_object(0.5, 0.5, [0, 1], sideRpart, [0, 1, 0], -1)
 		if (border && sideThick == 0){
 
 		}
 	}
-	if (sideThick > 0)
-	{
-		const sideL = new Part(//should be on blue aka index 0
-			scale_points(arcade_side_points, height, width), 
-			sideThick,
-			material,
-		);
-		const sideR= new Part(
-			scale_points(arcade_side_points, height, width), 
-			sideThick,
-			material,
-		);
-		if (sideLpart)
-			sideLpart.add_object(0.5, 0.5, 0, sideL.self, true, [0, 1, 0], 1)
-		else
-			obj.add_part(0.5, 0.5, 0, 0, sideL, [0, 1, 0])
-		if (sideRpart)
-			sideRpart.add_object(0.5, 0.5, 1, sideR.self, true, [0, 1, 0], -1)
-		else
-			obj.add_part(0.5, 0.5, 0, 1, sideR, [0, 1, 0], -1)
-		if (border){
+	// if (sideThick > 0)
+	// {
+	// 	const sideL = new Part(//should be on blue aka index 0
+	// 		scale_points(arcade_side_points, height, width), 
+	// 		sideThick,
+	// 		material,
+	// 	);
+	// 	const sideR= new Part(
+	// 		scale_points(arcade_side_points, height, width), 
+	// 		sideThick,
+	// 		material,
+	// 	);
+	// 	if (sideLpart)
+	// 		sideLpart.add_object(0.5, 0.5, 0, sideL.self, true, [0, 1, 0], 1)
+	// 	else
+	// 		obj.add_object(0.5, 0.5, 0, 0, sideL, [0, 1, 0])
+	// 	if (sideRpart)
+	// 		sideRpart.add_object(0.5, 0.5, 1, sideR.self, true, [0, 1, 0], -1)
+	// 	else
+	// 		obj.add_object(0.5, 0.5, 0, 1, sideR, [0, 1, 0], -1)
+	// 	if (border){
 
-		}
-	}
+	// 	}
+	// }
 	const partIndex = 0;
 	const surfaceIndex = 5;
 	const screenSurface = obj.self.children[partIndex].children[surfaceIndex].userData.instance;
@@ -127,7 +129,7 @@ export function add_controls(side, controls, obj){
 
 
 	}
-	obj.add_part(1.6, 0.7, 0, 4, controlsL, [0, 1, 0], 1)
-	obj.add_part(0.5, 0.5, 0, 4, controlsR, [0, 1, 0], 1)
+	obj.add_object(1.6, 0.7, 0, 4, controlsL, [0, 1, 0], 1)
+	obj.add_object(0.5, 0.5, 0, 4, controlsR, [0, 1, 0], 1)
 
 }

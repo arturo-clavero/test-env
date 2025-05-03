@@ -6,14 +6,14 @@ const machine = make_arcade_machine({
 	width: 6,
 	height: 3, 
 	thick: 2.5,
-	//screenBorderThick: 0.3,
-	//sideThick: 0.001,
+	screenBorderThick: 0.3,
+	sideThick: 0.001,
 	material: new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide }),
 	border: new THREE.LineBasicMaterial({ color: 0xff00ff, linewidth: 5 }),
 })
 
 const localMachineObj = machine.object;
-add_controls(1, "handle", localMachineObj)
+// add_controls(1, "handle", localMachineObj)
 
 localMachineObj.self.position.z = 3;
 localMachineObj.self.position.x = -4;
