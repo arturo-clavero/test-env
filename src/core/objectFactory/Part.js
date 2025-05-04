@@ -170,6 +170,7 @@ class Part {
 		const point = surface.get_points(xPercent, yPercent);
 		const forward = surface.get_normal(point, this.self).normalize();		
 		const up = new THREE.Vector3(obj_up[0], obj_up[1], obj_up[2]);
+		
 		const right = new THREE.Vector3().crossVectors(up, forward).normalize();
 		const adjustedUp = new THREE.Vector3().crossVectors(forward, right).normalize();		// console.log("right", right);
 		// Apply quaternion to object based on forward, up, right

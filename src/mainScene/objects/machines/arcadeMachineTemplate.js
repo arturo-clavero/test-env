@@ -112,18 +112,72 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 }
 
 function create_joystick(material){
-	const joystick = new Object(new Part([[0, 0],[0, 0.1],[0.1, 0.1],[0.1, 0]], 0.4, material))
-	const geometry = new THREE.SphereGeometry(0.1, 32, 32); // radius 1, segments
+	const joystick = new Object(new Part([[0, 0],[0, 0.08],[0.08, 0.08],[0.08, 0]], 0.4, material))
+	const geometry = new THREE.SphereGeometry(0.08, 32, 32); // radius 1, segments
 	const ball = new THREE.Mesh(geometry, material);
 	joystick.add_object(0.5, 0.5, [0, 0], ball, [0,0,1], 1, true, 0.8)
 	return joystick;
 }
+
+// function create_handle(material){
+// 	const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, material))
+// 	const distance = 0.2;
+// 	const stick1 = create_joystick(material)
+// 	base.add_object(0 + distance, 0.3, [0, 0], stick1, [0, 1, 0],1, true, 0.5)
+// 	stick1.self.rotation.x += Math.PI/4
+// 	const stick2 = create_joystick(material)
+// 	base.add_object(1 - distance, 0.3, [0, 0], stick2, [0, 1, 0],1,true,  0.5 )
+// 	stick2.self.rotation.x += Math.PI/4
+// 	return base;
+// }
+
+// function create_button(amount, material, radius = 0.05, rows = 1,){
+// 	const group = new THREE.Group();
+// 	const geometry = new THREE.CylinderGeometry(radius, radius, 0.1, 16);
+// 	for (let i  = 0; i < amount; i++)
+// 	{
+// 		const button = new THREE.Mesh(geometry, material);
+// 		button.rotation.x += Math.PI/2;
+// 		if (rows == 1) {
+// 			const offset = (i - (amount - 1) / 2) * radius * 4;
+// 			button.position.x = offset;
+// 		}
+// 		group.add(button);
+// 	}
+// 	return group;
+// }
+function create_button(amount, material,  rows = 1,radius = 0.05) {
+	const group = new THREE.Group();
+	const geometry = new THREE.CylinderGeometry(radius, radius, 0.1, 16);
+	const spacing = radius * 4;
+
+	// Calculate buttons per row
+	let buttonsPerRow = Math.ceil(amount / rows);
+
+	for (let i = 0; i < amount; i++) {
+		const button = new THREE.Mesh(geometry, material);
+		button.rotation.x = Math.PI / 2;
+		const row = Math.floor(i / buttonsPerRow);
+		const col = i % buttonsPerRow;
+		if ((amount / rows) % 2 != 0 && i + 1 == amount)
+			buttonsPerRow -= 1;
+		let xOffset = (col - (buttonsPerRow - 1) / 2) * spacing;
+		const yOffset = -((row - (rows - 1) / 2) * spacing);
+		button.position.set(xOffset, yOffset, 0);
+		group.add(button);
+	}
+
+	return group;
+}
+
 function create_handle(material){
 	const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, material))
-	const stick1 = create_joystick(material)
-	base.add_object(0.3, 0.5, [0, 0], stick1, [0, 1, 0],1 )
-	const stick2 = create_joystick(material)
-	base.add_object(0.7, 0.5, [0, 0], stick2, [0, 1, 0],1 )
+	const distance = 0.2;
+	const button1 = create_button(3, material, 2)
+	base.add_object(0 + distance, 0.3, [0, 0], button1, [0, 1, 0],1, true, 0.5)
+	// const stick2 = create_joystick(material)
+	// base.add_object(1 - distance, 0.3, [0, 0], stick2, [0, 1, 0],1,true,  0.5 )
+	// stick2.self.rotation.x += Math.PI/4
 	return base;
 }
 
@@ -133,13 +187,16 @@ export function add_controls(side, controls, obj){
 	{
 		controlObj = create_handle(new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }))
 	}
-	obj.add_object(0.5, 0.5, [0, 4], controlObj, [0, 0, 1], true, 0.8)
-	console.log("")
-	console.log("")
-	console.log("check!!!")
-	console.log("")
-	console.log("")
-	console.log(	obj.basePart.self.children[4].userData.instance	)
-	obj.basePart.self.children[4]
+
+	console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
+	// obj.basePart.self.children[4].userData.instance.normal = new THREE.Vector3(0, 1, 0)
+
+	console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
+	obj.add_object(0.5, 0.5, [0, 4], controlObj, [0, 0, 1], true, )
+	controlObj.self.rotation.z += Math.PI / 2;
+	controlObj.self.position.y -= 0.8;
+	controlObj.self.position.z += 1;
+	controlObj.self.position.x -= 0.35;
+
 
 }
