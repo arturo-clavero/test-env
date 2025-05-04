@@ -51,13 +51,13 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 		material
 	));
 	if (border){
-		if (screenBorderThick > 0 || sideThick > 0)
-		{
-			obj.basePart.add_borders([5], border)
-		}
-		else {
+		// if (screenBorderThick > 0 || sideThick > 0)
+		// {
+		// 	obj.basePart.add_borders([5], border)
+		// }
+		// else {
 			obj.basePart.add_borders([2, 3, 4, 5, 6, 7], border)
-		}
+		// }
 	}
 	if (screenBorderThick > 0)
 	{
@@ -158,18 +158,21 @@ function create_button(amount, material,  rows = 1,radius = 0.05) {
 	const spacing = radius * 4;
 
 	// Calculate buttons per row
+	let prev_row = 0;
 	let buttonsPerRow = Math.ceil(amount / rows);
-
+	let og_buttonsPerRow = buttonsPerRow;
 	for (let i = 0; i < amount; i++) {
 		const button = new THREE.Mesh(geometry, material);
 		button.rotation.x = Math.PI / 2;
-		const row = Math.floor(i / buttonsPerRow);
+		const row = Math.floor(i / og_buttonsPerRow);
+		if (row + 2 >= rows && prev_row != row && amount - i < buttonsPerRow)
+			buttonsPerRow = amount - i;
+		prev_row = row;
 		const col = i % buttonsPerRow;
-		if ((amount / rows) % 2 != 0 && i + 1 == amount)
-			buttonsPerRow -= 1;
 		let xOffset = (col - (buttonsPerRow - 1) / 2) * spacing;
+		if (buttonsPerRow == 1)
+			xOffset = 0;
 		const yOffset = -((row - (rows - 1) / 2) * spacing);
-		console.log("y offset button", yOffset)
 		button.position.set(xOffset, yOffset, 0);
 		group.add(button);
 	}
@@ -184,8 +187,12 @@ function create_handle(material){
 		opacity: 0,           // Fully invisible
 	})))
 	const distance = 0.2;
-	const button1 = create_button(5, material, 2)
-	base.add_object(0 + distance, 0.5, [0, 0], button1, [0, 1, 0],1, true, 0.5)
+	const button1 = create_button(6, material, 2)
+	//check buttons ft to add some dotn work bla bla TODO!
+	base.add_object(0.5, 0.5, [0, 0], button1, [0, 1, 0],1, true, 0.5)
+	const stick1 = create_joystick(new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }))
+	base.add_object(0+ distance, 0.3, [0, 0], stick1, [0, 1, 0],1,true,  0.5 )
+	stick1.self.rotation.x += Math.PI/8
 	const stick2 = create_joystick(new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }))
 	base.add_object(1 - distance, 0.3, [0, 0], stick2, [0, 1, 0],1,true,  0.5 )
 	stick2.self.rotation.x += Math.PI/8
