@@ -41,7 +41,7 @@ export function preEnterScene(app_container){
 	//	console.log("add to engine...")
 		//engine.add(test, false);
 		engine.add(backBox, false);
-		engine.add(mainSceneObj, true);
+		engine.add(mainSceneObj, false);
 		engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
 	}

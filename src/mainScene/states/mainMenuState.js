@@ -38,6 +38,8 @@ mainSceneObj.self.position.y = 4;
 mainSceneObj.self.position.z = -2;
 mainSceneObj.add_object(0.2, 0.5, [0, 0], localMachineObj, [0, 1, 0], 1)
 localMachineObj.self.rotation.y -= Math.PI/2
+localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+
 mainSceneObj.add_object(0.5, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
 aiMachineObj.self.rotation.y -= Math.PI/2
 mainSceneObj.add_object(0.8, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)

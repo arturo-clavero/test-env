@@ -146,12 +146,17 @@ class MainEngine {
 		for (let i = 0; i < this.clickableObjects.length; i++)
 		{
 			if (! this.clickableObjects[i].userData.instance)
+			{
+				console.log("skipping object")
 				continue ;
+
+			}
 			const bbox = this.clickableObjects[i].userData.instance.get_bbox();
 			const intersectsModel = this.raycaster.ray.intersectBox(bbox, new THREE.Vector3());
 			if (intersectsModel)
 			{
-				this.clickableObjects[i].userData.instance.handle_click(this.raycaster);
+				console.log("clicked obj")
+				console.log(this.clickableObjects[i].userData.instance.handle_click(this.raycaster));
 				return ;
 			}
 		}

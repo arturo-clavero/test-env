@@ -40,18 +40,31 @@ class Object {
 		this.onclick = ft
 	}
 	handle_click(raycaster) {
-		if (this.onclick)
+		if (this.onclick) {
+			console.log("clicked handled");
 			this.onclick();
-		const intersectsShape= raycaster.intersectObject(this.self, true);
-		const validIntersects = [];
-		for (let i = 0; i < intersectsShape.length; i++)
-		{
-			if (intersectsShape[i].object.userData.raycaster == false)
-				continue;
-			validIntersects.push(intersectsShape[i].object);
+			return true;
 		}
-		if (validIntersects.length > 0 && validIntersects[0].userData.instance)
-			validIntersects[0].userData.instance.handle_click();
+	
+		console.log("handle click");
+		console.log("self : ", this.self)
+		const intersectsShape = raycaster.intersectObject(this.self);
+		console.log(intersectsShape);
+	
+		for (let i = 0; i < intersectsShape.length; i++) {
+			console.log("Intersected object:", intersectsShape[i].object);
+
+			const instance = intersectsShape[i].object.userData.instance;
+			console.log("instance: ", instance)
+			if (instance && typeof instance.handle_click === "function") {
+				const result = instance.handle_click(raycaster);
+				if (result === true) {
+					console.log("inner obj intersect");
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	get_bbox(){
 		this.self.updateMatrixWorld();

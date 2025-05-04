@@ -1,6 +1,7 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
 import * as THREE from 'three';
 import { make_arcade_machine, add_controls } from './arcadeMachineTemplate';
+import { MainEngine } from '../../utils/MainEngine';
 
 const machine = make_arcade_machine({
 	width: 6,
@@ -14,12 +15,7 @@ const machine = make_arcade_machine({
 
 const localMachineObj = machine.object;
 add_controls(1, "handle", localMachineObj)
-
-localMachineObj.self.position.z = 3;
-localMachineObj.self.position.x = -4;
-localMachineObj.self.position.y = 2.8;
-localMachineObj.self.rotation.y -= Math.PI / 2;
-localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+new MainEngine().clickableObjects.push(localMachineObj.self)
 
 const partIndex = machine.partIndex;
 const surfaceIndex = machine.surfaceIndex;
