@@ -1,38 +1,8 @@
 import { Object } from '../../../core/objectFactory/Object'
 import { Part } from '../../../core/objectFactory/Part';
-import { noiseTexture } from '../simpleAssets';
+import { noiseTexture } from '../materialAssets';
+import { scale_points, cube_points, arcade_points, arcade_side_points } from '../geoAssets';
 import * as THREE from 'three';
-
-const arcade_points = [
-    [0, 0],         // [w[0], h[0]]
-    [0, 1],         // [w[0], h[6]]
-    [0.9, 1],       // [w[3], h[7]]
-    [0.9, 0.87],     // [w[3], h[5]]
-    [0.7, 0.87],    // [w[1], h[4]]
-    [0.7, 0.55],    // [w[2], h[3]]
-    [1, 0.45],       // [w[5], h[2]]
-    [1, 0.35],       // [w[5], h[1]]
-    [0.85, 0],      // [w[4], h[1]]
-];
-
-const arcade_side_points = [
-    [-0.1, -0.05], //-1, -1 // x= -%/w, y =-%/h
-    [-0.1, 1.05], //-1, +1 
-    [1.0, 1.05], //+1, +1      // [w[3], h[7]]
-    [1.0, 0.82], // +1, -1   // [w[3], h[5]]
-    [0.8, 0.82],  //+1, -1  // [w[1], h[4]]
-    [0.8, 0.6],  //+1, +1  // [w[2], h[3]]
-    [1.1, 0.5],  //+1, +1    // [w[5], h[2]]
-    [1.1, 0.3],   //+1, -1    // [w[5], h[1]]
-    [0.95, -0.05],  //+1 -1    // [w[4], h[1]]
-];
-
-function scale_points(points, wFactor, hFactor) {
-    return points.map(([x, y]) => [
-        x * wFactor,   // Apply width factor
-        y * hFactor    // Apply height factor
-    ]);
-}
 
 const defaultScreenMaterial =  new THREE.MeshStandardMaterial({
 	map: noiseTexture,
@@ -72,9 +42,10 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 		}
 	}
 	const dimension = thick * 0.7
-	const screen = new Object(new Part([[0,0], [0, dimension],[dimension, dimension], [dimension, 0]], 0.001, new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), true))
+		// const screen = new Object(new Part([[0,0], [0, dimension],[dimension, dimension], [dimension, 0]], 0.001, new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), true))
+	const screen = new Object(new Part(scale_points(cube_points, dimension, dimension), 0.001, new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), true))
 	obj.add_object(0.5, 0.5, [0, 5], screen, [0, 1, 0], 1)
-	console.log("baset: ", screen.basePart.shapes[0])
+	// console.log("baset: ", screen.basePart.shapes[0])
 	screen.basePart.shapes[0].geometry.scale(1, 1, -1);
 	screen.basePart.shapes[0].geometry.computeVertexNormals();
 	const partIndex = 1;
@@ -83,7 +54,8 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 }
 
 function create_joystick(material){
-	const joystick = new Object(new Part([[0, 0],[0, 0.06],[0.06, 0.06],[0.06, 0]], 0.5, material))
+	const joystick = new Object(new Part(scale_points(cube_points, 0.03, 0.03), 0.5, material))
+	// const joystick = new Object(new Part([[0, 0],[0, 0.06],[0.06, 0.06],[0.06, 0]], 0.5, material))
 	const geometry = new THREE.SphereGeometry(0.08, 32, 32); // radius 1, segments
 	const geometryb = new THREE.ConeGeometry(0.15, 0.15, 16, 16)
 	const base = new THREE.Mesh(geometryb, material);
@@ -152,7 +124,8 @@ function create_button(amount, material,  rows = 1,radius = 0.05) {
 }
 
 function create_handle(material){
-	const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, new THREE.MeshBasicMaterial({
+		// const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, new THREE.MeshBasicMaterial({
+	const base = new Object(new Part(scale_points(cube_points, 0.5, 2.5), 0.01, new THREE.MeshBasicMaterial({
 		color: 0xffffff,      // Color still required, but doesn't matter when fully transparent
 		transparent: true,
 		opacity: 0,           // Fully invisible
@@ -177,10 +150,10 @@ export function add_controls(side, controls, obj){
 		controlObj = create_handle(new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }))
 	}
 
-	console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
+	// console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
 	// obj.basePart.self.children[4].userData.instance.normal = new THREE.Vector3(0, 1, 0)
 // 
-	console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
+	// console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
 	obj.add_object(0.5, 0.5, [0, 4], controlObj, [0, 0, 1], true, )
 	controlObj.self.rotation.z += Math.PI / 2;
 	controlObj.self.position.y -= 0.8;

@@ -22,6 +22,9 @@ export const arcade_side_points = [
     [0.95, -0.05],  //+1 -1    // [w[4], h[1]]
 ];
 
+
+export const cube_points = [[0, 0], [0, 1], [1, 1], [1,0]]
+
 // Function to scale points
 export function scale_points(points, wFactor, hFactor) {
     return points.map(([x, y]) => [

@@ -13,7 +13,7 @@ class CssSubState extends SubState {
 		this.div.style.position = "absolute";
 		//this.divObject = new CSS3DObject(this.div);
 		// this.divObject.position.set(0, 0, 0);
-		console.log("adding css3d div to obj...")
+		// console.log("adding css3d div to obj...")
 		// object.add_object(0.5, 0.5, [partIndex, surfaceIndex ], this.divObject, [0, 1, 0]);
 		this.screenSurface = screenSurface
 		// if (screenSurface != null)
@@ -35,8 +35,8 @@ class CssSubState extends SubState {
 	}
     resize()
 	{
-		console.log("screensurface: ", this.screenSurface)
-		console.log("screensurface: ", this.screenSurface.self)
+		// console.log("screensurface: ", this.screenSurface)
+		// console.log("screensurface: ", this.screenSurface.self)
 		const boundingBox = new THREE.Box3().setFromObject(this.screenSurface.self);
 		const worldSize = new THREE.Vector3();
 		boundingBox.getSize(worldSize);

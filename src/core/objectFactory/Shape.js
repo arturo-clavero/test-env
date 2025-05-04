@@ -152,7 +152,7 @@ class Shape {
 		this.self.material.needsUpdate = true;
 	}
 	get_borders(lineBasicMaterial){
-		console.log(this.geometry, "this geometry");
+		// console.log(this.geometry, "this geometry");
 		const border = new THREE.LineLoop(this.geometry, lineBasicMaterial);
 		if (this.z != 0)
 			border.position.z -= this.z;

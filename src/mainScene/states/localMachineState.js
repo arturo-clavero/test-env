@@ -2,7 +2,7 @@
 
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
-import { screenMaterial } from '../objects/simpleAssets';
+import { screenMaterial } from '../objects/materialAssets';
 import { screenSurface, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';

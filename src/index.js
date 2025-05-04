@@ -6,7 +6,7 @@ import { backBox } from './mainScene/objects/background/backBox';
 import { StateManager } from './core/stateManager/StateManager';
 
 import { Socket } from './mainScene/utils/Socket';
-
+import {animateBalls, test} from './mainScene/objects/machines/friends'
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
 import { Object } from './core/objectFactory/Object';
@@ -39,7 +39,7 @@ export function preEnterScene(app_container){
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
-		//engine.add(test, false);
+		engine.add(test, false);
 		engine.add(backBox, false);
 		engine.add(mainSceneObj, false);
 		engine.stateManager = stateManager;
@@ -86,13 +86,15 @@ export function uponEnter(){
 export function animate() {
 	if (!isAnimating) return ;
 	
+	// test.self.rotation.z += 0.001
 
 	//console.log("animate");
 	requestAnimationFrame(animate);
+	animateBalls()
 	engine.animate();
 	if (firstFrame < 2)
 	{
-		console.log("hey!!!")
+		// console.log("hey!!!")
 		window.dispatchEvent(new Event("resize"));
 		firstFrame++;
 	}
@@ -123,7 +125,7 @@ function onClick(event) {
 }
 
 function key_events(event){
-	console.log("clicked key!")
+	// console.log("clicked key!")
 	stateManager.handleKeyPress(event)
 }
 

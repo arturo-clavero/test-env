@@ -40,7 +40,7 @@ mainSceneObj.add_object(0.2, 0.5, [0, 0], localMachineObj, [0, 1, 0], 1)
 localMachineObj.self.rotation.y -= Math.PI/2
 localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
-mainSceneObj.add_object(0.5, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
+//mainSceneObj.add_object(0.5, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
 aiMachineObj.self.rotation.y -= Math.PI/2
 mainSceneObj.add_object(0.8, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)
 tourMachineObj.self.rotation.y -= Math.PI/2
@@ -57,6 +57,7 @@ const mainSub = new SubState(
 	null,
 	mainSceneObj.self
 )
+
 const mainState = new State(
 	"lobby",
 	{
@@ -78,6 +79,7 @@ const mainState = new State(
 	new THREE.Vector3(0, 0, -1),
 	1.25,
 );
+
 const stateManager = new StateManager(
 	[
 		mainState, 
@@ -86,7 +88,5 @@ const stateManager = new StateManager(
 		tourMachineState,
 	],
 );
-
-
 
 export { stateManager, mainSceneObj}
