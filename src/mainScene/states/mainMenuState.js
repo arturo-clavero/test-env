@@ -8,11 +8,40 @@ import { localMachineObj } from '../objects/machines/localMachineObj';
 import { aiMachineObj } from '../objects/machines/aiMachineObj';
 import { tourMachineObj } from '../objects/machines/tournamentMachineObj';
 import * as THREE from 'three';
+import { Part } from '../../core/objectFactory/Part';
+import { Object } from '../../core/objectFactory/Object';
+const points = [
+	[0, 0],         // [w[0], h[0]]
+	[0, 1],         // [w[0], h[6]]
+   [1, 1],
+   [1, 0]
+];
 
-const mainSceneObj = new THREE.Group();
-mainSceneObj.add(localMachineObj.self)
-mainSceneObj.add(aiMachineObj.self)
-mainSceneObj.add(tourMachineObj.self)
+// Function to scale points
+function scale_points(points, wFactor, hFactor) {
+	return points.map(([x, y]) => [
+		x * wFactor,   // Apply width factor
+		y * hFactor    // Apply height factor
+	]);
+}
+
+const part_test = new Part(
+	scale_points(points, 15, 10), 
+	3,
+	[
+		new THREE.MeshStandardMaterial({ color: 0x800080, side: THREE.DoubleSide }), // Purple
+	  ]
+	  );
+const mainSceneObj = new Object(part_test);
+mainSceneObj.self.position.x = 0;
+mainSceneObj.self.position.y = 4;
+mainSceneObj.self.position.z = -2;
+mainSceneObj.add_object(0.2, 0.5, [0, 0], localMachineObj, [0, 1, 0], 1)
+localMachineObj.self.rotation.y -= Math.PI/2
+mainSceneObj.add_object(0.5, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
+aiMachineObj.self.rotation.y -= Math.PI/2
+mainSceneObj.add_object(0.8, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)
+tourMachineObj.self.rotation.y -= Math.PI/2
 
 const mainSub = new SubState(
 	"main controls", 
@@ -24,7 +53,7 @@ const mainSub = new SubState(
 	null, 
 	null,
 	null,
-	mainSceneObj
+	mainSceneObj.self
 )
 const mainState = new State(
 	"lobby",
@@ -43,7 +72,7 @@ const mainState = new State(
 	null,
 	[],
 	// null,
-	mainSceneObj,
+	mainSceneObj.self,
 	new THREE.Vector3(0, 0, -1),
 	1.25,
 );

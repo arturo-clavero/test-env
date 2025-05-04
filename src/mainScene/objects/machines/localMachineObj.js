@@ -4,7 +4,7 @@ import { make_arcade_machine, add_controls } from './arcadeMachineTemplate';
 
 const machine = make_arcade_machine({
 	width: 6,
-	height: 3, 
+	height: 1, 
 	thick: 2.5,
 	screenBorderThick: 0.3,
 	sideThick: 0.001,
@@ -13,7 +13,7 @@ const machine = make_arcade_machine({
 })
 
 const localMachineObj = machine.object;
-// add_controls(1, "handle", localMachineObj)
+add_controls(1, "handle", localMachineObj)
 
 localMachineObj.self.position.z = 3;
 localMachineObj.self.position.x = -4;

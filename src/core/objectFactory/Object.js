@@ -15,7 +15,7 @@ class Object {
 		this.self.receiveShadow = true;
 		this.self.castShadow = true;
 	}
-	add_object(Xpercent, Ypercent, index, inputObj, axisUp = [0, 1, 0], axisForward = 1, obj_height = true){
+	add_object(Xpercent, Ypercent, index, inputObj, axisUp = [0, 1, 0], axisForward = 1, obj_height = true, height_depth = 1){
 		console.log("in object ... add new object");
 		let object;
 		if (inputObj instanceof THREE.Object3D)
@@ -30,7 +30,7 @@ class Object {
 		console.log("index-> ", index);
 		let children_i = index.shift();
 		console.log("children_i", children_i, "next_i", index);
-		this.self.children[children_i].userData.instance.add_object(Xpercent, Ypercent, index, object, axisUp, axisForward, obj_height)
+		this.self.children[children_i].userData.instance.add_object(Xpercent, Ypercent, index, object, axisUp, axisForward, obj_height, height_depth)
 		if (!(inputObj instanceof CSS3DObject))
 			this.self.add(object)
 		// if (!(part instanceof CSS3DObject))

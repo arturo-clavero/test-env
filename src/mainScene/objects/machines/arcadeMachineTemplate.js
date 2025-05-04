@@ -111,25 +111,35 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 	return ({"object" : obj, "screenSurface" : screenSurface, "partIndex" : partIndex, "surfaceIndex": surfaceIndex});
 }
 
-function create_handle(){
-	const col = new Part([[0, 0], [0, 0.1], [0.1, 0.1], [0.1, 0]], 0.4, new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }))
-	const geometry = new THREE.SphereGeometry(0.15, 32, 32);
-	const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-	const ball = new THREE.Mesh(geometry, material);	
-	col.add_object(0.5, 0.5, 0, ball, true, [0, 1, 0], 1);
-	return col;
+function create_joystick(material){
+	const joystick = new Object(new Part([[0, 0],[0, 0.1],[0.1, 0.1],[0.1, 0]], 0.4, material))
+	const geometry = new THREE.SphereGeometry(0.1, 32, 32); // radius 1, segments
+	const ball = new THREE.Mesh(geometry, material);
+	joystick.add_object(0.5, 0.5, [0, 0], ball, [0,0,1], 1, true, 0.8)
+	return joystick;
+}
+function create_handle(material){
+	const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, material))
+	const stick1 = create_joystick(material)
+	base.add_object(0.3, 0.5, [0, 0], stick1, [0, 1, 0],1 )
+	const stick2 = create_joystick(material)
+	base.add_object(0.7, 0.5, [0, 0], stick2, [0, 1, 0],1 )
+	return base;
 }
 
 export function add_controls(side, controls, obj){
-	let controlsL, controlsR;
+	let controlObj;
 	if (controls == "handle")
 	{
-		controlsL = create_handle();
-		controlsR = create_handle();
-
-
+		controlObj = create_handle(new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }))
 	}
-	obj.add_object(1.6, 0.7, 0, 4, controlsL, [0, 1, 0], 1)
-	obj.add_object(0.5, 0.5, 0, 4, controlsR, [0, 1, 0], 1)
+	obj.add_object(0.5, 0.5, [0, 4], controlObj, [0, 0, 1], true, 0.8)
+	console.log("")
+	console.log("")
+	console.log("check!!!")
+	console.log("")
+	console.log("")
+	console.log(	obj.basePart.self.children[4].userData.instance	)
+	obj.basePart.self.children[4]
 
 }

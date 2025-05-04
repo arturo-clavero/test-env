@@ -162,7 +162,7 @@ class Part {
 	// 	this.self.add(object);
 	// 	this.joined_parts.push(object);
 	// }
-	add_object(xPercent, yPercent, index, object, obj_up, obj_forward, obj_height) {
+	add_object(xPercent, yPercent, index, object, obj_up, obj_forward, obj_height, height_depth) {
 		console.log("index-> ", index);
 		let i = Array.isArray(index) ? index[0] : index;
 		console.log("in part shape[", i, "] ... ad new 'object'")
@@ -208,6 +208,7 @@ class Part {
 			const radius = size.length() / 2;
 			object_half_len = radius * maxDot;
 		}
+		object_half_len *= height_depth;
 			object.position.set(
 				point[0] + (forward.x * object_half_len * obj_forward),
 				point[1] + (forward.y * object_half_len * obj_forward),
