@@ -76,6 +76,7 @@ class State {
 			new MainEngine().camera.position.copy(this.get_camera_position());
 			this.currentSubstate.postCamEnter();
 		}
+		this.resize()
 	}
 	exit() {
 		if (this.exitState() == "cancelled" || this.changeSubstate(this.startIndex, false) == "cancelled")

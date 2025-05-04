@@ -18,8 +18,7 @@ const divStart = new StartScreen('white', "START GAME");
 const restScreen = new CssSubState(
 	"rest",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divStart.div,
 	0,
 	()=>{
@@ -36,8 +35,7 @@ const restScreen = new CssSubState(
 const startScreen = new CssSubState(
 	"start",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divStart.div,
 	0,
 	null,
@@ -54,8 +52,7 @@ const divControls = controls;
 const controlScreen = new CssSubState(
 	"controls", 
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divControls.div,
 	0,
 	()=>{
@@ -88,8 +85,7 @@ const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divEnd.div,
 	0,
 	()=>{divEnd.enter()},
@@ -128,7 +124,7 @@ const aiMachineState = new State(
 		pongGame.renderMaterial,
 	],
 	// null,
-	aiMachineObj.self,
+	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5
 )

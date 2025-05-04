@@ -38,7 +38,7 @@ function clean_vector(v, decimals = 5) {
 }
 
 class Shape {
-	constructor(points, isAbstract = false, normal =null)
+	constructor(points, isAbstract = false, normal =null, all_quads = false)
 	{
 		this.z = 0;
 		if (points[0].length == 3)
@@ -51,7 +51,6 @@ class Shape {
 			if (this.z != 0)
 				this.z /= points.length
 		}
-			
 		this.vertex3d = [];
 		this.vertex3d = points;
 		this.vertex2d = [];
@@ -60,7 +59,7 @@ class Shape {
 		this.normal = null;
 		this.onclick = null;
 		this.bbox = null;
-		isAbstract == false ? this.quad_geo() : this.abstract_geo(normal);
+		isAbstract == false ? this.quad_geo() : this.abstract_geo(normal, all_quads);
 	}
 	quad_geo(){
 		this.geometry = new THREE.BufferGeometry();
@@ -72,7 +71,7 @@ class Shape {
 		this.geometry.setIndex(indices);
 		this.calc_uvs();
 	}
-	abstract_geo(normal){
+	abstract_geo(normal, all_quads){
 		this.normal = normal;
 		const shape = new THREE.Shape();
 		this.vertex2d = this.vertex3d.map(v => [v[0], v[1]]);
@@ -83,6 +82,8 @@ class Shape {
 		}
 		shape.closePath();
 		this.geometry = new THREE.ShapeGeometry(shape);
+		if (all_quads)
+			this.calc_uvs()
 	}
 	calc_uvs()
 	{
@@ -107,16 +108,13 @@ class Shape {
 			// const v_ = 1 - (v.y - minY) / (maxY - minY); // <-- flipped Y
 			// uvs.push(u, v_);
 		});
-		// console.log("uvs: ", uvs);
 		uvs = [
-			0, 0,  // top-left
-			0, 1,  // top-right
-			1, 1,  // bottom-right
 			1, 0,  // bottom-left
-		];
+			0, 0,  // bottom-right
+			0, 1,  // top-right
+			1, 1   // top-left
+		  ];
 		this.geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
-		// console.log("geo: ", this.geometry)
-
 	}
 	add_material(material)
 	{
@@ -154,6 +152,7 @@ class Shape {
 		this.self.material.needsUpdate = true;
 	}
 	get_borders(lineBasicMaterial){
+		console.log(this.geometry, "this geometry");
 		const border = new THREE.LineLoop(this.geometry, lineBasicMaterial);
 		if (this.z != 0)
 			border.position.z -= this.z;

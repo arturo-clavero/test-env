@@ -24,8 +24,7 @@ const divStart = start;
 const restScreen = new CssSubState(
 	"rest no info",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divStart["div"],
 	0,
 	()=>{
@@ -44,8 +43,7 @@ const restScreen = new CssSubState(
 const startScreen = new CssSubState(
 	"start no info",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divStart['div'],
 	0,
 	()=>{
@@ -68,8 +66,7 @@ const divCreate = create;
 const restScreenCreate = new CssSubState(
 	"rest create",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divCreate["div"],
 	0,
 	()=>{
@@ -88,8 +85,7 @@ const restScreenCreate = new CssSubState(
 const startScreenCreate = new CssSubState(
 	"start create",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divCreate['div'],
 	0,
 	()=>{
@@ -111,8 +107,7 @@ const divJoin = join;
 const restScreenJoin = new CssSubState(
 	"rest join",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divJoin["div"],
 	0,
 	()=>{
@@ -131,8 +126,7 @@ const restScreenJoin = new CssSubState(
 const startScreenJoin = new CssSubState(
 	"start join",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divJoin['div'],
 	0,
 	()=>{
@@ -154,8 +148,7 @@ const divPay = payment;
 const screenPay = new CssSubState(
 	"pay",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divPay['div'],
 	0,
 	()=>{
@@ -176,8 +169,7 @@ const divRefund = refund;
 const screenRefund = new CssSubState(
 	"refund",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divRefund['div'],
 	0,
 	()=>{
@@ -201,8 +193,7 @@ const divControls = controls;
 const screenControls = new CssSubState(
 	"controls", 
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divControls.div,
 	0,
 	()=>{
@@ -224,8 +215,7 @@ const divMatchmake = matchmake;
 const screenMatchmake = new CssSubState(
 	"end",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divMatchmake['div'],
 	0,
 	()=>{
@@ -256,8 +246,7 @@ const divEnd = end;
 const screenEnd = new CssSubState(
 	"end",
 	object,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divEnd['div'],
 	0,
 	()=>{
@@ -329,7 +318,7 @@ const tourMachineState = new State(
 		waiting.renderMaterial,
 	],
 	// null,
-	tourMachineObj.self,
+	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5
 )

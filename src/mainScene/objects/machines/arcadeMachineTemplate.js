@@ -43,72 +43,43 @@ const defaultScreenMaterial =  new THREE.MeshStandardMaterial({
 
 export function make_arcade_machine({height, width, thick, material, border = null, screenBorderThick = 0, sideThick = 0, screenMaterial = defaultScreenMaterial})
 {
-	let sideLpart = null;
-	let sideRpart = null;
 	const obj = new Object(new Part(
 		scale_points(arcade_points, height, width), 
 		thick,
 		material
 	));
 	if (border){
-		// if (screenBorderThick > 0 || sideThick > 0)
-		// {
-		// 	obj.basePart.add_borders([5], border)
-		// }
-		// else {
-			obj.basePart.add_borders([2, 3, 4, 5, 6, 7], border)
-		// }
+		// obj.basePart.add_borders([2, 3, 4, 5, 6, 7], border)
+		obj.basePart.add_borders([4, 7], border)
 	}
-	if (screenBorderThick > 0)
+	if (sideThick > 0)
 	{
-		console.log("border")
-		sideLpart = new Part(//should be on blue aka index 0
-			scale_points(arcade_points, height, width), 
-			screenBorderThick,
-			material
+		const sideL = new Part(//should be on blue aka index 0
+			scale_points(arcade_side_points, height, width), 
+			sideThick,
+			material,
 		);
-		sideRpart = new Part(
-			scale_points(arcade_points, height, width), 
-			screenBorderThick,
-			material
+		const sideR= new Part(
+			scale_points(arcade_side_points, height, width), 
+			sideThick,
+			material,
 		);
-		console.log("adding part to obj")
-		obj.add_object(0.5, 0.5, [0, 0], sideLpart, [0, 1, 0])
-		console.log("adding part to obj")
-		obj.add_object(0.5, 0.5, [0, 1], sideRpart, [0, 1, 0], -1)
-		if (border && sideThick == 0){
-
+		obj.add_object(0.5, 0.5, [0, 0], sideL, [0, 1, 0])
+		obj.add_object(0.5, 0.5, [0, 1], sideR, [0, 1, 0], -1)
+		if (border){
+			sideL.add_borders([2, 3, 4, 5, 6, 7], border)
+			sideR.add_borders([2, 3, 4, 5, 6, 7], border)
 		}
 	}
-	// if (sideThick > 0)
-	// {
-	// 	const sideL = new Part(//should be on blue aka index 0
-	// 		scale_points(arcade_side_points, height, width), 
-	// 		sideThick,
-	// 		material,
-	// 	);
-	// 	const sideR= new Part(
-	// 		scale_points(arcade_side_points, height, width), 
-	// 		sideThick,
-	// 		material,
-	// 	);
-	// 	if (sideLpart)
-	// 		sideLpart.add_object(0.5, 0.5, 0, sideL.self, true, [0, 1, 0], 1)
-	// 	else
-	// 		obj.add_object(0.5, 0.5, 0, 0, sideL, [0, 1, 0])
-	// 	if (sideRpart)
-	// 		sideRpart.add_object(0.5, 0.5, 1, sideR.self, true, [0, 1, 0], -1)
-	// 	else
-	// 		obj.add_object(0.5, 0.5, 0, 1, sideR, [0, 1, 0], -1)
-	// 	if (border){
-
-	// 	}
-	// }
-	const partIndex = 0;
-	const surfaceIndex = 5;
-	const screenSurface = obj.self.children[partIndex].children[surfaceIndex].userData.instance;
-	screenSurface.add_material( screenMaterial);
-	return ({"object" : obj, "screenSurface" : screenSurface, "partIndex" : partIndex, "surfaceIndex": surfaceIndex});
+	const dimension = thick * 0.7
+	const screen = new Object(new Part([[0,0], [0, dimension],[dimension, dimension], [dimension, 0]], 0.001, new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), true))
+	obj.add_object(0.5, 0.5, [0, 5], screen, [0, 1, 0], 1)
+	console.log("baset: ", screen.basePart.shapes[0])
+	screen.basePart.shapes[0].geometry.scale(1, 1, -1);
+	screen.basePart.shapes[0].geometry.computeVertexNormals();
+	const partIndex = 1;
+	const surfaceIndex = 0;
+	return ({"object" : obj, "screenObj:": screen, "screenSurface" : screen.basePart.shapes[0], "partIndex" : partIndex, "surfaceIndex": surfaceIndex});
 }
 
 function create_joystick(material){

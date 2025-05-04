@@ -34,7 +34,6 @@ tourMachineObj.add_onclick(()=>{ new StateManager().changeState(3);})
 const partIndex = 0;
 const surfaceIndex = 5;
 const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
-screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;
 

@@ -65,5 +65,4 @@ function createScreenMaterial(renderTarget) {
     return renderMaterial;
 }
 
-
 export {createRenderTarget, createScreenMaterial}

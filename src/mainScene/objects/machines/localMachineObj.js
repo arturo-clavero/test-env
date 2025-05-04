@@ -7,10 +7,11 @@ const machine = make_arcade_machine({
 	width: 6,
 	height: 1, 
 	thick: 2.5,
-	screenBorderThick: 0.3,
-	sideThick: 0.001,
+	// screenBorderThick: 0.3,
+	sideThick: 0.01,
 	material: new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide }),
-	border: new THREE.LineBasicMaterial({ color: 0xff00ff, linewidth: 5 }),
+	// border: new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 }),
+	border: new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide })
 })
 
 const localMachineObj = machine.object;

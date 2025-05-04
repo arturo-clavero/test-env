@@ -21,8 +21,7 @@ console.log("")
 const restScreen = new CssSubState(
 	"rest",
 	localMachineObj,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divStart.div,
 	0,
 	()=>{
@@ -39,8 +38,7 @@ const restScreen = new CssSubState(
 const startScreen = new CssSubState(
 	"start",
 	localMachineObj,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divStart.div,
 	0,
 	null,
@@ -57,8 +55,7 @@ const divControls = controls;
 const controlScreen = new CssSubState(
 	"controls", 
 	localMachineObj,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divControls.div,
 	0,
 	()=>{
@@ -72,10 +69,10 @@ const controlScreen = new CssSubState(
 	},
 	()=>{divControls["resize"]()},
 	(event)=>{return divControls["keyHandler"](event)},
-	null
+	null,
 )
 
-console.log("screen surface: ", screenSurface.vertex2d)
+console.log("screen surface: ", screenSurface)
 let min_x = Math.min(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
 let max_x = Math.max(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
 let width = max_x - min_x;
@@ -90,7 +87,7 @@ let height = max_y - min_y;
 let aspect = width / height;
 console.log("aspect is : ", aspect)
 const gameScreen = new MeshSubState(
-	"game", 
+	"game",
 	screenSurface,
 	pongGame,
 	1,
@@ -108,8 +105,7 @@ const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
 	localMachineObj,
-	partIndex,
-	surfaceIndex,
+	screenSurface,
 	divEnd.div,
 	0,
 	()=>{divEnd.enter()},

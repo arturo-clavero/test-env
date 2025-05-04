@@ -14,8 +14,8 @@ import { Part } from './core/objectFactory/Part';
 const engine = new MainEngine();
 
 let isAnimating = false;
-
-console.log("TEST PART");
+let firstFrame = 0;
+// console.log("TEST PART");
 
 //developent:
 document.addEventListener('keydown', (event) => {
@@ -61,7 +61,9 @@ export function uponEnter(){
 	//console.log(engine.camera.position)
 	//engine.resize()
 	isAnimating = true;
-	animate();
+	// engine.stateManager.currentState.currentSubstate.resize()
+	window.dispatchEvent(new Event("resize"));
+	firstFrame = 0;
 	window.dispatchEvent(new Event("resize"));
 	if (engine.stateManager.currentState == null)
 		{
@@ -72,7 +74,9 @@ export function uponEnter(){
 	
 	
 		}
+	animate();
 	window.dispatchEvent(new Event("resize"));
+	engine.stateManager.currentState.currentSubstate.resize()
 
 	// document.body.focus()
 	// engine.container.focus()
@@ -81,9 +85,17 @@ export function uponEnter(){
 
 export function animate() {
 	if (!isAnimating) return ;
+	
+
 	//console.log("animate");
 	requestAnimationFrame(animate);
 	engine.animate();
+	if (firstFrame < 2)
+	{
+		console.log("hey!!!")
+		window.dispatchEvent(new Event("resize"));
+		firstFrame++;
+	}
 }
 
 //exitScene is called in beforeUnmount() or onBeforeUnmount().

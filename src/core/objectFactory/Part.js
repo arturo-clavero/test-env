@@ -5,7 +5,7 @@ import { order_path, mapToCenter } from '../../mainScene/utils/utils';
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 class Part {
-	constructor(pointsLeftXY, pointsRightXY, materials){
+	constructor(pointsLeftXY, pointsRightXY, materials, all_quads = false){
 		this.width = 0;
 		this.shapes = [];
 		this.self = null;
@@ -19,7 +19,7 @@ class Part {
 			console.log("Incorrect parameters");
 			return;
 		}
-		this.init();
+		this.init(all_quads);
 		if (materials)
 			this.add_material(materials);
 		else
@@ -52,14 +52,14 @@ class Part {
 			this.pointsRight = null;
 		}
 	}
-	init(){
+	init(all_quads){
 		const newPoints = mapToCenter(this.pointsLeft, this.pointsRight);
 		this.pointsLeft = newPoints.left;
 		this.pointsRight = newPoints.right;
 		this.pointsRight = order_path(this.pointsRight);
 		this.pointsLeft = order_path(this.pointsLeft);
-		this.shapes[0] =  new Shape(this.pointsRight, true, new THREE.Vector3(0, 0, 1));
-		this.shapes[1] = new Shape(this.pointsLeft, true, new THREE.Vector3(0, 0, 1));
+		this.shapes[0] =  new Shape(this.pointsRight, true, new THREE.Vector3(0, 0, 1), all_quads);
+		this.shapes[1] = new Shape(this.pointsLeft, true, new THREE.Vector3(0, 0, 1), all_quads);
 		for (let i = 0; i < this.pointsRight.length; i++){
 			const currRight = this.pointsRight[i];
 			const nextRight = i + 1 < this.pointsRight.length ? this.pointsRight[i + 1] : this.pointsRight[0];	
@@ -163,9 +163,9 @@ class Part {
 	// 	this.joined_parts.push(object);
 	// }
 	add_object(xPercent, yPercent, index, object, obj_up, obj_forward, obj_height, height_depth) {
-		console.log("index-> ", index);
+		// console.log("index-> ", index);
 		let i = Array.isArray(index) ? index[0] : index;
-		console.log("in part shape[", i, "] ... ad new 'object'")
+		// console.log("in part shape[", i, "] ... ad new 'object'")
 		const surface = this.shapes[i];
 		const point = surface.get_points(xPercent, yPercent);
 		const forward = surface.get_normal(point, this.self).normalize();		
