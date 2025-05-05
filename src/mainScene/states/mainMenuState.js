@@ -4,12 +4,14 @@ import { SubState } from '../../core/stateManager/SubStates';
 import { localMachineState } from "./localMachineState";
 import { aiMachineState } from './aiMachineState';
 import { tourMachineState } from './tournamentMachineState';
-import { localMachineObj } from '../objects/machines/localMachineObj';
-import { aiMachineObj } from '../objects/machines/aiMachineObj';
-import { tourMachineObj } from '../objects/machines/tournamentMachineObj';
+import { localMachineObj } from '../objects/arcadeMachines/localMachineObj';
+import { aiMachineObj } from '../objects/arcadeMachines/aiMachineObj';
+import { tourMachineObj } from '../objects/arcadeMachines/tournamentMachineObj';
 import * as THREE from 'three';
 import { Part } from '../../core/objectFactory/Part';
 import { Object } from '../../core/objectFactory/Object';
+import { friends_machine } from '../objects/friends/friendMachine';
+import { friendState } from './friendsState';
 const points = [
 	[0, 0],         // [w[0], h[0]]
 	[0, 1],         // [w[0], h[6]]
@@ -26,7 +28,7 @@ function scale_points(points, wFactor, hFactor) {
 }
 
 const part_test = new Part(
-	scale_points(points, 15, 10), 
+	scale_points(points, 20, 20), 
 	3,
 	[
 		new THREE.MeshStandardMaterial({ color: 0x800080, side: THREE.DoubleSide }), // Purple
@@ -36,14 +38,24 @@ const mainSceneObj = new Object(part_test);
 mainSceneObj.self.position.x = 0;
 mainSceneObj.self.position.y = 4;
 mainSceneObj.self.position.z = -2;
+
 mainSceneObj.add_object(0.2, 0.5, [0, 0], localMachineObj, [0, 1, 0], 1)
 localMachineObj.self.rotation.y -= Math.PI/2
 localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
-//mainSceneObj.add_object(0.5, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
+mainSceneObj.add_object(0.4, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
 aiMachineObj.self.rotation.y -= Math.PI/2
-mainSceneObj.add_object(0.8, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)
+aiMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+
+mainSceneObj.add_object(0.6, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)
 tourMachineObj.self.rotation.y -= Math.PI/2
+tourMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+
+mainSceneObj.add_object(0.8, 0.5, [0, 0], friends_machine, [0, 1, 0], 1)
+friends_machine.self.rotation.x += Math.PI/2
+// friends_machine.self.rotation.z -= Math.PI/2
+friends_machine.add_onclick(()=>{ new StateManager().changeState(4);})
+//friends_machine.self.position.z -= 4
 
 const mainSub = new SubState(
 	"main controls", 
@@ -86,6 +98,7 @@ const stateManager = new StateManager(
 		localMachineState,
 		aiMachineState,
 		tourMachineState,
+		friendState,
 	],
 );
 

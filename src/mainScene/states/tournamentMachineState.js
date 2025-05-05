@@ -3,7 +3,7 @@ import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
 import { screenMaterial } from '../objects/materialAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
+import { screenSurface, center, object, partIndex, surfaceIndex, tourMachineObj } from '../objects/arcadeMachines/tournamentMachineObj';
 
 import { start } from '../overlays/divs/tour_start';
 import { create } from '../overlays/divs/tour_create';

@@ -39,7 +39,7 @@ class State {
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
-		if (this.materialIndex != this.currentSubstate.materialIndex)
+		if (this.materials && this.materialIndex != this.currentSubstate.materialIndex)
 		{
 			this.materialIndex = this.currentSubstate.materialIndex;
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];

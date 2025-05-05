@@ -59,24 +59,24 @@ class MainEngine {
 		// console.log("engine initiliazed")
 	}
 	setUpLights(){
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
 		this.scene.add(ambientLight);
 
 		const topLight = new THREE.SpotLight(0x0053f9, 50);
-		topLight.position.set(0, 6, 2);
+		topLight.position.set(15, 6, 4);
 		topLight.castShadow = true;
 		this.scene.add(topLight);
 
 		const spotLight1 = new THREE.SpotLight(0xd34dee, 50);
-		spotLight1.position.set(-5, 5, 7);
+		spotLight1.position.set(-7, 5, 4);
 		spotLight1.castShadow = true;
 		this.scene.add(spotLight1);
 		const spotLight2 = new THREE.SpotLight(0xd34dee, 50);
-		spotLight2.position.set(0, 5, 7);
+		spotLight2.position.set(0, 5, 5);
 		spotLight2.castShadow = true;
 		this.scene.add(spotLight2);
 		const spotLight3 = new THREE.SpotLight(0xd34dee, 50);
-		spotLight3.position.set(5, 5, 7);
+		spotLight3.position.set(15, 10, 5);
 		spotLight3.castShadow = true;
 		this.scene.add(spotLight3);
 	}

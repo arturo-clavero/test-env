@@ -3,7 +3,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/materialAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, aiMachineObj } from '../objects/machines/aiMachineObj';
+import { screenSurface, center, object, partIndex, surfaceIndex, aiMachineObj } from '../objects/arcadeMachines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 import { pongGame } from '../overlays/scenes/pong-game/Game';		
