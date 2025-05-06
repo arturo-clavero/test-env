@@ -10,6 +10,7 @@ import { MainEngine } from '../utils/MainEngine';
 const sphereGroup = new SphereGroup()
 await sphereGroup.init()
 
+export let background_friends = true;
 const display_null = new SubState(
 	"rest",
 	null,
@@ -103,7 +104,9 @@ const friendState = new State(
 		duration: 2,
 		ease: "power2.inOut",
 	},
-	null,
+	()=>{
+		background_friends = false;
+	},
 	[
 		display_null,
 		display_pics,
@@ -117,6 +120,7 @@ const friendState = new State(
 	()=>{
 		sphereGroup.instanceGroup.forEach(sp=>sp.hideAvatar())
 		sphereGroup.random_position(true)
+		background_friends = true;
 	},
 	null, 
 	friends_machine.self,
