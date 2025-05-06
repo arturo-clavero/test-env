@@ -10,7 +10,7 @@ const radius = 0.3;
 const min_spheres = 5
 const max_spheres = 5
 const engine = new MainEngine();
-let duration = 3000;
+let duration = 5000;
 let scrollVelocity = 0;
 let velocityDecay = 0.95; 
 let lastKeyTime = Date.now();
@@ -49,6 +49,7 @@ export class SphereGroup {
 	}
 	async init(){
 		this.self = new THREE.Group();
+		this.self.position.set(0, 0, 0);
 		this.queue.forEach(obj=>this.self.add(obj))
 		this.friends_list = await get_friends()
 		if (this.friends_list == null)
@@ -80,6 +81,7 @@ export class SphereGroup {
 		this.instanceGroup.forEach(sp=>sp.random_position(travel, this.cellIndices, this.gridSize, this.f, this.total_x, this.total_z))
 		if (travel)
 		{
+			console.log("random position travel")
 			this.change_motion("travel")
 		}
 	}
@@ -101,10 +103,17 @@ export class SphereGroup {
 			const speedFactor = 1 + scrollVelocity * 11; //AMP UP!
 			duration = 3000 / speedFactor;
 		}
+		else
+		{
+			this.startRotationZ = this.self.rotation.z
+			console.log("start rot", this.startRotationZ)
+			this.animationStartTime = now
+		}
 		// else{
 		// 	this.instanceGroup.forEach(sp=>sp.label.rotation.z = 0)
 		// }
 		this.instanceGroup.forEach(sp=>sp.scroll_position(this.total_spheres, dir))
+		console.log("change motion travel")
 		this.change_motion("travel")
 	}
 	resize(){
@@ -128,6 +137,7 @@ export class SphereGroup {
 		}
 		if (this.motion == "travel")
 		{
+			console.log("delayed motion")
 			this.delay_motion = motion;
 		}
 		else
@@ -142,23 +152,37 @@ export class SphereGroup {
 	}
 	travel(t){
 		let finished = 0;
+		if (this.startRotationZ)
+		{
+			let f = (t - this.animationStartTime) / duration;
+			this.self.rotation.z = this.startRotationZ * (1 - f);
+			if (f >= 1)
+			{
+				this.startRotationZ = null;
+			}
+		}
 		for (let i = 0; i < this.instanceGroup.length; i++){
 			finished += this.instanceGroup[i].travel(t)
 		}
 		if (finished == this.total_spheres)
 		{
-			this.instanceGroup.forEach(sp=>sp.allow_float())
+			this.instanceGroup.forEach(sp=>console.log("finished ", sp.self.position))
 			this.duration = 3000
 			if (this.position == "scroll")
 				this.position = "arrived"
 			this.motion = "0"
+			this.instanceGroup.forEach(sp=>sp.allow_float())
 			if (this.delay_motion)
 			{
+				console.log("change motion to prev call")
 				this.change_motion(this.delay_motion)
 				this.delay_motion = null
 			}
 			else
+			{
+				console.log("change motion to float")
 				this.change_motion("float");
+			}
 		}
 	}
 	float(t){
@@ -220,6 +244,7 @@ export class Sphere {
 			this.startPosition.x = this.self.position.x
 			this.startPosition.y = this.self.position.y
 			this.startPosition.z = this.self.position.z
+			//this.startRotationZ = new SphereGroup().self.rotation.z
 		}
 	}
 	scroll_position(total, dir){
@@ -228,17 +253,16 @@ export class Sphere {
 		if (dir == 0)
 		{
 			this.i = this.og_i
-
 		}
 		if (this.i < 1 )
 		{
 			this.i = total;
-			if (dir == 0)this.secondTarget = true;
+			this.secondTarget = true;
 		}
 		else if (this.i > total)
 		{
 			this.i = 1;
-			if (dir == 0)this.secondTarget = true;
+			this.secondTarget = true;
 		}
 		
 		let f = 0.5;
@@ -262,21 +286,12 @@ export class Sphere {
 		}
 		const curveX = 1 - Math.sin(t * Math.PI);  // 1 → 0 → 1
 		this.targetX = minX + curveX * ((maxX - minX ) * factor); 
-		this.targetX = 0;
-		this.targetY = 0;
+		// this.targetX = 0 - width / 4;
+		// this.targetY = 0;
 		this.startPosition = this.self.position.clone();
+		//this.startRotationZ = new SphereGroup().self.rotation.z
 		this.animationStartTime = Date.now();
-		if (this.i == 1)
-		{
-			console.log("min: ", minX, minY, minZ)
-			console.log("max: ", maxX, maxY, maxZ)	
-			console.log("factor: ", factor)
-			console.log("this i :", this.i, "total ", total, "t: ", t)
-			console.log("target", this.targetX, this.targetY, this.targetZ)
-			console.log("cureve ", curveX, curveY)
-			console.log("this start position", this.startPosition)
-			console.log("duration: ", duration)
-		}
+		console.log("this target x ", this.targetX, width)
 		if (this.secondTarget)
 		{
 			console.log("2nd target")
@@ -408,7 +423,6 @@ export class Sphere {
 	{
 		this.div.style.boxShadow = '0 0 10px 5px rgba(255, 255, 255, 0.8)';
 		this.div.style.boxShadow = '0 0 10px 5px rgb(84, 253, 188)';
-
 	}
 	deselected(){
 		this.div.style.boxShadow = '';

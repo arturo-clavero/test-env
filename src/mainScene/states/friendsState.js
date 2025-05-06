@@ -15,6 +15,7 @@ const display_null = new SubState(
 	null,
 	null, 
 	()=>{
+		console.log("change motion spin")
 		sphereGroup.change_motion("spin")
 		sphereGroup.random_position()
 		sphereGroup.instanceGroup.forEach(sp=>sp.hideAvatar(0))
@@ -33,6 +34,7 @@ const display_pics = new SubState(
 	null,
 	()=>{
 		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar(0.5))
+		console.log("change motion to spin")
 		sphereGroup.change_motion("spin")
 		sphereGroup.resize()
 	},
@@ -111,6 +113,8 @@ const friendState = new State(
 		scroll,
 	],
 	()=>{
+		sphereGroup.resize()
+		sphereGroup.self.position.set(0, 0, 0)
 		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar(0.3))
 	},
 	()=>{
