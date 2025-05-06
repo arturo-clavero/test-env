@@ -42,6 +42,7 @@ class MainEngine {
 		this.raycaster = new THREE.Raycaster();
 		this.mouse = new THREE.Vector2();
 		this.clickableObjects = [];
+		this.cssScene = new THREE.Scene();  // for CSS3DObjects
 	}
 	setUpRenderer(){
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });

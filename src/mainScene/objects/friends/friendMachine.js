@@ -43,9 +43,9 @@ bottom.add_object(0.5, 0.5, [0, 1], glass, [0, 1, 0], -1)
 glass.add_object(0.5, 0.5, [0, 1], top, [0, 1, 0], -1)
 
 const friends_machine = bottom;
-friends_machine.self.position.z = 5
-friends_machine.self.position.y = 2
-friends_machine.self.rotation.x += Math.PI / 2
+// friends_machine.self.position.z = 5
+// friends_machine.self.position.y = 2
+// friends_machine.self.rotation.x = Math.PI / 2
 
 export {friends_machine, glass, button}
 

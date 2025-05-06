@@ -221,7 +221,7 @@ function add_avatar(avatar, ball)
 	const label = new CSS3DObject(div);
 	label.userData.isLabel = true;
 	label.position.set(0, 0, 0)
-	label.rotation.x -= Math.PI/2;
+	label.rotation.x = - Math.PI/2;
 	label.scale.set(0.012, 0.012, 0.012);
 	ball.add(label);
 }

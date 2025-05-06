@@ -5,6 +5,7 @@ import {width, height, length, glass} from './friendMachine'
 import { MainEngine } from '../../utils/MainEngine';
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { shuffleArray, updateLabel} from './utils';
+import { StateManager } from '../../../core/stateManager/StateManager';
 const radius = 0.3;
 const min_spheres = 5
 const max_spheres = 5
@@ -57,7 +58,11 @@ export class SphereGroup {
 			this.total_spheres -=1
 		// this.mode = this.friends_list.length < min_spheres ? -1 : this.friends_list.length > max_spheres ? 1 : 0;
 		for (let i = 0; i < this.total_spheres; i++)
-			new Sphere()
+		{
+			let sp = new Sphere();
+			console.log("i: ",i)
+			await sp.add_friend(i);
+		}
 		glass.self.add(this.self)
 	}
 	random_position(travel = false){
@@ -76,7 +81,6 @@ export class SphereGroup {
 		if (travel)
 		{
 			this.change_motion("travel")
-			console.log("travel in tandom!", duration)
 		}
 	}
 	scroll_position(dir = 0)
@@ -97,17 +101,24 @@ export class SphereGroup {
 			const speedFactor = 1 + scrollVelocity * 11; //AMP UP!
 			duration = 3000 / speedFactor;
 		}
+		// else{
+		// 	this.instanceGroup.forEach(sp=>sp.label.rotation.z = 0)
+		// }
 		this.instanceGroup.forEach(sp=>sp.scroll_position(this.total_spheres, dir))
 		this.change_motion("travel")
 	}
 	resize(){
-		// for (let i = 0; i < this.total_spheres; i++){
-		// 	updateLabel(this.instanceGroup[i].label, this.instanceGroup[i].self, engine.camera, engine.renderer)
-		// }
+		for (let i = 0; i < this.total_spheres; i++){
+			updateLabel(this.instanceGroup[i].label, this.instanceGroup[i].self)
+		}
 	}
 	animate(){
-		this.instanceGroup.forEach(sphere=>sphere.label.lookAt(engine.camera))
-		this.animate_motion(Date.now())
+		//this.instanceGroup.forEach(sphere=>sphere.label.lookAt(engine.camera))
+		let now = Date.now()
+		this.resize()
+		this.animate_motion(now)
+		engine.css3DRenderer.render(engine.cssScene, engine.camera);
+		this.instanceGroup.forEach(sp=>sp.animate(now))
 	}
 	change_motion(motion){
 		const actions = {
@@ -118,7 +129,6 @@ export class SphereGroup {
 		if (this.motion == "travel")
 		{
 			this.delay_motion = motion;
-			console.log("delaying motion ", motion)
 		}
 		else
 		{
@@ -132,13 +142,11 @@ export class SphereGroup {
 	}
 	travel(t){
 		let finished = 0;
-		console.log("travel")
 		for (let i = 0; i < this.instanceGroup.length; i++){
 			finished += this.instanceGroup[i].travel(t)
 		}
 		if (finished == this.total_spheres)
 		{
-			console.log("finished")
 			this.instanceGroup.forEach(sp=>sp.allow_float())
 			this.duration = 3000
 			if (this.position == "scroll")
@@ -146,7 +154,6 @@ export class SphereGroup {
 			this.motion = "0"
 			if (this.delay_motion)
 			{
-				console.log("delayed motion apply")
 				this.change_motion(this.delay_motion)
 				this.delay_motion = null
 			}
@@ -169,10 +176,24 @@ export class Sphere {
 		this.self.userData.instance = this;
 		this.self.position.set(0, 0, 0);
 		this.i = new SphereGroup().add(this);
+		this.og_i = this.i
 		this.secondTarget = null;
 		this.animationStartTime = null;
 		this.inSecondLeg = false;
-		this.add_label()
+		this.div = document.createElement('div');
+		this.div.className = 'label';
+		this.div.style.width = '40px';
+		this.div.style.height = '40px';
+		this.div.style.borderRadius = '50%';
+		this.div.style.overflow = 'hidden';
+		this.div.style.visibility = 'hidden';
+		this.overlay = document.createElement('div');
+		this.label = new CSS3DObject(this.div);
+		this.label.position.set(0, 0, 0)
+		this.label.rotation.x = -Math.PI/2;
+		this.label.scale.set(0.015, 0.015, 0.015);
+		engine.cssScene.add(this.label)
+		this.animate = ()=>{}
 	}
 	random_position(travel = false, cellIndices, gridSize, f, total_x, total_z){
 		const {x, y} = cellIndices[this.i];
@@ -192,7 +213,6 @@ export class Sphere {
 		}
 		else
 		{
-			console.log("trael shere")
 			this.targetX = pos.x
 			this.targetY = pos.y
 			this.targetZ = pos.z
@@ -204,20 +224,23 @@ export class Sphere {
 	}
 	scroll_position(total, dir){
 		this.position = "scroll"
-		console.log("this i : ", this.i)
 		this.i += dir;
+		if (dir == 0)
+		{
+			this.i = this.og_i
 
+		}
 		if (this.i < 1 )
 		{
 			this.i = total;
-			this.secondTarget = true;
+			if (dir == 0)this.secondTarget = true;
 		}
 		else if (this.i > total)
 		{
 			this.i = 1;
-			this.secondTarget = true;
+			if (dir == 0)this.secondTarget = true;
 		}
-		console.log("this i : ", this.i)
+		
 		let f = 0.5;
 		const minX = -width / 2 + f;
 		const maxX = minX + width - f - f;
@@ -225,26 +248,42 @@ export class Sphere {
 		const maxY =  minY + height - f;
 		const minZ = -length / 2 + f ;
 		const maxZ = minZ + length - f -f;
-		const factor = (1 / 5) + ((total - 5) / (15 - 5)) * (1 - 1 / 5);
+		
+		const factor = (1 / 12) + ((total - 5) / (15 - 5)) * (1 - 1 / 10);
 		const t = (this.i - 1) / (total - 1); // normalize index from 0 to 1
+	
 		this.targetZ = maxZ - t * (maxZ - minZ);// adjust minZ/maxZ as needed
 		const curveY = Math.sin(t * Math.PI); // same arch
 		this.targetY = minY + curveY * (maxY - minY);
 		if (this.i == Math.ceil(total / 2)) 
 		{
 			new SphereGroup().midSphere = this;
-			console.log(this.i)
 			this.targetY = maxY + radius;
 		}
 		const curveX = 1 - Math.sin(t * Math.PI);  // 1 → 0 → 1
 		this.targetX = minX + curveX * ((maxX - minX ) * factor); 
+		this.targetX = 0;
+		this.targetY = 0;
 		this.startPosition = this.self.position.clone();
 		this.animationStartTime = Date.now();
+		if (this.i == 1)
+		{
+			console.log("min: ", minX, minY, minZ)
+			console.log("max: ", maxX, maxY, maxZ)	
+			console.log("factor: ", factor)
+			console.log("this i :", this.i, "total ", total, "t: ", t)
+			console.log("target", this.targetX, this.targetY, this.targetZ)
+			console.log("cureve ", curveX, curveY)
+			console.log("this start position", this.startPosition)
+			console.log("duration: ", duration)
+		}
 		if (this.secondTarget)
 		{
+			console.log("2nd target")
 			this.secondTarget = new THREE.Vector3(this.targetX, this.targetY, this.targetZ)
 			this.targetX = 0;
 			this.targetY = 0;
+			this.hideAvatar(0.45)
 			if (this.i == 1)
 			{
 				this.targetZ = - length / 2 - radius;
@@ -272,6 +311,7 @@ export class Sphere {
 		{
 			if (this.secondTarget && !this.inSecondLeg)
 			{
+				this.showAvatar(0.45)
 				this.inSecondLeg = true;
 				this.startPosition = new THREE.Vector3(this.secondStart.x, this.secondStart.y, this.secondStart.z)
 				this.self.position.set(this.startPosition.x, this.startPosition.y, this.startPosition.z)
@@ -283,6 +323,7 @@ export class Sphere {
 			}
 			else
 			{
+				this.self.position.set(this.targetX, this.targetY, this.targetZ)
 				this.secondTarget = null;
 				this.secondStart = null;
 				this.inSecondLeg = false;
@@ -317,7 +358,10 @@ export class Sphere {
 	}
 	async add_friend(index)
 	{
+		console.log("got index", index)
 		this.friend = await get_friends(index);
+		if (this.friend == null)
+			return;
 		const img = document.createElement('img');
 		img.src = this.friend.avatar;
 		img.style.width = '100%';
@@ -325,45 +369,55 @@ export class Sphere {
 		img.style.objectFit = 'cover';
 		this.div.appendChild(img);
 	}
-	hideAvatar() {
+	hideAvatar(len = null) {
+		if (this.friend && this.div.style.visibility == "visible")
+		{
+			let length = len ? len : duration
+			this.animationStartTime = Date.now()
+			this.animate = (now)=>{
+				let t = (now - this.animationStartTime) / length;
+				this.div.style.opacity = 1 - t;
+				if (t >= 1)
+				{
+					this.div.style.visibility = "hidden"
+					this.animate = ()=>{}
+				}
+			}
+		}
 		this.div.style.visibility = 'hidden';
-		console.log("hide");
 	}
-	showAvatar() {
-		this.div.style.visibility = 'visible';
-		console.log("show");
-	}	
-	add_label(){
-		this.div = document.createElement('div');
-		this.div.className = 'label';
-		this.div.style.width = '40px';
-		this.div.style.height = '40px';
-		this.div.style.borderRadius = '50%';
-		this.div.style.overflow = 'hidden';
-		this.div.style.backgroundColor = "white";
-		this.div.style.visibility = 'visible';
-		this.div.style.boxShadow = '0 0 4px rgba(0,0,0,0.5)';
-		this.overlay = document.createElement('div');
-		this.overlay.style.position = 'absolute';
-		this.overlay.style.top = '0';
-		this.overlay.style.left = '0';
-		this.overlay.style.width = '100%';
-		this.overlay.style.height = '100%';
-		this.overlay.style.borderRadius = '59%';
-		this.overlay.style.background = `
-		radial-gradient(
-			circle at 50% 50%,
-			transparent 40%,
-			rgba(0, 0, 0, 0.4) 80%,
-			rgba(0, 0, 0, 0.8)
-		)
-		`;
-		this.div.appendChild(this.overlay);
-		this.label = new CSS3DObject(this.div);
-		// this.label.userData.isLabel = true;
-		this.label.position.set(0, 0, 0)
-		this.label.rotation.x -= Math.PI/2;
-		this.label.scale.set(0.012, 0.012, 0.012);
-		this.self.add(this.label);
+	showAvatar(len = null) {
+		if (this.friend && this.div.style.visibility == "hidden")
+			{
+			this.div.style.opacity = 0;
+			this.div.style.visibility = "visible"
+			let length = len ? duration * len : duration
+			this.animationStartTime = Date.now()
+			this.animate = (now)=>{
+				let t = (now - this.animationStartTime) / length;
+				this.div.style.opacity = t;
+				if (t >= 1)
+				{
+					this.div.style.opacity = 1
+					this.animate = ()=>{}
+				}
+			}
+		}
 	}
+	selected()
+	{
+		this.div.style.boxShadow = '0 0 10px 5px rgba(255, 255, 255, 0.8)';
+		this.div.style.boxShadow = '0 0 10px 5px rgb(84, 253, 188)';
+
+	}
+	deselected(){
+		this.div.style.boxShadow = '';
+	}
+	// friend_offline(){
+	// 	this.div.style.boxShadow = '';
+	// }
+	// friend_online(){
+	// 	this.div.style.boxShadow = '0 0 10px 5px rgba(255, 255, 255, 0.8)';
+	// }
+
 }

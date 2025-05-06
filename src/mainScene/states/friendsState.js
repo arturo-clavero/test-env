@@ -17,7 +17,7 @@ const display_null = new SubState(
 	()=>{
 		sphereGroup.change_motion("spin")
 		sphereGroup.random_position()
-		sphereGroup.instanceGroup.forEach(sp=>sp.hideAvatar())
+		sphereGroup.instanceGroup.forEach(sp=>sp.hideAvatar(0))
 	},
 	null,
 	null,
@@ -32,8 +32,8 @@ const display_pics = new SubState(
 	null,
 	null,
 	()=>{
+		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar(0.5))
 		sphereGroup.change_motion("spin")
-		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar())
 		sphereGroup.resize()
 	},
 	null,
@@ -66,6 +66,7 @@ const scroll = new SubState(
 	null,
 	()=>{
 	//	button.basePart.self.material.color = 0x00ff00
+		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar(0.5))
 		sphereGroup.scroll_position()
 	},
 	()=>{
@@ -109,8 +110,13 @@ const friendState = new State(
 		display_pics,
 		scroll,
 	],
-	null,
-	null,
+	()=>{
+		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar(0.3))
+	},
+	()=>{
+		sphereGroup.instanceGroup.forEach(sp=>sp.hideAvatar())
+		sphereGroup.random_position(true)
+	},
 	null, 
 	friends_machine.self,
 	new THREE.Vector3(0, 0, -1),
