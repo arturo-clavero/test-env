@@ -14,6 +14,7 @@ const bottom = new Object(new Part(scale_points(cube_points, width, height), len
 
 const top = new Object(new Part(scale_points(cube_points, width, height), length / 4, material));
 
+
 const button = new Object(new Part(scale_points(cube_points, 0.2, 0.2), 0.1, new THREE.MeshStandardMaterial({color: 0xff0000, color: 0xff0000, emissive: 0x220000, emissiveIntensity: 1.0})))
 const base_button = new Object(new Part(scale_points(cube_points, 0.3, 0.3), 0.15, new THREE.MeshStandardMaterial({color: 0x000000, side: THREE.DoubleSide })))
 const button2 = new Object(new Part(scale_points(cube_points, 0.2, 0.2), 0.1, new THREE.MeshStandardMaterial({color: 0xff0000, color: 0xff0000, emissive: 0x220000, emissiveIntensity: 1.0})))
@@ -30,7 +31,7 @@ button.add_onclick(()=>{
 	}
 })
 // bottom.add_object(0.5, 0.5, [0, 4], base_button, [0, 1, 0], 1)
-bottom.add_object(0.85, 0.85, [0, 4], button, [0, 1, 0], 1)
+bottom.add_object(0.85, 0.85, [0, 3], button, [0, 1, 0], 1)
 const glass = new Object(new Part(scale_points(cube_points, width, height), length, new THREE.MeshBasicMaterial({
 	color: 0x0000ff,
 	side: THREE.DoubleSide,

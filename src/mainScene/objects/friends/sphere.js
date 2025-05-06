@@ -61,7 +61,6 @@ export class SphereGroup {
 		for (let i = 0; i < this.total_spheres; i++)
 		{
 			let sp = new Sphere();
-			console.log("i: ",i)
 			await sp.add_friend(i);
 		}
 		glass.self.add(this.self)
@@ -81,7 +80,6 @@ export class SphereGroup {
 		this.instanceGroup.forEach(sp=>sp.random_position(travel, this.cellIndices, this.gridSize, this.f, this.total_x, this.total_z))
 		if (travel)
 		{
-			console.log("random position travel")
 			this.change_motion("travel")
 		}
 	}
@@ -106,14 +104,12 @@ export class SphereGroup {
 		else
 		{
 			this.startRotationZ = this.self.rotation.z
-			console.log("start rot", this.startRotationZ)
 			this.animationStartTime = now
 		}
 		// else{
 		// 	this.instanceGroup.forEach(sp=>sp.label.rotation.z = 0)
 		// }
 		this.instanceGroup.forEach(sp=>sp.scroll_position(this.total_spheres, dir))
-		console.log("change motion travel")
 		this.change_motion("travel")
 	}
 	resize(){
@@ -137,7 +133,6 @@ export class SphereGroup {
 		}
 		if (this.motion == "travel")
 		{
-			console.log("delayed motion")
 			this.delay_motion = motion;
 		}
 		else
@@ -166,7 +161,6 @@ export class SphereGroup {
 		}
 		if (finished == this.total_spheres)
 		{
-			this.instanceGroup.forEach(sp=>console.log("finished ", sp.self.position))
 			this.duration = 3000
 			if (this.position == "scroll")
 				this.position = "arrived"
@@ -174,13 +168,11 @@ export class SphereGroup {
 			this.instanceGroup.forEach(sp=>sp.allow_float())
 			if (this.delay_motion)
 			{
-				console.log("change motion to prev call")
 				this.change_motion(this.delay_motion)
 				this.delay_motion = null
 			}
 			else
 			{
-				console.log("change motion to float")
 				this.change_motion("float");
 			}
 		}
@@ -291,10 +283,8 @@ export class Sphere {
 		this.startPosition = this.self.position.clone();
 		//this.startRotationZ = new SphereGroup().self.rotation.z
 		this.animationStartTime = Date.now();
-		console.log("this target x ", this.targetX, width)
 		if (this.secondTarget)
 		{
-			console.log("2nd target")
 			this.secondTarget = new THREE.Vector3(this.targetX, this.targetY, this.targetZ)
 			this.targetX = 0;
 			this.targetY = 0;
@@ -373,7 +363,6 @@ export class Sphere {
 	}
 	async add_friend(index)
 	{
-		console.log("got index", index)
 		this.friend = await get_friends(index);
 		if (this.friend == null)
 			return;

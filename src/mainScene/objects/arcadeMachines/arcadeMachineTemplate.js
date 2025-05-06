@@ -19,7 +19,6 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 		material
 	));
 	if (border){
-		// obj.basePart.add_borders([2, 3, 4, 5, 6, 7], border)
 		obj.basePart.add_borders([4, 7], border)
 	}
 	if (sideThick > 0)
@@ -42,10 +41,8 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 		}
 	}
 	const dimension = thick * 0.7
-		// const screen = new Object(new Part([[0,0], [0, dimension],[dimension, dimension], [dimension, 0]], 0.001, new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), true))
 	const screen = new Object(new Part(scale_points(cube_points, dimension, dimension), 0.001, new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), true))
 	obj.add_object(0.5, 0.5, [0, 5], screen, [0, 1, 0], 1)
-	// console.log("baset: ", screen.basePart.shapes[0])
 	screen.basePart.shapes[0].geometry.scale(1, 1, -1);
 	screen.basePart.shapes[0].geometry.computeVertexNormals();
 	const partIndex = 1;
@@ -55,52 +52,21 @@ export function make_arcade_machine({height, width, thick, material, border = nu
 
 function create_joystick(material){
 	const joystick = new Object(new Part(scale_points(cube_points, 0.03, 0.03), 0.5, material))
-	// const joystick = new Object(new Part([[0, 0],[0, 0.06],[0.06, 0.06],[0.06, 0]], 0.5, material))
 	const geometry = new THREE.SphereGeometry(0.08, 32, 32); // radius 1, segments
 	const geometryb = new THREE.ConeGeometry(0.15, 0.15, 16, 16)
 	const base = new THREE.Mesh(geometryb, material);
 	joystick.add_object(0.5, 0.5, [0, 1], base, [0,0,1], 1, true)
-	// base.position.z -= 0.1;
 	base.rotation.x += Math.PI/2
 	const ball = new THREE.Mesh(geometry, material);
 	joystick.add_object(0.5, 0.5, [0, 0], ball, [0,0,1], 1, true, 0.8)
-	
 	return joystick;
 }
 
-// function create_handle(material){
-// 	const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, material))
-// 	const distance = 0.2;
-// 	const stick1 = create_joystick(material)
-// 	base.add_object(0 + distance, 0.3, [0, 0], stick1, [0, 1, 0],1, true, 0.5)
-// 	stick1.self.rotation.x += Math.PI/4
-// 	const stick2 = create_joystick(material)
-// 	base.add_object(1 - distance, 0.3, [0, 0], stick2, [0, 1, 0],1,true,  0.5 )
-// 	stick2.self.rotation.x += Math.PI/4
-// 	return base;
-// }
-
-// function create_button(amount, material, radius = 0.05, rows = 1,){
-// 	const group = new THREE.Group();
-// 	const geometry = new THREE.CylinderGeometry(radius, radius, 0.1, 16);
-// 	for (let i  = 0; i < amount; i++)
-// 	{
-// 		const button = new THREE.Mesh(geometry, material);
-// 		button.rotation.x += Math.PI/2;
-// 		if (rows == 1) {
-// 			const offset = (i - (amount - 1) / 2) * radius * 4;
-// 			button.position.x = offset;
-// 		}
-// 		group.add(button);
-// 	}
-// 	return group;
-// }
 function create_button(amount, material,  rows = 1,radius = 0.05) {
 	const group = new THREE.Group();
 	const geometry = new THREE.CylinderGeometry(radius, radius, 0.1, 16);
 	const spacing = radius * 4;
 
-	// Calculate buttons per row
 	let prev_row = 0;
 	let buttonsPerRow = Math.ceil(amount / rows);
 	let og_buttonsPerRow = buttonsPerRow;
@@ -124,15 +90,13 @@ function create_button(amount, material,  rows = 1,radius = 0.05) {
 }
 
 function create_handle(material){
-		// const base = new Object(new Part([[0, 0], [0, 0.5], [2.5, 0.5], [2.5, 0]], 0.01, new THREE.MeshBasicMaterial({
-	const base = new Object(new Part(scale_points(cube_points, 0.5, 2.5), 0.01, new THREE.MeshBasicMaterial({
+	const base = new Object(new Part(scale_points(cube_points, 2.5, 0.5), 0.01, new THREE.MeshBasicMaterial({
 		color: 0xffffff,      // Color still required, but doesn't matter when fully transparent
 		transparent: true,
 		opacity: 0,           // Fully invisible
 	})))
 	const distance = 0.2;
 	const button1 = create_button(6, material, 2)
-	//check buttons ft to add some dotn work bla bla TODO!
 	base.add_object(0.5, 0.5, [0, 0], button1, [0, 1, 0],1, true, 0.5)
 	const stick1 = create_joystick(new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }))
 	base.add_object(0+ distance, 0.3, [0, 0], stick1, [0, 1, 0],1,true,  0.5 )
@@ -149,16 +113,9 @@ export function add_controls(side, controls, obj){
 	{
 		controlObj = create_handle(new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }))
 	}
-
-	// console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
-	// obj.basePart.self.children[4].userData.instance.normal = new THREE.Vector3(0, 1, 0)
-// 
-	// console.log("ayoo",	obj.basePart.self.children[4].userData.instance.normal)
 	obj.add_object(0.5, 0.5, [0, 4], controlObj, [0, 0, 1], true, )
 	controlObj.self.rotation.z += Math.PI / 2;
 	controlObj.self.position.y -= 0.8;
 	controlObj.self.position.z += 1;
 	controlObj.self.position.x -= 0.35;
-
-
 }
