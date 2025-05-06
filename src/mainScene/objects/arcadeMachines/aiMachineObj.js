@@ -1,42 +1,51 @@
-import { Object } from '../../../core/objectFactory/Object'
-import { Part } from '../../../core/objectFactory/Part';
-import { StateManager } from '../../../core/stateManager/StateManager';
-import { arcade_points, scale_points } from '../geoAssets';
-import { screenMaterial } from '../materialAssets';
-import * as THREE from 'three';
+import { make_arcade_machine, create_controls } from './arcadeMachineTemplate';
+import {hot, cold} from '../materialAssets'
 
-const part_test = new Part(
-	scale_points(arcade_points, 2, 6), 
-	2.5,
-	[
-		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
-		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
-		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
-		new THREE.MeshStandardMaterial({ color: 0xff7f00, side: THREE.DoubleSide }), // Orange
-		new THREE.MeshStandardMaterial({ color: 0xffff00, side: THREE.DoubleSide }), // Yellow
-		new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide }), // Green
-		new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), // Blue
-		new THREE.MeshStandardMaterial({ color: 0x800080, side: THREE.DoubleSide }), // Purple
-		new THREE.MeshStandardMaterial({ color: 0xff1493, side: THREE.DoubleSide }), // Pink
-		new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }), // Black
-	  ]
-);
+// let i = 2;
+// let array = hot;
 
-const object = new Object(part_test);
-object.self.position.z = 3;
-object.self.position.x = 0;
-object.self.position.y = 2.4;
-object.self.rotation.y -= Math.PI / 2;
+let i = 0;
+let array  =cold;
 
-const aiMachineObj = object;
-aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
+const arcade_machine_material = array[i]["arcade_machine_material"];
+const border_material = array[i]["border_material"];
+const joystick_material = array[i]["joystick_material"];
+const button_material = array[i]["button_material"];
 
-const partIndex = 0;
-const surfaceIndex = 5;
-const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
-screenSurface.add_material( screenMaterial);
-const center = object.self.position.clone();
+const machine = make_arcade_machine({
+	width: 6,
+	height: 1, 
+	thick: 2.5,
+	sideThick: 0.01,
+	material: arcade_machine_material,
+	border: border_material,
+})
+
+const aiMachineObj = machine.object;
+
+create_controls(aiMachineObj, 
+[
+	{
+		"factory" : "button",
+		"factory_arguments" : [
+			5, 
+			button_material,
+			2
+		],
+		"x" : 0.3,
+	},
+	{
+		"factory" : "joystick",
+		"factory_arguments" : [joystick_material],
+		"x" : 0.75,
+	},
+])
+
+const partIndex = machine.partIndex;
+const surfaceIndex = machine.surfaceIndex;
+const screenSurface = machine.screenSurface;
+
+// screenSurface.self.add(screenSurface.get_borders(border_material))
+const center = aiMachineObj.self.position.clone();
 center.z += 2;
-
-
-export {aiMachineObj, screenSurface, center,  object, partIndex, surfaceIndex }
+export {aiMachineObj, screenSurface, center, partIndex, surfaceIndex}

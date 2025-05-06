@@ -37,26 +37,33 @@ const part_test = new Part(
 	  );
 const mainSceneObj = new Object(part_test);
 mainSceneObj.self.position.x = 0;
-mainSceneObj.self.position.y = 4;
+mainSceneObj.self.position.y = 8;
 mainSceneObj.self.position.z = -2;
 
-mainSceneObj.add_object(0.2, 0.5, [0, 0], localMachineObj, [0, 1, 0], 1)
+mainSceneObj.add_object(0.2, 0.3, [0, 0], localMachineObj, [0, 1, 0], 1)
 localMachineObj.self.rotation.y -= Math.PI/2
 localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
-mainSceneObj.add_object(0.4, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
+mainSceneObj.add_object(0.4, 0.3, [0, 0], aiMachineObj, [0, 1, 0], 1)
 aiMachineObj.self.rotation.y -= Math.PI/2
 aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
+let d = 1.1
+aiMachineObj.self.scale.set(d, d, 1)
+aiMachineObj.self.position.y += 0.4
 
-mainSceneObj.add_object(0.6, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)
+mainSceneObj.add_object(0.65, 0.3, [0, 0], tourMachineObj, [0, 1, 0], 1)
 tourMachineObj.self.rotation.y -= Math.PI/2
 tourMachineObj.add_onclick(()=>{ new StateManager().changeState(3);})
+let f = 1.35
+tourMachineObj.self.scale.set(f, f, f * 1.25)
+tourMachineObj.self.position.y += 1
 
-mainSceneObj.add_object(0.8, 0.5, [0, 0], friends_machine, [0, 1, 0], 1)
+mainSceneObj.add_object(0.2, 1.1, [0, 0], friends_machine, [0, 1, 0], 1)
 friends_machine.self.rotation.x += Math.PI/2
-// friends_machine.self.rotation.z -= Math.PI/2
+friends_machine.self.rotation.y -= Math.PI/2
 friends_machine.add_onclick(()=>{ new StateManager().changeState(4);})
-//friends_machine.self.position.z -= 4
+friends_machine.self.position.z -= 4
+friends_machine.self.position.y += 2
 new MainEngine().clickableObjects.push(localMachineObj.self, aiMachineObj.self, tourMachineObj.self, friends_machine.self)
 
 const mainSub = new SubState(

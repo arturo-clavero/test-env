@@ -3,7 +3,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/materialAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, aiMachineObj } from '../objects/arcadeMachines/aiMachineObj';
+import { screenSurface, aiMachineObj } from '../objects/arcadeMachines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 import { pongGame } from '../overlays/scenes/pong-game/Game';		
@@ -17,7 +17,7 @@ const divStart = new StartScreen('white', "START GAME");
 
 const restScreen = new CssSubState(
 	"rest",
-	object,
+	aiMachineObj,
 	screenSurface,
 	divStart.div,
 	0,
@@ -34,7 +34,7 @@ const restScreen = new CssSubState(
 
 const startScreen = new CssSubState(
 	"start",
-	object,
+	aiMachineObj,
 	screenSurface,
 	divStart.div,
 	0,
@@ -51,7 +51,7 @@ const startScreen = new CssSubState(
 const divControls = controls;
 const controlScreen = new CssSubState(
 	"controls", 
-	object,
+	aiMachineObj,
 	screenSurface,
 	divControls.div,
 	0,
@@ -84,7 +84,7 @@ const gameScreen = new MeshSubState(
 const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
-	object,
+	aiMachineObj,
 	screenSurface,
 	divEnd.div,
 	0,

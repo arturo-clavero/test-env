@@ -3,7 +3,7 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/materialAssets';
-import { screenSurface, partIndex, surfaceIndex, localMachineObj } from '../objects/arcadeMachines/localMachineObj';
+import { screenSurface, localMachineObj } from '../objects/arcadeMachines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 	import { pongGame } from '../overlays/scenes/pong-game/Game';		
@@ -146,7 +146,7 @@ const localMachineState = new State(
 	],
 	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
-	1.5
+	2.75
 )
 
 export {localMachineState}

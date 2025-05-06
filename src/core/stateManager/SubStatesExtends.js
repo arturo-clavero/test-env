@@ -55,22 +55,13 @@ class CssSubState extends SubState {
 		const screenBottomRight = toScreenPosition(bottomRight, this.engine.camera);
 		const pixelWidth = Math.abs(screenBottomRight.x - screenTopLeft.x);
 		const pixelHeight = Math.abs(screenBottomRight.y - screenTopLeft.y);
-		// const scaleX = pixelWidth / worldSize.x;
-		// const scaleY = pixelHeight / worldSize.y;
-		// const scaleFactor = 1 / Math.min(scaleX, scaleY);
-		// this.div.style.border = "2px solid red"; // or any color you like
-		// this.div.style.width = `${pixelWidth}px`;
-		// this.div.style.height = `${pixelHeight}px`;
-		// this.div.style.position = "absolute";
-this.div.style.left = `${screenTopLeft.x}px`;
-this.div.style.top = `${screenTopLeft.y}px`;
-this.div.style.width = `${pixelWidth}px`;
-this.div.style.height = `${pixelHeight}px`;
-this.div.style.border = "2px solid red";
-this.div.style.position = "absolute";
 
-		// this.divObject.scale.set(scaleFactor * 0.9, scaleFactor * 0.9, scaleFactor);
-		//this.divObject.scale.set(scaleFactor, scaleFactor, scaleFactor);
+		this.div.style.left = `${screenTopLeft.x}px`;
+		this.div.style.top = `${screenTopLeft.y}px`;
+		this.div.style.width = `${pixelWidth}px`;
+		this.div.style.height = `${pixelHeight}px`;
+		// this.div.style.border = "2px solid red";
+		this.div.style.position = "absolute";
 		super.resize();
 	}
 	animate(){
