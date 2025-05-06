@@ -32,8 +32,7 @@ const display_pics = new SubState(
 	null,
 	null,
 	()=>{
-		sphereGroup.random_position()
-		//sphereGroup.change_motion("spin")
+		sphereGroup.change_motion("spin")
 		sphereGroup.instanceGroup.forEach(sp=>sp.showAvatar())
 		sphereGroup.resize()
 	},
@@ -73,6 +72,7 @@ const scroll = new SubState(
 	//	button.basePart.self.material.color = 0xff0000
 	},
 	()=>{
+		console.log("exit")
 		sphereGroup.random_position(true)
 	},
 	()=>{sphereGroup.resize()},

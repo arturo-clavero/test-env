@@ -28,6 +28,8 @@ export class SphereGroup {
 		this.position = "0"
 		this.animate_motion = null
 		this.midSphere = null
+		this.delay_motion = null
+		this.motion = "0"
 		SphereGroup.instance = this
 	}
 	add(obj){
@@ -72,7 +74,10 @@ export class SphereGroup {
 		shuffleArray(this.cellIndices);
 		this.instanceGroup.forEach(sp=>sp.random_position(travel, this.cellIndices, this.gridSize, this.f, this.total_x, this.total_z))
 		if (travel)
+		{
 			this.change_motion("travel")
+			console.log("travel in tandom!", duration)
+		}
 	}
 	scroll_position(dir = 0)
 	{
@@ -96,9 +101,9 @@ export class SphereGroup {
 		this.change_motion("travel")
 	}
 	resize(){
-		for (let i = 0; i < this.total_spheres; i++){
-			updateLabel(this.instanceGroup[i].label, this.instanceGroup[i].self, engine.camera, engine.renderer)
-		}
+		// for (let i = 0; i < this.total_spheres; i++){
+		// 	updateLabel(this.instanceGroup[i].label, this.instanceGroup[i].self, engine.camera, engine.renderer)
+		// }
 	}
 	animate(){
 		this.instanceGroup.forEach(sphere=>sphere.label.lookAt(engine.camera))
@@ -110,24 +115,43 @@ export class SphereGroup {
 			"travel" : this.travel,
 			"float" : this.float,
 		}
-		this.animate_motion = actions[motion]
+		if (this.motion == "travel")
+		{
+			this.delay_motion = motion;
+			console.log("delaying motion ", motion)
+		}
+		else
+		{
+			this.animate_motion = actions[motion]
+			this.motion = motion
+		}
 	}
 	spin(t){
 		this.self.rotation.z += 0.002
 		this.float(t)
 	}
 	travel(t){
-	let finished = 0
+		let finished = 0;
+		console.log("travel")
 		for (let i = 0; i < this.instanceGroup.length; i++){
 			finished += this.instanceGroup[i].travel(t)
 		}
 		if (finished == this.total_spheres)
 		{
+			console.log("finished")
 			this.instanceGroup.forEach(sp=>sp.allow_float())
-			this.change_motion("float");
 			this.duration = 3000
 			if (this.position == "scroll")
 				this.position = "arrived"
+			this.motion = "0"
+			if (this.delay_motion)
+			{
+				console.log("delayed motion apply")
+				this.change_motion(this.delay_motion)
+				this.delay_motion = null
+			}
+			else
+				this.change_motion("float");
 		}
 	}
 	float(t){
@@ -165,6 +189,17 @@ export class Sphere {
 		{
 			this.self.position.copy(pos);
 			this.allow_float()
+		}
+		else
+		{
+			console.log("trael shere")
+			this.targetX = pos.x
+			this.targetY = pos.y
+			this.targetZ = pos.z
+			this.animationStartTime = Date.now()
+			this.startPosition.x = this.self.position.x
+			this.startPosition.y = this.self.position.y
+			this.startPosition.z = this.self.position.z
 		}
 	}
 	scroll_position(total, dir){
@@ -290,12 +325,14 @@ export class Sphere {
 		img.style.objectFit = 'cover';
 		this.div.appendChild(img);
 	}
-	hideAvatar(){
-		this.div.style.visibility = false
+	hideAvatar() {
+		this.div.style.visibility = 'hidden';
+		console.log("hide");
 	}
-	showAvatar(){
-		this.div.style.visibility = true
-	}
+	showAvatar() {
+		this.div.style.visibility = 'visible';
+		console.log("show");
+	}	
 	add_label(){
 		this.div = document.createElement('div');
 		this.div.className = 'label';
@@ -303,6 +340,8 @@ export class Sphere {
 		this.div.style.height = '40px';
 		this.div.style.borderRadius = '50%';
 		this.div.style.overflow = 'hidden';
+		this.div.style.backgroundColor = "white";
+		this.div.style.visibility = 'visible';
 		this.div.style.boxShadow = '0 0 4px rgba(0,0,0,0.5)';
 		this.overlay = document.createElement('div');
 		this.overlay.style.position = 'absolute';

@@ -12,6 +12,7 @@ import { Part } from '../../core/objectFactory/Part';
 import { Object } from '../../core/objectFactory/Object';
 import { friends_machine } from '../objects/friends/friendMachine';
 import { friendState } from './friendsState';
+import { MainEngine } from '../utils/MainEngine';
 const points = [
 	[0, 0],         // [w[0], h[0]]
 	[0, 1],         // [w[0], h[6]]
@@ -45,17 +46,18 @@ localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
 mainSceneObj.add_object(0.4, 0.5, [0, 0], aiMachineObj, [0, 1, 0], 1)
 aiMachineObj.self.rotation.y -= Math.PI/2
-aiMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
 
 mainSceneObj.add_object(0.6, 0.5, [0, 0], tourMachineObj, [0, 1, 0], 1)
 tourMachineObj.self.rotation.y -= Math.PI/2
-tourMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+tourMachineObj.add_onclick(()=>{ new StateManager().changeState(3);})
 
 mainSceneObj.add_object(0.8, 0.5, [0, 0], friends_machine, [0, 1, 0], 1)
 friends_machine.self.rotation.x += Math.PI/2
 // friends_machine.self.rotation.z -= Math.PI/2
 friends_machine.add_onclick(()=>{ new StateManager().changeState(4);})
 //friends_machine.self.position.z -= 4
+new MainEngine().clickableObjects.push(localMachineObj.self, aiMachineObj.self, tourMachineObj.self, friends_machine.self)
 
 const mainSub = new SubState(
 	"main controls", 

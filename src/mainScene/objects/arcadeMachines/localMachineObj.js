@@ -16,8 +16,6 @@ const machine = make_arcade_machine({
 
 const localMachineObj = machine.object;
 add_controls(1, "handle", localMachineObj)
-new MainEngine().clickableObjects.push(localMachineObj.self)
-
 const partIndex = machine.partIndex;
 const surfaceIndex = machine.surfaceIndex;
 const screenSurface = machine.screenSurface;
