@@ -75,7 +75,7 @@ const gameScreen = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	()=>{pongGame["enter"](2)},
+	()=>{pongGame["enter"](1)},
 	()=>{
 		new AlertManager().remove_latest_alert("exit alert");
 	},

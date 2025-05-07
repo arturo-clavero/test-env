@@ -44,8 +44,6 @@ create_controls(aiMachineObj,
 const partIndex = machine.partIndex;
 const surfaceIndex = machine.surfaceIndex;
 const screenSurface = machine.screenSurface;
-
-// screenSurface.self.add(screenSurface.get_borders(border_material))
 const center = aiMachineObj.self.position.clone();
 center.z += 2;
 export {aiMachineObj, screenSurface, center, partIndex, surfaceIndex}

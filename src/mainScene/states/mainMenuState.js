@@ -33,50 +33,41 @@ const part_test = new Part(
 	2,
 	[
 		new THREE.MeshStandardMaterial({ color: 0x800080, side: THREE.DoubleSide }), // Purple
-	  ]
-	  );
-const mainSceneObj = new Object(part_test);
-mainSceneObj.self.position.x = 0;
-mainSceneObj.self.position.y = 0;
-mainSceneObj.self.position.z = 0;
-mainSceneObj.self.rotation.x += Math.PI/2
+	]
+);
+const mainScene = new THREE.Group();
+const platform = new Object(part_test);
+platform.self.position.x = 0;
+platform.self.position.y = 0;
+platform.self.position.z = 0;
+platform.self.rotation.x += Math.PI/2
+mainScene.add(platform.self)
 
-mainSceneObj.add_object(0.31, 0.6, [0, 1], localMachineObj, [0, 1, 0], -1)
+mainScene.add(localMachineObj.self)
 localMachineObj.self.rotation.y -= Math.PI/2
-localMachineObj.self.rotation.z += Math.PI/2
-localMachineObj.self.position.z -= 2
 localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
 
-mainSceneObj.add_object(0.4, 0.7, [0, 1], aiMachineObj, [0, 1, 0], -1)
-aiMachineObj.self.rotation.z += Math.PI/2
+mainScene.add(aiMachineObj.self)
 aiMachineObj.self.rotation.y -= Math.PI/2
-
 aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
-let d = 1.1
-aiMachineObj.self.scale.set(d, d, 1)
-aiMachineObj.self.position.z -= 2.3
 
-mainSceneObj.add_object(0.55, 0.7, [0, 1], tourMachineObj, [0, 1, 0], -1)
+mainScene.add(tourMachineObj.self)
 tourMachineObj.self.rotation.y -= Math.PI/2
-tourMachineObj.self.rotation.z += Math.PI/2
-tourMachineObj.self.position.z -= 3
+tourMachineObj.self.scale.set(1, 1.5, 2)
 tourMachineObj.add_onclick(()=>{ new StateManager().changeState(3);})
-let f = 1.35
-tourMachineObj.self.scale.set(f, f, f * 1.25)
-tourMachineObj.self.position.y += 1
 
-mainSceneObj.add_object(0.8, 0.3, [0, 0], friends_machine, [0, 1, 0], 1)
+mainScene.add(friends_machine.self)
 friends_machine.self.rotation.x += Math.PI/2
-friends_machine.self.position.y += 6
-friends_machine.self.position.z -= 4
-// friends_machine.self.rotation.y -= Math.PI/2
-// friends_machine.self.rotation.z -= Math.PI/2
 friends_machine.add_onclick(()=>{ new StateManager().changeState(4);})
+
+//set positions
+localMachineObj.self.position.set(-8, 4, -0.5)
+aiMachineObj.self.position.set(localMachineObj.self.position.x + 4, 4 ,-0.25)
+tourMachineObj.self.position.set(aiMachineObj.self.position.x + 5, 4, 0.25)
+friends_machine.self.position.set(tourMachineObj.self.position.x + 6, 4,- 0.75)
+
 new MainEngine().clickableObjects.push(localMachineObj.self, aiMachineObj.self, tourMachineObj.self, friends_machine.self)
 
-const baseY = friends_machine.self.position.y;
-const delta = 0.2
-let dir = 1
 let floatTime = 0;
 const mainSub = new SubState(
 	"main controls", 
@@ -114,7 +105,7 @@ const mainState = new State(
 	null,
 	[],
 	// null,
-	mainSceneObj.self,
+	mainScene,
 	new THREE.Vector3(0, 0, -1),
 	1.25,
 );
@@ -129,4 +120,4 @@ const stateManager = new StateManager(
 	],
 );
 
-export { stateManager, mainSceneObj}
+export { stateManager, mainScene}

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { MainEngine } from './mainScene/utils/MainEngine';
-import { stateManager, mainSceneObj } from './mainScene/states/mainMenuState';
+import { stateManager, mainScene } from './mainScene/states/mainMenuState';
 
 import { backBox } from './mainScene/objects/background/backBox';
 import { StateManager } from './core/stateManager/StateManager';
@@ -10,7 +10,6 @@ import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
 import { Object } from './core/objectFactory/Object';
 import { Part } from './core/objectFactory/Part';
-import { friends_machine } from './mainScene/objects/friends/friendMachine';
 const engine = new MainEngine();
 
 let isAnimating = false;
@@ -39,9 +38,8 @@ export function preEnterScene(app_container){
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
-		engine.add(friends_machine, false);
 		//engine.add(backBox, false);
-		engine.add(mainSceneObj, false);
+		engine.add(mainScene, false);
 		engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
 	}

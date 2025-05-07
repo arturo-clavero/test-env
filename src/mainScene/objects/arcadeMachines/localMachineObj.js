@@ -24,15 +24,6 @@ const localMachineObj = machine.object;
 
 create_controls(localMachineObj, 
 [
-	// {
-	// 	"factory" : "button",
-	// 	"factory_arguments" : [
-	// 		6, 
-	// 		button_material,
-	// 		2
-	// 	],
-	// 	"x" : "center",
-	// },
 	{
 		"factory" : "joystick",
 		"factory_arguments" : [joystick_material],
@@ -48,8 +39,6 @@ create_controls(localMachineObj,
 const partIndex = machine.partIndex;
 const surfaceIndex = machine.surfaceIndex;
 const screenSurface = machine.screenSurface;
-
-// screenSurface.self.add(screenSurface.get_borders(border_material))
 const center = localMachineObj.self.position.clone();
 center.z += 2;
 export {localMachineObj, screenSurface, center, partIndex, surfaceIndex}

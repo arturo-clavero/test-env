@@ -133,38 +133,38 @@ new THREE.MeshStandardMaterial({ color: 0xff00cc, side: THREE.DoubleSide }),
 
 	]
 },
-{
-	"arcade_machine_material" : [
-			new THREE.MeshStandardMaterial({ color: 0x002244, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x002244, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x003366, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x001122, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x223344, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x001122, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x001122, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x3399ff, side: THREE.DoubleSide })
+// {
+// 	"arcade_machine_material" : [
+// 			new THREE.MeshStandardMaterial({ color: 0x002244, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x002244, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x003366, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x001122, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x223344, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x001122, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x001122, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x3399ff, side: THREE.DoubleSide })
 
 
-	],
-	"border_material" : new THREE.MeshStandardMaterial({ color: 0x66ccff, side: THREE.DoubleSide }),
-	"joystick_material" : [
-			new THREE.MeshStandardMaterial({ color: 0x3399ff, metalness: 0.6, roughness: 0.2, side: THREE.DoubleSide }),
-	new THREE.MeshBasicMaterial({ color: 0x002244, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x003366, metalness: 0.8, roughness: 0.1, side: THREE.DoubleSide })
+// 	],
+// 	"border_material" : new THREE.MeshStandardMaterial({ color: 0x66ccff, side: THREE.DoubleSide }),
+// 	"joystick_material" : [
+// 			new THREE.MeshStandardMaterial({ color: 0x3399ff, metalness: 0.6, roughness: 0.2, side: THREE.DoubleSide }),
+// 	new THREE.MeshBasicMaterial({ color: 0x002244, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x003366, metalness: 0.8, roughness: 0.1, side: THREE.DoubleSide })
 
 
-	],
-	"button_material" : [
-			new THREE.MeshStandardMaterial({ color: 0x3399ff, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x00ccff, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x0099cc, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x006699, side: THREE.DoubleSide }),
-	new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide })
+// 	],
+// 	"button_material" : [
+// 			new THREE.MeshStandardMaterial({ color: 0x3399ff, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x00ccff, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x0099cc, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x006699, side: THREE.DoubleSide }),
+// 	new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide })
 
 
-	]
-},
+// 	]
+// },
 
 
 ];
